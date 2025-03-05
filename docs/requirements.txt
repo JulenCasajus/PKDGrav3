@@ -1,0 +1,4 @@
+setuptools
+Cython >= 0.29
+numpy
+sphinxcontrib-bibtex

@@ -1,0 +1,13 @@
+#!/bin/bash
+# http://astyle.sourceforge.net/
+test -z "$ASTYLE" && ASTYLE=$(which astyle)
+# Run all C/C++/CUDA files except external projects (boost, etc.)
+FILES=$(git ls-files | egrep -v '^(mdl2/(openpa|boost)|fmt|blitz|windows)/' | egrep '\.(c|h|cxx|cu)$')
+if git diff-index --quiet HEAD $FILES ; then
+  $ASTYLE --project $FILES
+  git diff --color -w $FILES
+else
+  echo "error: Your local changes to the following files would be overwritten by beautify:"
+  git status $FILES
+  echo "Please, commit your changes or stash them before you run beautify."
+fi

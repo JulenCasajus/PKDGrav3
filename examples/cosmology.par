@@ -1,0 +1,49 @@
+from accuracy import classic_theta_switch,classic_replicas_switch
+
+achOutName      = "example"
+
+# Initial Condition
+dBoxSize        = 2000          # Mpc/h
+nGrid           = 128           # Simulation has nGrid^3 particles
+b2LPT           = True          # second order IC
+iSeed           = 314159265     # Random seed
+dRedFrom        = 49            # Starting redshift
+
+# Cosmology
+achTfFile       = "euclid_z0_transfer_combined.dat"
+h               = 0.67
+dOmega0         = 0.32
+dLambda         = 0.68
+dSigma8         = 0.83
+dSpectral       = 0.96
+
+iStartStep      = 0
+nSteps          = 100
+dRedTo          = 0.0
+
+# Cosmological Simulation
+bComove         = True          # Use comoving coordinates
+bPeriodic       = True          # with a periodic box
+bEwald          = True          # enable Ewald periodic boundaries
+
+# Logging/Output
+iOutInterval    = 10
+#iCheckInterval = 10
+bDoDensity      = False
+bVDetails       = True
+
+bOverwrite      = True
+bParaRead       = True          # Read in parallel
+bParaWrite      = False         # Write in parallel (does not work on all file systems)
+#nParaRead      = 8             # Limit number of simultaneous readers to this
+#nParaWrite     = 8             # Limit number of simultaneous writers to this
+
+# Accuracy Parameters
+bEpsAccStep     = True          # Choose eps/a timestep criteria
+dTheta          = classic_theta_switch()        # 0.40, 0.55, 0.70 switch
+nReplicas       = classic_replicas_switch()     # 1 if theta > 0.52 otherwise 2
+
+# Memory and performance
+bMemUnordered   = True          # iOrder replaced by potential and group id
+bNewKDK         = True          # No accelerations in the particle, dual tree possible
+

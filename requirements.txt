@@ -1,0 +1,7 @@
+tomli; python_version < '3.11'
+Cython >= 3.0
+numpy >= 1.7
+unittest-xml-reporting
+ddt
+nose
+dill

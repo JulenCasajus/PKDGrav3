@@ -1,19 +1,19 @@
 /*  This file is part of PKDGRAV3 (http://www.pkdgrav.org/).
-*  Copyright (c) 2001-2018 Joachim Stadel & Douglas Potter
-*
-*  PKDGRAV3 is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*
-*  PKDGRAV3 is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with PKDGRAV3. If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) 2001-2018 Joachim Stadel & Douglas Potter
+ *
+ *  PKDGRAV3 is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PKDGRAV3 is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PKDGRAV3. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifdef HAVE_CONFIG_H
     #include "config.h"
@@ -136,9 +136,7 @@ void pkdAssignMass(PKD pkd, uint32_t iLocalRoot, int iAssignment, int iGrid, flo
             if (kdn->is_cell()) { // At the moment we cannot handle enormous buckets
                 stack.push_back(kdn->rchild());
                 stack.push_back(kdn->lchild());
-            }
-            // Huge bucket. Do a particle at a time.
-            else {
+            } else { // Huge bucket. Do a particle at a time.
                 for (auto &p : *kdn) { // All particles in this tree cell
                     float3_t r(p.position());
                     r = (r * ifPeriod + 0.5) * nGrid + fDelta;
@@ -155,8 +153,7 @@ void pkdAssignMass(PKD pkd, uint32_t iLocalRoot, int iAssignment, int iGrid, flo
                     flush_masses(pkd, nGrid, masses, ilower);
                 }
             }
-        }
-        else { // Assign the mass for this range of particles
+        } else { // Assign the mass for this range of particles
             data.resize(size); // Hold the right number of masses
             mass_array_t masses(data.data(), ishape, blitz::neverDeleteData, RegularArray());
             masses = 0.0f;
@@ -180,8 +177,7 @@ int pstAssignMass(PST pst, void *vin, int nIn, void *vout, int nOut) {
         int rID = mdlReqService(pst->mdl, pst->idUpper, PST_ASSIGN_MASS, vin, nIn);
         pstAssignMass(pst->pstLower, vin, nIn, NULL, 0);
         mdlGetReply(pst->mdl, rID, NULL, NULL);
-    }
-    else {
+    } else {
         pkdAssignMass(plcl->pkd, ROOT, in->iAssignment, in->iGrid, in->fDelta);
     }
     return 0;

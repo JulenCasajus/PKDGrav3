@@ -1,4 +1,4 @@
-#include "smooth/smooth.h"
+#include "../smooth/smooth.h"
 #include "pkd.h"
 
 #define NOT_ACCRETED -1

@@ -15,13 +15,13 @@
  */
 
 /* NOTE: This is not portable code.  Parts of numeric_limits<> are
- * inherently machine-dependent, and this file is written for the MIPS
+ * inherently machine - dependent, and this file is written for the MIPS
  * architecture and the SGI MIPSpro C++ compiler.  Parts of it (in
  * particular, some of the characteristics of floating-point types)
  * are almost certainly incorrect for any other platform.
  */
 
-#include <blitz/wrap-climits.h> 
+#include <blitz/wrap-climits.h>
 #include <float.h>
 
 BZ_NAMESPACE(std)
@@ -42,7 +42,7 @@ enum float_denorm_style {
 
 // Base class for all specializations of numeric_limits.
 
-template <typename __number>
+template<typename __number>
 class _Numeric_limits_base {
 public:
   static const bool is_specialized = false;
@@ -88,7 +88,7 @@ public:
 };
 
 #define __declare_numeric_base_member(__type, __mem) \
-template <typename __number> \
+template<typename __number> \
   const __type _Numeric_limits_base<__number>:: __mem
 
 __declare_numeric_base_member(bool, is_specialized);
@@ -118,7 +118,7 @@ __declare_numeric_base_member(float_round_style, round_style);
 
 // Base class for integers.
 
-template <typename _Int,
+template<typename _Int,
           _Int __imin,
           _Int __imax,
           int __idigits = -1>
@@ -129,10 +129,10 @@ public:
   static _Int (min)()  { return __imin; }
   static _Int (max)()  { return __imax; }
 
-  static const int digits = 
-    (__idigits < 0) ? sizeof(_Int) * CHAR_BIT - (__imin == 0 ? 0 : 1) 
+  static const int digits =
+    (__idigits < 0) ? sizeof(_Int) * CHAR_BIT - (__imin == 0 ? 0 : 1)
                     : __idigits;
-  static const int digits10 = (digits * 301) / 1000; 
+  static const int digits10 = (digits * 301) / 1000;
                                 // log 2 = 0.301029995664...
 
   static const bool is_signed = __imin != 0;
@@ -146,7 +146,7 @@ public:
 };
 
 #define __declare_integer_limits_member(__type, __mem) \
-template <typename _Int, _Int __imin, _Int __imax, int __idigits> \
+template<typename _Int, _Int __imin, _Int __imax, int __idigits> \
   const __type _Integer_limits<_Int, __imin, __imax, __idigits>:: __mem
 
 __declare_integer_limits_member(bool, is_specialized);
@@ -162,7 +162,7 @@ __declare_integer_limits_member(bool, is_modulo);
 #undef __declare_integer_limits_member
 
 // Base class for floating-point numbers.
-template <typename __number,
+template<typename __number,
          int __Digits, int __Digits10,
          int __MinExp, int __MaxExp,
          int __MinExp10, int __MaxExp10,
@@ -194,17 +194,17 @@ public:
   static const bool has_denorm_loss   = false;
 
   static __number infinity()  {
-    static unsigned int _S_inf[sizeof(__number) / sizeof(int)] = 
+    static unsigned int _S_inf[sizeof(__number) / sizeof(int)] =
       { __InfinityWord };
     return *reinterpret_cast<__number*>(&_S_inf);
   }
   static __number quiet_NaN()  {
-    static unsigned int _S_nan[sizeof(__number) / sizeof(int)] = 
+    static unsigned int _S_nan[sizeof(__number) / sizeof(int)] =
       { __QNaNWord };
     return *reinterpret_cast<__number*>(&_S_nan);
   }
   static __number signaling_NaN()  {
-    static unsigned int _S_nan[sizeof(__number) / sizeof(int)] = 
+    static unsigned int _S_nan[sizeof(__number) / sizeof(int)] =
       { __SNaNWord };
     return *reinterpret_cast<__number*>(&_S_nan);
   }
@@ -218,23 +218,23 @@ public:
 };
 
 #define __declare_float_limits_member(__type, __mem) \
-template <typename __Num, int __Dig, int __Dig10, \
+template<typename __Num, int __Dig, int __Dig10, \
           int __MnX, int __MxX, int __MnX10, int __MxX10, \
           unsigned int __Inf, unsigned int __QNaN, unsigned int __SNaN, \
           bool __IsIEEE, float_round_style __Sty> \
 const __type _Floating_limits<__Num, __Dig, __Dig10, \
                               __MnX, __MxX, __MnX10, __MxX10, \
-                              __Inf, __QNaN, __SNaN,__IsIEEE, __Sty>:: __mem
+                              __Inf, __QNaN, __SNaN, __IsIEEE, __Sty>:: __mem
 
-__declare_float_limits_member(bool, is_specialized);  
-__declare_float_limits_member(int, digits);  
-__declare_float_limits_member(int, digits10);  
-__declare_float_limits_member(bool, is_signed);  
-__declare_float_limits_member(int, radix);  
-__declare_float_limits_member(int, min_exponent);  
-__declare_float_limits_member(int, max_exponent);  
-__declare_float_limits_member(int, min_exponent10);  
-__declare_float_limits_member(int, max_exponent10);  
+__declare_float_limits_member(bool, is_specialized);
+__declare_float_limits_member(int, digits);
+__declare_float_limits_member(int, digits10);
+__declare_float_limits_member(bool, is_signed);
+__declare_float_limits_member(int, radix);
+__declare_float_limits_member(int, min_exponent);
+__declare_float_limits_member(int, max_exponent);
+__declare_float_limits_member(int, min_exponent10);
+__declare_float_limits_member(int, max_exponent10);
 __declare_float_limits_member(bool, has_infinity);
 __declare_float_limits_member(bool, has_quiet_NaN);
 __declare_float_limits_member(bool, has_signaling_NaN);
@@ -252,7 +252,7 @@ __declare_float_limits_member(float_round_style, round_style);
 
 // The unspecialized class.
 
-template<typename T> 
+template<typename T>
 class numeric_limits : public _Numeric_limits_base<T> {};
 
 // Specializations for all built-in integral types.
@@ -312,13 +312,13 @@ class numeric_limits<unsigned long>
 #ifdef __STL_LONG_LONG
 #ifdef LONG_LONG_MIN
 
-// CYGNUS LOCAL 9/4/1998
+// CYGNUS LOCAL 9 / 4 / 1998
 // fixed LONGLONG to be LONG_LONG
 template<>
 class numeric_limits<long long>
   : public _Integer_limits<long long, LONG_LONG_MIN, LONG_LONG_MAX> {};
 
-// CYGNUS LOCAL 9/4/1998
+// CYGNUS LOCAL 9 / 4 / 1998
 // fixed LONGLONG to be LONG_LONG
 template<>
 class numeric_limits<unsigned long long>
@@ -330,7 +330,7 @@ class numeric_limits<unsigned long long>
 // Specializations for all built-in floating-point type.
 
 template<> class numeric_limits<float>
-  : public _Floating_limits<float, 
+  : public _Floating_limits<float,
                             FLT_MANT_DIG,   // Binary digits of precision
                             FLT_DIG,        // Decimal digits of precision
                             FLT_MIN_EXP,    // Minimum exponent
@@ -352,7 +352,7 @@ public:
 };
 
 template<> class numeric_limits<double>
-  : public _Floating_limits<double, 
+  : public _Floating_limits<double,
                             DBL_MANT_DIG,   // Binary digits of precision
                             DBL_DIG,        // Decimal digits of precision
                             DBL_MIN_EXP,    // Minimum exponent
@@ -374,13 +374,13 @@ public:
 };
 
 template<> class numeric_limits<long double>
-  : public _Floating_limits<long double, 
+  : public _Floating_limits<long double,
                             LDBL_MANT_DIG,  // Binary digits of precision
                             LDBL_DIG,       // Decimal digits of precision
                             LDBL_MIN_EXP,   // Minimum exponent
                             LDBL_MAX_EXP,   // Maximum exponent
-                            LDBL_MIN_10_EXP,// Minimum base 10 exponent
-                            LDBL_MAX_10_EXP,// Maximum base 10 exponent
+                            LDBL_MIN_10_EXP, // Minimum base 10 exponent
+                            LDBL_MAX_10_EXP, // Maximum base 10 exponent
                             0x7ff00000u,    // First word of +infinity
                             0x7ff10000u,    // First word of quiet NaN
                             0x7ff90000u,    // First word of signaling NaN

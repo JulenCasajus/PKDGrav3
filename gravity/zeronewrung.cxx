@@ -21,10 +21,10 @@
 static_assert(std::is_void<ServiceZeroNewRung::input>()  || std::is_trivial<ServiceZeroNewRung::input>());
 static_assert(std::is_void<ServiceZeroNewRung::output>() || std::is_trivial<ServiceZeroNewRung::output>());
 
-int ServiceZeroNewRung::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceZeroNewRung::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
     auto pkd = pst->plcl->pkd;
-    pkdZeroNewRung(pkd,in->uRungLo,in->uRungHi,in->uRung);
+    pkdZeroNewRung(pkd, in->uRungLo, in->uRungHi, in->uRung);
     return 0;
 }

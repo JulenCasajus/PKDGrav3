@@ -22,38 +22,38 @@
 #endif
 namespace gpu {
 template<int n> using fvector = float[n];
-template <int n> struct ppBlk {
+template<int n> struct ppBlk {
     int width() const {return n;}
     fvector<n> dx, dy, dz; // Offset from ilp->cx, cy, cz
     fvector<n> m;          // Mass
     fvector<n> fourh2;     // Softening: calculated
 };
 
-template <int n> struct pcBlk {
+template<int n> struct pcBlk {
     int width() const {return n;}
-    fvector<n> dx,dy,dz;
-    fvector<n> xxxx,xxxy,xxxz,xxyz,xxyy,yyyz,xyyz,xyyy,yyyy;
-    fvector<n> xxx,xyy,xxy,yyy,xxz,yyz,xyz;
-    fvector<n> xx,xy,xz,yy,yz;
+    fvector<n> dx, dy, dz;
+    fvector<n> xxxx, xxxy, xxxz, xxyz, xxyy, yyyz, xyyz, xyyy, yyyy;
+    fvector<n> xxx, xyy, xxy, yyy, xxz, yyz, xyz;
+    fvector<n> xx, xy, xz, yy, yz;
 #ifdef USE_DIAPOLE
-    fvector<n> x,y,z;
+    fvector<n> x, y, z;
 #endif
-    fvector<n> m,u;
+    fvector<n> m, u;
 };
 
-template <int n> struct denBlk {
+template<int n> struct denBlk {
     int width() const {return n;}
     fvector<n> dx, dy, dz;
     fvector<n> m, iMat;
 };
 
-template <int n> struct denCorrBlk {
+template<int n> struct denCorrBlk {
     int width() const {return n;}
     fvector<n> dx, dy, dz;
     fvector<n> T, P, expImb2;
 };
 
-template <int n> struct sphForceBlk {
+template<int n> struct sphForceBlk {
     int width() const {return n;}
     fvector<n> dx, dy, dz;
     fvector<n> m, fBall, Omega;
@@ -73,7 +73,7 @@ struct alignas(8) ppWorkUnit {
     uint16_t nP;   // Number of particles
     uint16_t nI;   // Number of interactions in the block
 };
-static_assert(sizeof(ppWorkUnit)==8,"check size of ppWorkUnit");
+static_assert(sizeof(ppWorkUnit)==8, "check size of ppWorkUnit");
 
 struct alignas(32) ppInput {
     float dx, dy, dz;
@@ -81,7 +81,7 @@ struct alignas(32) ppInput {
     float fSoft2;
     float dImaga;
 };
-static_assert(sizeof(ppInput)==32,"Check isze of ppInput");
+static_assert(sizeof(ppInput)==32, "Check isze of ppInput");
 
 /* Each thread block outputs this for each particle */
 struct alignas(32) ppResult {
@@ -92,13 +92,13 @@ struct alignas(32) ppResult {
     float dirsum;
     float normsum;
 };
-static_assert(sizeof(ppResult)==32,"Check size of ppResult");
+static_assert(sizeof(ppResult)==32, "Check size of ppResult");
 
 struct alignas(32) denInput {
     float dx, dy, dz;
     float fBall, iMat;
 };
-static_assert(sizeof(denInput)==32,"Check size of denInput");
+static_assert(sizeof(denInput)==32, "Check size of denInput");
 
 struct alignas(32) denResult {
     float rho;
@@ -108,20 +108,20 @@ struct alignas(32) denResult {
     float nSmooth;
     float imbalanceX, imbalanceY, imbalanceZ;
 };
-static_assert(sizeof(denResult)==32,"Check size of denResult");
+static_assert(sizeof(denResult)==32, "Check size of denResult");
 
 struct alignas(16) denCorrInput {
     float dx, dy, dz;
     float fBall;
 };
-static_assert(sizeof(denCorrInput)==16,"Check size of denCorrInput");
+static_assert(sizeof(denCorrInput)==16, "Check size of denCorrInput");
 
 struct alignas(16) denCorrResult {
     float corrT;
     float corrP;
     float corr;
 };
-static_assert(sizeof(denCorrResult)==16,"Check size of denCorrResult");
+static_assert(sizeof(denCorrResult)==16, "Check size of denCorrResult");
 
 struct alignas(64) sphForceInput {
     float dx, dy, dz;
@@ -129,7 +129,7 @@ struct alignas(64) sphForceInput {
     float vx, vy, vz;
     float rho, P, c;
 };
-static_assert(sizeof(sphForceInput)==64,"Check size of sphForceInput");
+static_assert(sizeof(sphForceInput)==64, "Check size of sphForceInput");
 
 struct alignas(32) sphForceResult {
     float uDot;
@@ -138,6 +138,6 @@ struct alignas(32) sphForceResult {
     float dtEst;
     float maxRung;
 };
-static_assert(sizeof(sphForceResult)==32,"Check size of sphForceResult");
+static_assert(sizeof(sphForceResult)==32, "Check size of sphForceResult");
 }
 #endif

@@ -68,7 +68,7 @@ public:
     CXX_Queue_element_hdr_t() = default;
     virtual ~CXX_Queue_element_hdr_t() = default;
 };
-static_assert(std::atomic<CXX_Queue_element_hdr_t *>::is_always_lock_free,"Atomics must be lock free or performance will be unacceptable");
+static_assert(std::atomic<CXX_Queue_element_hdr_t *>::is_always_lock_free, "Atomics must be lock free or performance will be unacceptable");
 
 class CXX_Queue_info_t {
 protected:
@@ -90,8 +90,8 @@ public:
         if (shadow.head.load(std::memory_order_relaxed) == nullptr) {
             if (normal.head.load(std::memory_order_relaxed) == nullptr) return true;
             else {
-                shadow.head.store(normal.head.load(std::memory_order_relaxed),std::memory_order_release);
-                normal.head.store(nullptr,std::memory_order_relaxed);
+                shadow.head.store(normal.head.load(std::memory_order_relaxed), std::memory_order_release);
+                normal.head.store(nullptr, std::memory_order_relaxed);
             }
         }
         return false;
@@ -99,7 +99,7 @@ public:
 
     template<typename MESSAGE>
     void enqueue(MESSAGE *m) {
-        m->next.store(nullptr,std::memory_order_relaxed);
+        m->next.store(nullptr, std::memory_order_relaxed);
         // We need to make sure that the above store happens before the exchange.
         // We use memory_order_release on the exchange for this, but on POWERPC
         // the eieio instruction is sufficient (release uses lwsync normally).
@@ -108,13 +108,13 @@ public:
         // lwsync: orders load/load, store/store and load/store to memory
         // sync: orders everything
 #if defined(__GNUC__) && defined(__PPC__)
-        __asm__ __volatile__  ( "eieio"  ::: "memory" );
+        __asm__ __volatile__  ("eieio"  ::: "memory");
 #else
         std::atomic_thread_fence(std::memory_order_release);
 #endif
-        auto prev = normal.tail.exchange(m,std::memory_order_relaxed);
-        if (prev==nullptr) normal.head.store(m,std::memory_order_relaxed);
-        else prev->next.store(m,std::memory_order_relaxed);
+        auto prev = normal.tail.exchange(m, std::memory_order_relaxed);
+        if (prev == nullptr) normal.head.store(m, std::memory_order_relaxed);
+        else prev->next.store(m, std::memory_order_relaxed);
     }
     template<typename MESSAGE>
     void enqueue(MESSAGE &m) { enqueue(&m); }
@@ -124,22 +124,22 @@ public:
     MESSAGE &dequeue() {
         auto e = shadow.head.load(std::memory_order_relaxed);
         auto n = e->next.load(std::memory_order_relaxed);
-        if (n != nullptr) shadow.head.store(n,std::memory_order_relaxed);
+        if (n != nullptr) shadow.head.store(n, std::memory_order_relaxed);
         else {
-            shadow.head.store(nullptr,std::memory_order_relaxed);
+            shadow.head.store(nullptr, std::memory_order_relaxed);
             CXX_Queue_element_hdr_t *expected = e;
-            if (!normal.tail.compare_exchange_strong(expected,nullptr,std::memory_order_relaxed)) {
-                while ((n=e->next.load(std::memory_order_relaxed)) == nullptr) {
+            if (!normal.tail.compare_exchange_strong(expected, nullptr, std::memory_order_relaxed)) {
+                while ((n = e->next.load(std::memory_order_relaxed)) == nullptr) {
 #if defined(HAVE_SCHED_YIELD)
                     sched_yield();
 #elif defined(_MSC_VER)
                     SwitchToThread();
 #endif
                 }
-                shadow.head.store(n,std::memory_order_relaxed);
+                shadow.head.store(n, std::memory_order_relaxed);
             }
         }
-        e->next.store(nullptr,std::memory_order_relaxed);
+        e->next.store(nullptr, std::memory_order_relaxed);
         std::atomic_thread_fence(std::memory_order_acquire);
         return *static_cast<MESSAGE *>(e);
     }
@@ -165,7 +165,7 @@ public:
 
     void enqueue(basicMessage *m) { CXX_Queue_info_t::enqueue(m); }
     void enqueue(basicMessage &m) { CXX_Queue_info_t::enqueue(&m); }
-    void enqueue(const basicMessage &C,basicQueue &Q) {
+    void enqueue(const basicMessage &C, basicQueue &Q) {
         // We do modify "M", but we are done before we return. Promise.
         // This allows patterns like Q.enqueueAndWait(MessageType(...))
         basicMessage &M = const_cast<basicMessage &>(C);

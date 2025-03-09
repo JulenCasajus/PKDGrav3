@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -58,7 +58,7 @@ const paddingPolicy defaultPadding = BZ_PADDING_DEFAULT;
 
 /**
   Declaration of class GeneralArrayStorage<N_rank>
- 
+
   This class describes a storage format for an N-dimensional array.
   The dimensions can be stored in an arbitrary order (for example, as
   a C-style row major array or Fortran-style column major array, or
@@ -71,10 +71,10 @@ const paddingPolicy defaultPadding = BZ_PADDING_DEFAULT;
   GeneralArrayStorage<N> defaults to C-style arrays.  To implement
   other storage formats, subclass and modify the constructor.  The
   class FortranArray, below, is an example.
- 
+
   Objects inheriting from GeneralArrayStorage<N> can be passed as
   an optional constructor argument to Array objects.
-  e.g. Array<int,3> A(16,16,16, FortranArray<3>());
+  e.g. Array<int, 3> A(16, 16, 16, FortranArray<3>());
   will create a 3-dimensional 16x16x16 Fortran-style array.
  */
 
@@ -88,7 +88,7 @@ public:
 
     GeneralArrayStorage(paddingPolicy pp = defaultPadding)
     {
-        for (int i=0; i < N_rank; ++i)
+        for (int i = 0; i < N_rank; ++i)
           ordering_(i) = N_rank - 1 - i;
         ascendingFlag_ = true;
         base_ = 0;
@@ -98,11 +98,11 @@ public:
     GeneralArrayStorage(const GeneralArrayStorage<N_rank>& x)
       : paddingPolicy_(x.paddingPolicy_), ascendingFlag_(x.ascendingFlag_),
 	ordering_(x.ordering_), base_(x.base_)
-    { 
+    {
     }
 
-    GeneralArrayStorage(TinyVector<int,N_rank> ordering,
-			TinyVector<bool,N_rank> ascendingFlag,
+    GeneralArrayStorage(TinyVector<int, N_rank> ordering,
+			TinyVector<bool, N_rank> ascendingFlag,
 			paddingPolicy pp = defaultPadding)
       : paddingPolicy_(pp), ascendingFlag_(ascendingFlag),
 	ordering_(ordering)
@@ -132,12 +132,12 @@ public:
     int ordering(int i) const
     { return ordering_[i]; }
 
-    void setOrdering(int i, int order) 
+    void setOrdering(int i, int order)
     { ordering_[i] = order; }
 
     bool allRanksStoredAscending() const
     {
-        for (int i=0; i < N_rank; ++i)
+        for (int i = 0; i < N_rank; ++i)
             if (!ascendingFlag_[i]) return false;
         return true;
     }
@@ -145,13 +145,13 @@ public:
     bool isRankStoredAscending(int i) const
     { return ascendingFlag_[i]; }
 
-    TinyVector<bool, N_rank>& ascendingFlag() 
+    TinyVector<bool, N_rank>& ascendingFlag()
     { return ascendingFlag_; }
 
     const TinyVector<bool, N_rank>& ascendingFlag() const
     { return ascendingFlag_; }
 
-    void setAscendingFlag(int i, bool ascendingFlag) 
+    void setAscendingFlag(int i, bool ascendingFlag)
     { ascendingFlag_[i] = ascendingFlag; }
 
     TinyVector<int, N_rank>& base()
@@ -188,22 +188,22 @@ protected:
     /*
      * ordering_[] specifies the order in which the array is stored in
      * memory.  For a newly allocated array, ordering_(0) will give the
-     * rank with unit stride, and ordering_(N_rank-1) will be the rank
+     * rank with unit stride, and ordering_(N_rank - 1) will be the rank
      * with largest stride.  An order like [2, 1, 0] corresponds to
      * C-style array storage; an order like [0, 1, 2] corresponds to
      * Fortran array storage.
      *
      * ascendingFlag_[] indicates whether the data in a rank is stored
      * in ascending or descending order.  Most of the time these values
-     * will all be true (indicating ascending order).  Some peculiar 
-     * formats (e.g. MS-Windows BMP image format) store the data in 
+     * will all be true (indicating ascending order).  Some peculiar
+     * formats (e.g. MS-Windows BMP image format) store the data in
      * descending order.
-     *  
+     *
      * base_[] gives the first valid index for each rank.  For a C-style
      * array, all the base_ elements will be zero; for a Fortran-style
      * array, they will be one.  base_[] can be set arbitrarily using
      * the Array constructor which takes a Range argument, e.g.
-     * Array<float,2> A(Range(30,40),Range(23,33));
+     * Array<float, 2> A(Range(30, 40), Range(23, 33));
      * will create an array with base_[] = { 30, 23 }.
      */
 
@@ -217,9 +217,9 @@ protected:
 
 /** This tag class can be used to provide a nicer notation for
     constructing padded arrays: instead of
-      Array<int,2> A(3, 3, GeneralArrayStorage<2>(paddedData));
+      Array<int, 2> A(3, 3, GeneralArrayStorage<2>(paddedData));
     one can simply write:
-      Array<int,2> A(3, 3, paddedArray);
+      Array<int, 2> A(3, 3, paddedArray);
     where paddedArray is an object of type _bz_paddedTag.
 */
 class _bz_paddedTag {
@@ -266,9 +266,9 @@ _bz_global _bz_paddedTag paddedArray;
 
 /** This tag class can be used to provide a nicer notation for
     constructing unpadded arrays: instead of
-      Array<int,2> A(3, 3, GeneralArrayStorage<2>(contiguousData));
+      Array<int, 2> A(3, 3, GeneralArrayStorage<2>(contiguousData));
     one can simply write:
-      Array<int,2> A(3, 3, contiguousArray);
+      Array<int, 2> A(3, 3, contiguousArray);
     where contiguousArray is an object of type _bz_contiguousTag.
 */
 class _bz_contiguousTag {
@@ -333,7 +333,7 @@ public:
     FortranArray(paddingPolicy pp = defaultPadding)
         : GeneralArrayStorage<N_rank>(noInitializeFlag())
     {
-        for (int i=0; i < N_rank; ++i)
+        for (int i = 0; i < N_rank; ++i)
           ordering_(i) = i;
         ascendingFlag_ = true;
         base_ = 1;
@@ -344,9 +344,9 @@ public:
 
 // This tag class can be used to provide a nicer notation for
 // constructing Fortran-style arrays: instead of
-//     Array<int,2> A(3, 3, FortranArray<2>());
+//     Array<int, 2> A(3, 3, FortranArray<2>());
 // one can simply write:
-//     Array<int,2> A(3, 3, fortranArray);
+//     Array<int, 2> A(3, 3, fortranArray);
 // where fortranArray is an object of type _bz_fortranTag.
 
 class _bz_fortranTag {
@@ -418,9 +418,9 @@ public:
 
 // This tag class can be used to provide a nicer notation for
 // constructing column major arrays: instead of
-//     Array<int,2> A(3, 3, ColumnMajorArray<2>());
+//     Array<int, 2> A(3, 3, ColumnMajorArray<2>());
 // one can simply write:
-//     Array<int,2> A(3, 3, columnMajorArray);
+//     Array<int, 2> A(3, 3, columnMajorArray);
 // where columnMajorArray is an object of type _bz_columnMajorTag.
 
 class _bz_columnMajorTag {
@@ -470,7 +470,7 @@ BZ_NAMESPACE_END
 
 #ifdef BZ_HAVE_BOOST_MPI
 namespace boost { namespace mpi {
-  template <int N>
+  template<int N>
   struct is_mpi_datatype<blitz::GeneralArrayStorage<N> > : boost::mpl::true_ { };
 } }
 #endif

@@ -37,7 +37,7 @@ float SPHEOSPCTofRhoU(PKD pkd, float rho, float u, float *c, float *T, int iMat,
 #ifdef HAVE_EOSLIB_H
         double ctmp = 0.0;
         double Ttmp = 0.0;
-        P = (float)EOSPCTofRhoU(pkd->materials[iMat],rho,u,&ctmp,&Ttmp);
+        P = (float)EOSPCTofRhoU(pkd->materials[iMat], rho, u, &ctmp, &Ttmp);
         *c = (float)ctmp;
         if (T) *T = (float)Ttmp;
         if (P < 0.0f) P = 0.0f;
@@ -52,12 +52,12 @@ float SPHEOSUofRhoT(PKD pkd, float rho, float T, int iMat, SPHOptions *SPHoption
     if (iMat == 0 && SPHoptions->useBuiltinIdeal) {
         u = T * SPHoptions->TuFac;
         if (SPHoptions->useIsentropic) {
-            u = u * (SPHoptions->gamma - 1.0f) / pow(rho,SPHoptions->gamma - 1.0f);
+            u = u * (SPHoptions->gamma - 1.0f) / pow(rho, SPHoptions->gamma - 1.0f);
         }
     }
     else {
 #ifdef HAVE_EOSLIB_H
-        u = (float)EOSUofRhoT(pkd->materials[iMat],rho,T);
+        u = (float)EOSUofRhoT(pkd->materials[iMat], rho, T);
 #endif
     }
     return u;
@@ -67,13 +67,13 @@ float SPHEOSTofRhoU(PKD pkd, float rho, float u, int iMat, SPHOptions *SPHoption
     float T = 0.0f;
     if (iMat == 0 && SPHoptions->useBuiltinIdeal) {
         if (SPHoptions->useIsentropic) {
-            u = u / (SPHoptions->gamma - 1.0f) * pow(rho,SPHoptions->gamma - 1.0f);
+            u = u / (SPHoptions->gamma - 1.0f) * pow(rho, SPHoptions->gamma - 1.0f);
         }
         T = u / SPHoptions->TuFac;
     }
     else {
 #ifdef HAVE_EOSLIB_H
-        T = (float)EOSTofRhoU(pkd->materials[iMat],rho,u);
+        T = (float)EOSTofRhoU(pkd->materials[iMat], rho, u);
 #endif
     }
     return T;
@@ -87,7 +87,7 @@ float SPHEOSPofRhoT(PKD pkd, float rho, float T, int iMat, SPHOptions *SPHoption
     }
     else {
 #ifdef HAVE_EOSLIB_H
-        P = (float)EOSPofRhoT(pkd->materials[iMat],rho,T);
+        P = (float)EOSPofRhoT(pkd->materials[iMat], rho, T);
         if (P < 0.0f) P = 0.0f;
 #endif
     }
@@ -102,7 +102,7 @@ float SPHEOSRhoofPT(PKD pkd, float P, float T, int iMat, SPHOptions *SPHoptions)
     }
     else {
 #ifdef HAVE_EOSLIB_H
-        rho = (float)EOSRhoofPT(pkd->materials[iMat],P,T);
+        rho = (float)EOSRhoofPT(pkd->materials[iMat], P, T);
 #endif
     }
     return rho;

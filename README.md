@@ -1,7 +1,7 @@
 # pkdgrav3
 
-Douglas Potter <douglas.potter@uzh.ch>  
-Joachim Stadel <stadel@physik.uzh.ch>  
+Douglas Potter <douglas.potter@uzh.ch>
+Joachim Stadel <stadel@physik.uzh.ch>
 
 The User Guide for pkdgrav3 can be found at: [https://pkdgrav3.readthedocs.io/](https://pkdgrav3.readthedocs.io/)
 

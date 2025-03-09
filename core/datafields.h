@@ -28,7 +28,7 @@
 //! The size of particles and tree nodes can vary depending on what
 //! features are enabled at run-time. This class tracks which fields
 //! are present, and their offset in the structure.
-template<typename DATA,typename FIELD>
+template<typename DATA, typename FIELD>
 class dataFields {
 public:
     using field = FIELD;
@@ -38,34 +38,34 @@ protected:
     size_t nElementAlign = alignof(DATA);   //!< Requirement alignment of the element (usually 4 or 8)
     size_t iElement32 = 0;
 public:
-    dataFields() : oFieldOffset(static_cast<size_t>(FIELD::MAX_FIELD),0) {}
+    dataFields() : oFieldOffset(static_cast<size_t>(FIELD::MAX_FIELD), 0) {}
     //! Setup the field offsets for adding fields.
     //! Here we set the basic size of the element to a fixed value (the header size).
     //! Following this call, "add" is called for each element that should be present.
     //! \param iBasicSize The size of the element header (the fixed part)
-    void initialize(int iBasicSize=0) {
+    void initialize(int iBasicSize = 0) {
         iElementSize = nElementAlign = iBasicSize;
         iElement32 = 0;
         oFieldOffset.clear();
-        oFieldOffset.insert(oFieldOffset.end(),static_cast<size_t>(FIELD::MAX_FIELD),0);
+        oFieldOffset.insert(oFieldOffset.end(), static_cast<size_t>(FIELD::MAX_FIELD), 0);
     }
     //! Make sure that elements are properly aligned.
     //! This is called after all fields have been added. The size is adjusted to respect alignment.
     void align(void) {
-        iElementSize = (iElementSize + nElementAlign - 1 ) & ~(nElementAlign-1);
+        iElementSize = (iElementSize + nElementAlign - 1 ) & ~(nElementAlign - 1);
     }
 
     //! Add a field to the store. A field of type T is added with the specified offset.
     //! \param f The field id
     //! \param offset The offset to the field
-    template<typename T,std::enable_if_t<!std::is_void_v<T>,bool> = true>
-    void add(FIELD f,std::string_view name, int offset) {
+    template<typename T, std::enable_if_t<!std::is_void_v<T>, bool> = true>
+    void add(FIELD f, std::string_view name, int offset) {
         oFieldOffset[static_cast<unsigned int>(f)] = offset;
     }
     //! Add a "void" type field. For some element the offset isn't relevant, only if it is present.
     //! \param f The field id
-    template<typename T,std::enable_if_t<std::is_void_v<T>,bool> = true>
-    void add(FIELD f,std::string_view name) {
+    template<typename T, std::enable_if_t<std::is_void_v<T>, bool> = true>
+    void add(FIELD f, std::string_view name) {
         oFieldOffset[static_cast<unsigned int>(f)] = 1;
     }
 
@@ -82,35 +82,35 @@ public:
     //!       double d[3];
     //!       float f[4];
     //!   };
-    //!   particles.add<double[3],u>(PKD_FIELD::oPosition,"r")
-    //!   particles.add<float[4]>(PKD_FIELD::oWhatever,"q",particles.offset(PKD_FIELD::oPosition))
+    //!   particles.add<double[3], u>(PKD_FIELD::oPosition, "r")
+    //!   particles.add<float[4]>(PKD_FIELD::oWhatever, "q", particles.offset(PKD_FIELD::oPosition))
     //! @endcode
     //! \param f The field id
-    template<typename T,typename S=T,std::enable_if_t<!std::is_void_v<T>,bool> = true>
-    void add(FIELD f,std::string_view name) {
+    template<typename T, typename S = T, std::enable_if_t<!std::is_void_v<T>, bool> = true>
+    void add(FIELD f, std::string_view name) {
         static_assert(std::is_standard_layout<S>());
         static_assert(sizeof(T) <= sizeof(S));
         static_assert(alignof(T) <= alignof(S));
         static_assert(alignof(S) <= 4 || alignof(S) == 8);
         int iOffset = iElementSize;
-        int iAlign = std::max(4ul,alignof(S));
-        if (iAlign==4 && iElement32 && (sizeof(S)%8)) {
+        int iAlign = std::max(4ul, alignof(S));
+        if (iAlign == 4 && iElement32 && (sizeof(S)%8)) {
             iOffset = iElement32;
             iElement32 = 0;
             auto iExtra = sizeof(S) - 4;
-            assert(iExtra%8 == 0);
+            assert(iExtra % 8 == 0);
             for (auto &i : oFieldOffset) {
-                if (i>iOffset) i += iExtra;
+                if (i > iOffset) i += iExtra;
             }
             iElementSize += iExtra;
         }
         else {
-            auto iMask = iOffset & (iAlign-1);
+            auto iMask = iOffset & (iAlign - 1);
             if (iMask) {
                 iElement32 = iOffset;
                 iOffset += iAlign - iMask;
             }
-            assert((iOffset & (iAlign-1)) == 0);
+            assert((iOffset & (iAlign - 1)) == 0);
             iElementSize = iOffset + sizeof(S);
         }
         if (nElementAlign < iAlign) nElementAlign = iAlign;
@@ -126,16 +126,16 @@ public:
     //! Returns a pointer to the field if present or nullptr if not.
     //! \param p Pointer to an element
     //! \param f The field id
-    template<typename T,std::enable_if_t<!std::is_array_v<T>,bool> = true>
-    const auto & get(const DATA *p,FIELD f) const noexcept {
+    template<typename T, std::enable_if_t<!std::is_array_v<T>, bool> = true>
+    const auto & get(const DATA *p, FIELD f) const noexcept {
         auto v = reinterpret_cast<const char *>(p);
         return * reinterpret_cast<const T *>(v + oFieldOffset[static_cast<unsigned int>(f)]);
     }
     //! Returns a pointer to the field if present or nullptr if not.
     //! \param p Pointer to an element
     //! \param f The field id
-    template<typename T,std::enable_if_t<!std::is_array_v<T>,bool> = true>
-    auto & get(DATA *p,FIELD f) const noexcept {
+    template<typename T, std::enable_if_t<!std::is_array_v<T>, bool> = true>
+    auto & get(DATA *p, FIELD f) const noexcept {
         auto v = reinterpret_cast<char *>(p);
         return * reinterpret_cast<T *>(v + oFieldOffset[static_cast<unsigned int>(f)]);
     }
@@ -143,17 +143,17 @@ public:
     //! Returns the field as a blitz++ TinyVector.
     //! \param p Pointer to an element
     //! \param f The field id
-    template<typename T,std::enable_if_t<std::rank_v<T> == 1,bool> = true>
-    const auto &get(const DATA *p,FIELD f) const noexcept {
-        return get<blitz::TinyVector<typename std::remove_extent<T>::type,std::extent_v<T>>>(p,f);
+    template<typename T, std::enable_if_t<std::rank_v<T> == 1, bool> = true>
+    const auto &get(const DATA *p, FIELD f) const noexcept {
+        return.get<blitz::TinyVector<typename std::remove_extent<T>::type, std::extent_v<T>>>(p, f);
     }
 
     //! Returns the field as a blitz++ TinyVector.
     //! \param p Pointer to an element
     //! \param f The field id
-    template<typename T,std::enable_if_t<std::rank_v<T> == 1,bool> = true>
-    auto &get(DATA *p,FIELD f) const noexcept {
-        return get<blitz::TinyVector<typename std::remove_extent<T>::type,std::extent_v<T>>>(p,f);
+    template<typename T, std::enable_if_t<std::rank_v<T> == 1, bool> = true>
+    auto &get(DATA *p, FIELD f) const noexcept {
+        return.get<blitz::TinyVector<typename std::remove_extent<T>::type, std::extent_v<T>>>(p, f);
     }
 
     //! Returns the size (in bytes) of an element (all fields).

@@ -29,29 +29,29 @@ public:
     // As the service descends the PST, nSimultaneous, iBeg and iEnd are updated.
     struct input {
         uint32_t nSimultaneous; // Number at this level of the PST
-        uint32_t iReaderWriter; // Index of the reader/write [0,nTotalActive)
+        uint32_t iReaderWriter; // Index of the reader/write [0, nTotalActive)
         uint32_t nSegment;      // Number of threads that act serially together
         uint32_t iThread;       // Index of the first thread in this group
         char filename[256];
     };
     typedef void output;
-    explicit ServiceIO(PST pst,int service_id,int nInBytes=0,const char *name="InputOutput")
-        : TraversePST(pst,service_id,nInBytes+sizeof(input),name) {}
+    explicit ServiceIO(PST pst, int service_id, int nInBytes = 0, const char *name="InputOutput")
+        : TraversePST(pst, service_id, nInBytes + sizeof(input), name) {}
 private:
-    virtual int Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) final;
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) final;
+    virtual int Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) final;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) final;
 protected:
-    virtual int do_lower(PST pst,void *vin,int nIn,void *vout,int nOut);
-    virtual int do_upper(PST pst,void *vin,int nIn);
-    virtual void IO(PST pst,void *vin,int nIn,int iGroup,int iSegment,int nSegment) = 0;
+    virtual int do_lower(PST pst, void *vin, int nIn, void *vout, int nOut);
+    virtual int do_upper(PST pst, void *vin, int nIn);
+    virtual void IO(PST pst, void *vin, int nIn, int iGroup, int iSegment, int nSegment) = 0;
 };
 
 class ServiceFileSizes : public TraversePST {
 public:
     struct input {
-        uint32_t nTotalActive;  // Number of simultaneous readers/writers
+        uint32_t nTotalActive;  // Number of simultaneous readers / writers
         uint32_t nSimultaneous; // Number at this level of the PST
-        uint32_t iReaderWriter; // Index of the reader/write [0,nTotalActive)
+        uint32_t iReaderWriter; // Index of the reader / write [0, nTotalActive)
         uint32_t nElementSize;  // Size of each element (1 for file size)
         char filename[256];
     };
@@ -60,18 +60,18 @@ public:
         uint64_t nFileBytes : 40;
         uint64_t iFileIndex : 24;
     };
-    explicit ServiceFileSizes(PST pst,int service_id=PST_FILE_SIZES,const char *name="FileSizes")
-        : TraversePST(pst,service_id,sizeof(input),max_files*(sizeof(output)),name) {}
+    explicit ServiceFileSizes(PST pst, int service_id = PST_FILE_SIZES, const char *name="FileSizes")
+        : TraversePST(pst, service_id, sizeof(input), max_files*(sizeof(output)), name) {}
 private:
-    virtual int Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) final;
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) final;
+    virtual int Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) final;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) final;
 protected:
-    virtual uint64_t GetSize(const std::string &filename,uint64_t file_size);
+    virtual uint64_t GetSize(const std::string &filename, uint64_t file_size);
 };
 
 class ServiceInput : public ServiceIO {
 public:
-    // This should be initialized with the number of parallel readers/writers
+    // This should be initialized with the number of parallel readers / writers
     // in nSimultaneous. The number of files is nFiles. Immediately after this
     // header is an array of file_info[nFiles] with information about each file.
     // The nElements in the header is the sum of the nElements in all files.
@@ -87,21 +87,21 @@ public:
     static constexpr int max_files = 100'000;
     using io_elements = uint64_t; // Read this many elements
     typedef void output;
-    explicit ServiceInput(PST pst,int service_id,int nInBytes=0,const char *name="Input")
-        : ServiceIO(pst,service_id,nInBytes+sizeof(input)+max_files*(sizeof(io_elements)),name) {}
+    explicit ServiceInput(PST pst, int service_id, int nInBytes = 0, const char *name="Input")
+        : ServiceIO(pst, service_id, nInBytes + sizeof(input)+max_files*(sizeof(io_elements)), name) {}
 protected:
-    virtual int do_lower(PST pst,void *vin,int nIn,void *vout,int nOut) override;
-    virtual int do_upper(PST pst,void *vin,int nIn) override;
-    virtual void IO(PST pst,void *vin,int nIn,int iGroup,int iSegment,int nSegment) override;
+    virtual int do_lower(PST pst, void *vin, int nIn, void *vout, int nOut) override;
+    virtual int do_upper(PST pst, void *vin, int nIn) override;
+    virtual void IO(PST pst, void *vin, int nIn, int iGroup, int iSegment, int nSegment) override;
 protected:
-    virtual void start(PST pst,uint64_t nElements,void *vin,int nIn);
-    virtual void finish(PST pst,uint64_t nElements,void *vin,int nIn);
-    virtual void Read(PST pst,uint64_t iElement,const std::string &filename,uint64_t iBeg,uint64_t iEnd) = 0;
+    virtual void start(PST pst, uint64_t nElements, void *vin, int nIn);
+    virtual void finish(PST pst, uint64_t nElements, void *vin, int nIn);
+    virtual void Read(PST pst, uint64_t iElement, const std::string &filename, uint64_t iBeg, uint64_t iEnd) = 0;
 };
 
 class ServiceOutput : public ServiceIO {
 public:
-    // This should be initialized with the number of parallel readers/writers
+    // This should be initialized with the number of parallel readers / writers
     // in nSimultaneous. The number of files is nFiles. Immediately after this
     // header is an array of file_info[nFiles] with information about each file.
     // The nElements in the header is the sum of the nElements in all files.
@@ -111,12 +111,12 @@ public:
         ServiceIO::input io;
     };
     typedef void output;
-    explicit ServiceOutput(PST pst,int service_id,int nInBytes=0,const char *name="Output")
-        : ServiceIO(pst,service_id,nInBytes+sizeof(input),name) {}
+    explicit ServiceOutput(PST pst, int service_id, int nInBytes = 0, const char *name="Output")
+        : ServiceIO(pst, service_id, nInBytes + sizeof(input), name) {}
 protected:
-    virtual void IO(PST pst,void *vin,int nIn,int iGroup,int iSegment,int nSegment) override;
+    virtual void IO(PST pst, void *vin, int nIn, int iGroup, int iSegment, int nSegment) override;
 protected:
-    virtual void Write(PST pst,void *vin,int nIn,int iGroup,const std::string &filename,int iSegment,int nSegment) = 0;
+    virtual void Write(PST pst, void *vin, int nIn, int iGroup, const std::string &filename, int iSegment, int nSegment) = 0;
 };
 
 #endif /* B52D0DB0_06A9_416B_A559_F5010B417974 */

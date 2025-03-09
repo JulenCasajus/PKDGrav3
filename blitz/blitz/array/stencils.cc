@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -54,7 +54,7 @@ BZ_NAMESPACE(blitz)
  *    class T_array3, typename T_array4, typename T_array5, typename T_array6,
  *    class T_array7, typename T_array8, typename T_array9, typename T_array10,
  *    class T_array11>
- * void applyStencil(const T_stencil& stencil, Array<T_numtype1,3>& A,
+ * void applyStencil(const T_stencil& stencil, Array<T_numtype1, 3>& A,
  *    T_array2& B = _dummyArray, T_array3& C = _dummyArray, ......)
  *
  * and allow for up to (say) 11 arrays to be passed.  But this doesn't
@@ -68,34 +68,34 @@ template<int N_rank, typename T_numtype1, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-void checkShapes(const Array<T_numtype1,N_rank>& BZ_DEBUG_PARAM(A),
+void checkShapes(const Array<T_numtype1, N_rank>& BZ_DEBUG_PARAM(A),
     const T_array2& BZ_DEBUG_PARAM(B), const T_array3& BZ_DEBUG_PARAM(C),
     const T_array4& BZ_DEBUG_PARAM(D), const T_array5& BZ_DEBUG_PARAM(E),
-    const T_array6& BZ_DEBUG_PARAM(F), const T_array7& BZ_DEBUG_PARAM(G), 
+    const T_array6& BZ_DEBUG_PARAM(F), const T_array7& BZ_DEBUG_PARAM(G),
     const T_array8& BZ_DEBUG_PARAM(H), const T_array9& BZ_DEBUG_PARAM(I),
     const T_array10& BZ_DEBUG_PARAM(J), const T_array11& BZ_DEBUG_PARAM(K))
 {
-    BZPRECONDITION(areShapesConformable(A.shape(),B.shape())
-        && areShapesConformable(A.shape(),C.shape())
-        && areShapesConformable(A.shape(),D.shape())
-        && areShapesConformable(A.shape(),E.shape())
-        && areShapesConformable(A.shape(),F.shape())
-        && areShapesConformable(A.shape(),G.shape())
-        && areShapesConformable(A.shape(),H.shape())
-        && areShapesConformable(A.shape(),I.shape())
-        && areShapesConformable(A.shape(),J.shape())
-        && areShapesConformable(A.shape(),K.shape()));
+    BZPRECONDITION(areShapesConformable(A.shape(), B.shape())
+        && areShapesConformable(A.shape(), C.shape())
+        && areShapesConformable(A.shape(), D.shape())
+        && areShapesConformable(A.shape(), E.shape())
+        && areShapesConformable(A.shape(), F.shape())
+        && areShapesConformable(A.shape(), G.shape())
+        && areShapesConformable(A.shape(), H.shape())
+        && areShapesConformable(A.shape(), I.shape())
+        && areShapesConformable(A.shape(), J.shape())
+        && areShapesConformable(A.shape(), K.shape()));
 }
 
-template<typename T_extent, int N_rank, 
+template<typename T_extent, int N_rank,
     class T_stencil, typename T_numtype1, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-void calcStencilExtent(T_extent& At, const T_stencil& stencil, 
-    const Array<T_numtype1,N_rank>&,
-    const T_array2&, const T_array3&, const T_array4&, const T_array5&, 
-    const T_array6&, const T_array7&, const T_array8&, const T_array9&, 
+void calcStencilExtent(T_extent& At, const T_stencil& stencil,
+    const Array<T_numtype1, N_rank>&,
+    const T_array2&, const T_array3&, const T_array4&, const T_array5&,
+    const T_array6&, const T_array7&, const T_array8&, const T_array9&,
     const T_array10&, const T_array11&)
 {
     // Interrogate the stencil to find out its extent
@@ -125,22 +125,22 @@ void calcStencilExtent(T_extent& At, const T_stencil& stencil,
 
 template<int N_rank, typename T_stencil, typename T_numtype1, typename T_array2>
 RectDomain<N_rank> interiorDomain(const T_stencil& stencil,
-    const Array<T_numtype1,N_rank>& A,
+    const Array<T_numtype1, N_rank>& A,
     const T_array2& B)
 {
     RectDomain<N_rank> domain = A.domain();
 
     // Interrogate the stencil to find out its extent
     stencilExtent<3, T_numtype1> At;
-    calcStencilExtent(At, stencil, A, B, _dummyArray, _dummyArray, 
-        _dummyArray, _dummyArray, _dummyArray, _dummyArray, _dummyArray, 
+    calcStencilExtent(At, stencil, A, B, _dummyArray, _dummyArray,
+        _dummyArray, _dummyArray, _dummyArray, _dummyArray, _dummyArray,
         _dummyArray, _dummyArray);
 
     // Shrink the domain according to the stencil size
-    TinyVector<int,N_rank> lbound, ubound;
+    TinyVector<int, N_rank> lbound, ubound;
     lbound = domain.lbound() - (At.min)();
     ubound = domain.ubound() - (At.max)();
-    return RectDomain<N_rank>(lbound,ubound);
+    return RectDomain<N_rank>(lbound, ubound);
 }
 
 template<int hasExtents>
@@ -150,9 +150,9 @@ template<int N_rank,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-static void getStencilExtent(TinyVector<int,N_rank>& minb,
-    TinyVector<int,N_rank>& maxb,
-    const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+static void getStencilExtent(TinyVector<int, N_rank>& minb,
+    TinyVector<int, N_rank>& maxb,
+    const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
     T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
     T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {
@@ -171,9 +171,9 @@ template<int N_rank,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-static inline void getStencilExtent(TinyVector<int,N_rank>& minb,
-    TinyVector<int,N_rank>& maxb,
-    const T_stencil& stencil, Array<T_numtype1,N_rank>&,
+static inline void getStencilExtent(TinyVector<int, N_rank>& minb,
+    TinyVector<int, N_rank>& maxb,
+    const T_stencil& stencil, Array<T_numtype1, N_rank>&,
     T_array2&, T_array3&, T_array4&, T_array5&, T_array6&,
     T_array7&, T_array8&, T_array9&, T_array10&, T_array11&)
 {
@@ -186,9 +186,9 @@ template<int N_rank,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-inline void getStencilExtent(TinyVector<int,N_rank>& minb,
-    TinyVector<int,N_rank>& maxb,
-    const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void getStencilExtent(TinyVector<int, N_rank>& minb,
+    TinyVector<int, N_rank>& maxb,
+    const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
     T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
     T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {
@@ -199,20 +199,20 @@ inline void getStencilExtent(TinyVector<int,N_rank>& minb,
 /*
  * This version applies a stencil to a set of 3D arrays.  Up to 11 arrays
  * may be used.  Any unused arrays are turned into dummyArray objects.
- * Operations on dummyArray objects are translated into no-ops.
+ * Operations on dummyArray objects are translated into no - ops.
  */
 template<typename T_stencil, typename T_numtype1, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,3>& A,
+void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1, 3>& A,
     T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
     T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {
-    checkShapes(A,B,C,D,E,F,G,H,I,J,K);
- 
+    checkShapes(A, B, C, D, E, F, G, H, I, J, K);
+
     // Determine stencil extent
-    TinyVector<int,3> minb, maxb;
+    TinyVector<int, 3> minb, maxb;
     getStencilExtent(minb, maxb, stencil, A, B, C, D, E, F, G, H, I, J, K);
 
     // Now determine the subdomain over which the stencil
@@ -242,7 +242,7 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,3>& A,
 #endif
 
     // Now do the actual loop
-    FastArrayIterator<T_numtype1,3> Aiter(A);
+    FastArrayIterator<T_numtype1, 3> Aiter(A);
     _bz_typename T_array2::T_iterator Biter(B);
     _bz_typename T_array3::T_iterator Citer(C);
     _bz_typename T_array4::T_iterator Diter(D);
@@ -267,23 +267,23 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,3>& A,
     Jiter.loadStride(2);
     Kiter.loadStride(2);
 
-    for (int i=lbound0; i <= ubound0; ++i)
+    for (int i = lbound0; i <= ubound0; ++i)
     {
-      for (int j=lbound1; j <= ubound1; ++j)
+      for (int j = lbound1; j <= ubound1; ++j)
       {
-        Aiter.moveTo(i,j,lbound2);
-        Biter.moveTo(i,j,lbound2);
-        Citer.moveTo(i,j,lbound2);
-        Diter.moveTo(i,j,lbound2);
-        Eiter.moveTo(i,j,lbound2);
-        Fiter.moveTo(i,j,lbound2);
-        Giter.moveTo(i,j,lbound2);
-        Hiter.moveTo(i,j,lbound2);
-        Iiter.moveTo(i,j,lbound2);
-        Jiter.moveTo(i,j,lbound2);
-        Kiter.moveTo(i,j,lbound2);
+        Aiter.moveTo(i, j, lbound2);
+        Biter.moveTo(i, j, lbound2);
+        Citer.moveTo(i, j, lbound2);
+        Diter.moveTo(i, j, lbound2);
+        Eiter.moveTo(i, j, lbound2);
+        Fiter.moveTo(i, j, lbound2);
+        Giter.moveTo(i, j, lbound2);
+        Hiter.moveTo(i, j, lbound2);
+        Iiter.moveTo(i, j, lbound2);
+        Jiter.moveTo(i, j, lbound2);
+        Kiter.moveTo(i, j, lbound2);
 
-        for (int k=lbound2; k <= ubound2; ++k)
+        for (int k = lbound2; k <= ubound2; ++k)
         {
             stencil.apply(Aiter, Biter, Citer, Diter, Eiter, Fiter, Giter,
                 Hiter, Iiter, Jiter, Kiter);
@@ -307,20 +307,20 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,3>& A,
 /*
  * This version applies a stencil to a set of 2D arrays.  Up to 11 arrays
  * may be used.  Any unused arrays are turned into dummyArray objects.
- * Operations on dummyArray objects are translated into no-ops.
+ * Operations on dummyArray objects are translated into no - ops.
  */
 template<typename T_stencil, typename T_numtype1, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,2>& A,
-    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F, 
+void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1, 2>& A,
+    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
     T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {
-    checkShapes(A,B,C,D,E,F,G,H,I,J,K);
+    checkShapes(A, B, C, D, E, F, G, H, I, J, K);
 
     // Determine stencil extent
-    TinyVector<int,2> minb, maxb;
+    TinyVector<int, 2> minb, maxb;
     getStencilExtent(minb, maxb, stencil, A, B, C, D, E, F, G, H, I, J, K);
 
     // Now determine the subdomain over which the stencil
@@ -342,10 +342,10 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,2>& A,
     cout << "Stencil bounds are:" << endl
      << lbound0 << '\t' << ubound0 << endl
      << lbound1 << '\t' << ubound1 << endl;
-#endif 
+#endif
 
     // Now do the actual loop
-    FastArrayIterator<T_numtype1,2> Aiter(A);
+    FastArrayIterator<T_numtype1, 2> Aiter(A);
     _bz_typename T_array2::T_iterator Biter(B);
     _bz_typename T_array3::T_iterator Citer(C);
     _bz_typename T_array4::T_iterator Diter(D);
@@ -370,21 +370,21 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,2>& A,
     Jiter.loadStride(1);
     Kiter.loadStride(1);
 
-    for (int i=lbound0; i <= ubound0; ++i)
+    for (int i = lbound0; i <= ubound0; ++i)
     {
-        Aiter.moveTo(i,lbound1);
-        Biter.moveTo(i,lbound1);
-        Citer.moveTo(i,lbound1);
-        Diter.moveTo(i,lbound1);
-        Eiter.moveTo(i,lbound1);
-        Fiter.moveTo(i,lbound1);
-        Giter.moveTo(i,lbound1);
-        Hiter.moveTo(i,lbound1);
-        Iiter.moveTo(i,lbound1);
-        Jiter.moveTo(i,lbound1);
-        Kiter.moveTo(i,lbound1);
+        Aiter.moveTo(i, lbound1);
+        Biter.moveTo(i, lbound1);
+        Citer.moveTo(i, lbound1);
+        Diter.moveTo(i, lbound1);
+        Eiter.moveTo(i, lbound1);
+        Fiter.moveTo(i, lbound1);
+        Giter.moveTo(i, lbound1);
+        Hiter.moveTo(i, lbound1);
+        Iiter.moveTo(i, lbound1);
+        Jiter.moveTo(i, lbound1);
+        Kiter.moveTo(i, lbound1);
 
-        for (int k=lbound1; k <= ubound1; ++k)
+        for (int k = lbound1; k <= ubound1; ++k)
         {
             stencil.apply(Aiter, Biter, Citer, Diter, Eiter, Fiter, Giter,
                 Hiter, Iiter, Jiter, Kiter);
@@ -407,20 +407,20 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,2>& A,
 /*
  * This version applies a stencil to a set of 1D arrays.  Up to 11 arrays
  * may be used.  Any unused arrays are turned into dummyArray objects.
- * Operations on dummyArray objects are translated into no-ops.
+ * Operations on dummyArray objects are translated into no - ops.
  */
 template<typename T_stencil, typename T_numtype1, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,1>& A,
-    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F, 
+void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1, 1>& A,
+    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
     T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {
-    checkShapes(A,B,C,D,E,F,G,H,I,J,K);
+    checkShapes(A, B, C, D, E, F, G, H, I, J, K);
 
     // Determine stencil extent
-    TinyVector<int,1> minb, maxb;
+    TinyVector<int, 1> minb, maxb;
     getStencilExtent(minb, maxb, stencil, A, B, C, D, E, F, G, H, I, J, K);
 
     // Now determine the subdomain over which the stencil
@@ -438,7 +438,7 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,1>& A,
 #endif
 
     // Now do the actual loop
-    FastArrayIterator<T_numtype1,1> Aiter(A);
+    FastArrayIterator<T_numtype1, 1> Aiter(A);
     _bz_typename T_array2::T_iterator Biter(B);
     _bz_typename T_array3::T_iterator Citer(C);
     _bz_typename T_array4::T_iterator Diter(D);
@@ -476,7 +476,7 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,1>& A,
     Jiter.moveTo(lbound0);
     Kiter.moveTo(lbound0);
 
-    for (int i=lbound0; i <= ubound0; ++i)
+    for (int i = lbound0; i <= ubound0; ++i)
     {
         stencil.apply(Aiter, Biter, Citer, Diter, Eiter, Fiter, Giter,
             Hiter, Iiter, Jiter, Kiter);
@@ -501,7 +501,7 @@ void applyStencil_imp(const T_stencil& stencil, Array<T_numtype1,1>& A,
  * applyStencil_imp with 11 array parameters.
  */
 template<typename T_stencil, typename T_numtype1, int N_rank>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A)
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A)
 {
     applyStencil_imp(stencil, A, _dummyArray, _dummyArray,
         _dummyArray, _dummyArray, _dummyArray, _dummyArray,
@@ -509,7 +509,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A)
 }
 
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
     T_array2& B)
 {
     applyStencil_imp(stencil, A, B, _dummyArray, _dummyArray,
@@ -519,7 +519,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
     T_array2& B, T_array3& C)
 {
     applyStencil_imp(stencil, A, B, C, _dummyArray, _dummyArray,
@@ -529,7 +529,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
     T_array2& B, T_array3& C, T_array4& D)
 {
     applyStencil_imp(stencil, A, B, C, D, _dummyArray, _dummyArray,
@@ -538,7 +538,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E)
 {
     applyStencil_imp(stencil, A, B, C, D, E, _dummyArray,
@@ -547,7 +547,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F)
 {
     applyStencil_imp(stencil, A, B, C, D, E, F,
@@ -557,7 +557,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
    T_array7& G)
 {
@@ -568,7 +568,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
    T_array7& G, T_array8& H)
 {
@@ -579,7 +579,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
    T_array7& G, T_array8& H, T_array9& I)
 {
@@ -590,7 +590,7 @@ inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
 template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
    T_array7& G, T_array8& H, T_array9& I, T_array10& J)
 {
@@ -602,7 +602,7 @@ template<typename T_stencil, typename T_numtype1, int N_rank, typename T_array2,
     class T_array3, typename T_array4, typename T_array5, typename T_array6,
     class T_array7, typename T_array8, typename T_array9, typename T_array10,
     class T_array11>
-inline void applyStencil(const T_stencil& stencil, Array<T_numtype1,N_rank>& A,
+inline void applyStencil(const T_stencil& stencil, Array<T_numtype1, N_rank>& A,
    T_array2& B, T_array3& C, T_array4& D, T_array5& E, T_array6& F,
    T_array7& G, T_array8& H, T_array9& I, T_array10& J, T_array11& K)
 {

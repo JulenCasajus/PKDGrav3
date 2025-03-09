@@ -21,17 +21,17 @@
 static_assert(std::is_void<ServiceCalcBound::input>()  || std::is_standard_layout<ServiceCalcBound::input>());
 static_assert(std::is_void<ServiceCalcBound::output>() || std::is_standard_layout<ServiceCalcBound::output>());
 
-int ServiceCalcBound::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceCalcBound::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto pkd = pst->plcl->pkd;
     static_assert(std::is_void<input>());
     auto &out = * static_cast<output *>(vout);
-    assert(nIn==0);
-    assert(nOut==sizeof(output));
+    assert(nIn == 0);
+    assert(nOut == sizeof(output));
     out = pkd->bnd = pkd->particles.bound();
     return sizeof(output);
 }
 
-int ServiceCalcBound::Combine(void *vout,void *vout2) {
+int ServiceCalcBound::Combine(void *vout, void *vout2) {
     auto out  = static_cast<output *>(vout);
     auto out2 = static_cast<output *>(vout2);
     *out = out->combine(*out2);

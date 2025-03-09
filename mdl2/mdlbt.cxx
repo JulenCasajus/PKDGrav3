@@ -148,7 +148,7 @@ void mdlbt::show_backtrace() {
     }
 #else
     auto functions = backtrace_symbols(stack, stack_size);
-    for (int i=0; i < stack_size; i++) {
+    for (int i = 0; i < stack_size; i++) {
         std::cerr << i << ":" << functions[i] << '\n';
     }
     free(functions);

@@ -29,16 +29,16 @@ public:
         uint64_t nPerCore;
         uint64_t iMaxOrder;
         input() = default;
-        input(uint64_t nPerProc,uint64_t iMaxOrder) : nPerProc(nPerProc), nPerCore(0), iMaxOrder(iMaxOrder) {}
+        input(uint64_t nPerProc, uint64_t iMaxOrder) : nPerProc(nPerProc), nPerCore(0), iMaxOrder(iMaxOrder) {}
     };
     typedef void output;
     explicit ServiceReorder(PST pst)
-        : TraversePST(pst,PST_REORDER,sizeof(input),"Reorder") {}
+        : TraversePST(pst, PST_REORDER, sizeof(input), "Reorder") {}
 protected:
-    virtual int OffNode(PST pst,void *vin,int nIn,void *vout,int nOut) override;
-    virtual int  AtNode(PST pst,void *vin,int nIn,void *vout,int nOut) override;
-    virtual int Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) override;
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int OffNode(PST pst, void *vin, int nIn, void *vout, int nOut) override;
+    virtual int  AtNode(PST pst, void *vin, int nIn, void *vout, int nOut) override;
+    virtual int Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 } // NewDD

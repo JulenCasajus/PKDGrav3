@@ -7,7 +7,7 @@ BZ_NAMESPACE(blitz)
  * Rank numbers start with zero, which may be confusing to users coming
  * from Fortran.  To make code more readable, the following constants
  * may help.  Example: instead of
- * 
+ *
  * int firstRankExtent = A.extent(0);
  *
  * One can write:

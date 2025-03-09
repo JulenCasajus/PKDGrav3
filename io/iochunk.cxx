@@ -31,32 +31,32 @@
 #include "iomodule.h"
 
 void io_chunk_read(const char *filename, void *buffer, uint64_t nBytes, uint64_t iOffset) {
-    constexpr uint64_t chunk = 64*1024*1024; // Number of bytes to read at a time
+    constexpr uint64_t chunk = 64 * 1024 * 1024; // Number of bytes to read at a time
     asyncFileInfo info;
-    io_init(&info, 1, chunk, IO_AIO|IO_LIBAIO);
-    auto fd = io_open(&info,filename);
-    if (fd<0) {
+    io_init(&info, 1, chunk, IO_AIO | IO_LIBAIO);
+    auto fd = io_open(&info, filename);
+    if (fd < 0) {
         perror(filename);
         abort();
     }
-    io_read(&info,buffer,nBytes,iOffset);
+    io_read(&info, buffer, nBytes, iOffset);
     io_close(&info);
     io_free(&info);
 }
 
 void io_chunk_write(const char *filename, const void *buffer, uint64_t nBytes, bool bAppend) {
-    auto fd = open(filename,O_WRONLY | (bAppend?O_APPEND:O_CREAT | O_TRUNC),0666);
-    if (fd<0) {
+    auto fd = open(filename, O_WRONLY | (bAppend?O_APPEND:O_CREAT | O_TRUNC), 0666);
+    if (fd < 0) {
         perror(filename);
         abort();
     }
-    constexpr uint64_t chunk = 1024*1024; // Number of bytes to read at a time
+    constexpr uint64_t chunk = 1024 * 1024; // Number of bytes to read at a time
     auto p = static_cast<const char *>(buffer);
-    for (auto i=0; i<nBytes; i+=chunk) {
-        auto iSize = std::min(chunk,nBytes-i);
-        auto nWrote = write(fd,p,iSize);
+    for (auto i = 0; i < nBytes; i += chunk) {
+        auto iSize = std::min(chunk, nBytes - i);
+        auto nWrote = write(fd, p, iSize);
         if (nWrote != iSize) {
-            fprintf(stderr,"Short write: ");
+            fprintf(stderr, "Short write: ");
             perror(filename);
             abort();
         }

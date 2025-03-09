@@ -21,7 +21,7 @@
 static_assert(std::is_void<ServiceGetOrdSplits::input>()  || std::is_standard_layout<ServiceGetOrdSplits::input>());
 static_assert(std::is_void<ServiceGetOrdSplits::output>() || std::is_standard_layout<ServiceGetOrdSplits::output>());
 
-int ServiceGetOrdSplits::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceGetOrdSplits::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     assert(nOut >= sizeof(output));
     auto pkd = pst->plcl->pkd;
     auto out = static_cast<output *>(vout);

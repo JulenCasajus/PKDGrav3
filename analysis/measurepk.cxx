@@ -121,7 +121,7 @@ void MSR::AddLinearSignal(int iGrid, int iSeed, double Lbox, double a, bool bFix
 
 void pkdGridBinK(PKD pkd, int nBins, int iGrid, double *fK, double *fPower, uint64_t *nPower) {
     assert(pkd->fft != NULL);
-    
+
     auto fft = pkd->fft;
     int nGrid = fft->rgrid->n1;
     auto iNyquist = nGrid / 2;
@@ -136,7 +136,7 @@ void pkdGridBinK(PKD pkd, int nBins, int iGrid, double *fK, double *fPower, uint
         fPower[i] = 0.0;
         nPower[i] = 0;
     }
-    
+
     #ifdef LINEAR_PK
         double scale = nBins * 1.0 / iNyquist;
     #else
@@ -158,12 +158,12 @@ void pkdGridBinK(PKD pkd, int nBins, int iGrid, double *fK, double *fPower, uint
             #else
                 ks = floor(log(ks) * scale);
             #endif
-            
+
             assert(ks >= 0 && ks < nBins);
             fK[ks] += log(ak);
             fPower[ks] += std::norm(v1);
             nPower[ks] += 1;
-            
+
             if (i != 0 && i != iNyquist) { // Account for negative Kx values
                 fK[ks] += log(ak);
                 fPower[ks] += std::norm(v1);
@@ -181,7 +181,7 @@ int pstGridBinK(PST pst, void *vin, int nIn, void *vout, int nOut) {
 
     assert(nIn == sizeof(struct inGridBinK));
     assert(nOut == sizeof(struct outGridBinK));
-    
+
     if (pstNotCore(pst)) {
         auto outUpper = new struct outGridBinK;
         int rID = mdlReqService(pst->mdl, pst->idUpper, PST_GRID_BIN_K, vin, nIn);

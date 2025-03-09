@@ -22,8 +22,8 @@ struct bounds {
             return ascending1;
 
         BZ_DEBUG_MESSAGE("Two array operands have different"
-            << endl << "ascending flags: for rank " << rank 
-            << ", the flags are " << ascending1 << " and " 
+            << endl << "ascending flags: for rank " << rank
+            << ", the flags are " << ascending1 << " and "
             << ascending2 << endl);
         BZ_PRE_FAIL;
         return 0;

@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -46,7 +46,7 @@ void Array<P_numtype, N_rank>::constructSubarray(
     Array<T_numtype, N_rank>& array, const RectDomain<N_rank>& subdomain)
 {
     reference(array);
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
         slice(i, subdomain[i]);
 }
 
@@ -55,7 +55,7 @@ void Array<P_numtype, N_rank>::constructSubarray(
     Array<T_numtype, N_rank>& array, const StridedDomain<N_rank>& subdomain)
 {
     reference(array);
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
         slice(i, subdomain[i]);
 }
 
@@ -242,7 +242,7 @@ void Array<P_numtype, N_rank>::constructSlice(Array<T_numtype, N_rank2>& array,
     // Redo the ordering_ array to account for dimensions which
     // have been sliced away.
     int j = 0;
-    for (int i=0; i < N_rank2; ++i)
+    for (int i = 0; i < N_rank2; ++i)
     {
         if (rankMap[array.ordering(i)] != -1)
             storage_.setOrdering(j++, rankMap[array.ordering(i)]);
@@ -259,7 +259,7 @@ void Array<P_numtype, N_rank>::constructSlice(Array<T_numtype, N_rank2>& array,
  */
 template<typename P_numtype, int N_rank> template<int N_rank2>
 void Array<P_numtype, N_rank>::slice(int& setRank, Range r,
-    Array<T_numtype,N_rank2>& array, TinyVector<int,N_rank2>& rankMap,
+    Array<T_numtype, N_rank2>& array, TinyVector<int, N_rank2>& rankMap,
     int sourceRank)
 {
     // NEEDS WORK: ordering will change completely when some ranks
@@ -267,7 +267,7 @@ void Array<P_numtype, N_rank>::slice(int& setRank, Range r,
 
 #ifdef BZ_DEBUG_SLICE
 cout << "slice(" << setRank << ", [" << r.first(array.lbound(sourceRank))
-     << ", " << r.last(array.ubound(sourceRank)) << "], Array<T,"
+     << ", " << r.last(array.ubound(sourceRank)) << "], Array<T, "
      << N_rank2 << ">, " << sourceRank << ")" << endl;
 #endif
 
@@ -288,12 +288,12 @@ cout << "slice(" << setRank << ", [" << r.first(array.lbound(sourceRank))
  */
 template<typename P_numtype, int N_rank> template<int N_rank2>
 void Array<P_numtype, N_rank>::slice(int&, int i,
-    Array<T_numtype,N_rank2>& array, TinyVector<int,N_rank2>& rankMap,
+    Array<T_numtype, N_rank2>& array, TinyVector<int, N_rank2>& rankMap,
     int sourceRank)
 {
 #ifdef BZ_DEBUG_SLICE
     cout << "slice(" << i
-         << ", Array<T," << N_rank2 << ">, " << sourceRank << ")" << endl;
+         << ", Array<T, " << N_rank2 << ">, " << sourceRank << ")" << endl;
     cout << "Offset by " << (i * array.stride(sourceRank))
          << endl;
 #endif
@@ -312,8 +312,8 @@ void Array<P_numtype, N_rank>::slice(int&, int i,
 /*
  * After calling slice(int rank, Range r), the array refers only to the
  * Range r of the original array.
- * e.g. Array<int,1> x(100);
- *      x.slice(firstRank, Range(25,50));
+ * e.g. Array<int, 1> x(100);
+ *      x.slice(firstRank, Range(25, 50));
  *      x = 0;       // Sets elements 25..50 of the original array to 0
  */
 template<typename P_numtype, int N_rank>
@@ -331,9 +331,9 @@ void Array<P_numtype, N_rank>::slice(int rank, Range r)
          << endl << "length_[rank] = " << length_[rank] << endl;
 #endif
 
-    BZPRECHECK((((first <= last) && (stride > 0)) || 
-        ((first >= last) && (stride < 0))) && 
-        (first >= base(rank) && (first - base(rank)) < length_[rank]) && 
+    BZPRECHECK((((first <= last) && (stride > 0)) ||
+        ((first >= last) && (stride < 0))) &&
+        (first >= base(rank) && (first - base(rank)) < length_[rank]) &&
         (last >= base(rank) && (last - base(rank)) < length_[rank]),
         "Bad array slice: Range(" << first << ", " << last << ", "
         << stride << ").  Array is Range(" << lbound(rank) << ", "
@@ -346,7 +346,7 @@ void Array<P_numtype, N_rank>::slice(int rank, Range r)
 
     length_[rank] = (last - first) / stride + 1;
 
-    // TV 20000312: added second term here, for testsuite/Josef-Wagenhuber
+    // TV 20000312: added second term here, for testsuite / Josef - Wagenhuber
     diffType offset = (first - base(rank) * stride) * stride_[rank];
 
     data_ += offset;
@@ -354,7 +354,7 @@ void Array<P_numtype, N_rank>::slice(int rank, Range r)
 
     stride_[rank] *= stride;
     // JCC: adjust ascending flag if slicing with backwards Range
-    if (stride<0)
+    if (stride < 0)
         storage_.setAscendingFlag(rank, !isRankStoredAscending(rank));
 }
 

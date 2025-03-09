@@ -76,7 +76,7 @@ INCLUDE(CheckCSourceCompiles)
 check_c_source_compiles("
 #include <features.h>
 #ifdef __GNU_LIBRARY__
-  int main() {return 0;} 
+  int main() {return 0;}
 #endif
 " _GNU_SOURCE)
 if (_GNU_SOURCE)
@@ -261,7 +261,7 @@ add_library(cosmology MODULE ${CMAKE_CURRENT_BINARY_DIR}/modules/cosmology.cpp $
 target_include_directories(cosmology PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GSL_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
 target_compile_definitions(cosmology PUBLIC NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 target_link_libraries(cosmology Python3::Python Python3::NumPy ${GSL_LIBRARIES} ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES} mdl2)
-set_target_properties(cosmology PROPERTIES PREFIX "")  
+set_target_properties(cosmology PROPERTIES PREFIX "")
 
 if (NOT APPLE)
 CHECK_INCLUDE_FILES(libaio.h HAVE_LIBAIO_H)

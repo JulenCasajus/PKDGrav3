@@ -10,7 +10,7 @@
 FMT_BEGIN_NAMESPACE
 namespace detail {
 
-template <typename T>
+template<typename T>
 int format_float(char* buf, std::size_t size, const char* format, int precision,
                  T value) {
 #ifdef FMT_FUZZ

@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -47,7 +47,7 @@
 BZ_NAMESPACE(blitz)
 
 /*
- * These globals are used by the Blitz++ testsuite.  The _bz_global 
+ * These globals are used by the Blitz++ testsuite.  The _bz_global
  * modifier ensures that they will reside in libblitz.a, but appear
  * "extern" elsewhere.
  */
@@ -77,8 +77,8 @@ _bz_global int  assertSuccessCount BZ_GLOBAL_INIT(0);
    * to halt and issue an error code.   -- TV 980226
    */
 
-  inline void checkAssert(bool condition, const char* where=0, 
-    int line=0)
+  inline void checkAssert(bool condition, const char* where = 0,
+    int line = 0)
   {
     if (assertFailMode == true)
     {
@@ -120,8 +120,8 @@ _bz_global int  assertSuccessCount BZ_GLOBAL_INIT(0);
     #define BZASSERT(X)        blitz::checkAssert(X, __FILE__, __LINE__)
     #define BZPRECONDITION(X)  blitz::checkAssert(X, __FILE__, __LINE__)
     #define BZPOSTCONDITION(X) blitz::checkAssert(X, __FILE__, __LINE__)
-    #define BZSTATECHECK(X,Y)  blitz::checkAssert(X == Y, __FILE__, __LINE__)
-    #define BZPRECHECK(X,Y)                                    \
+    #define BZSTATECHECK(X, Y)  blitz::checkAssert(X == Y, __FILE__, __LINE__)
+    #define BZPRECHECK(X, Y)                                    \
         {                                                      \
             if ((assertFailMode == false) && (!(X)))           \
                 BZ_STD_SCOPE(cerr) << Y << BZ_STD_SCOPE(endl); \
@@ -146,8 +146,8 @@ _bz_global int  assertSuccessCount BZ_GLOBAL_INIT(0);
     #define BZASSERT(X)        assert(X)
     #define BZPRECONDITION(X)  assert(X)
     #define BZPOSTCONDITION(X) assert(X)
-    #define BZSTATECHECK(X,Y)  assert(X == Y)
-    #define BZPRECHECK(X,Y)                                                 \
+    #define BZSTATECHECK(X, Y)  assert(X == Y)
+    #define BZPRECHECK(X, Y)                                                 \
         { if (!(X))                                                         \
           { BZ_STD_SCOPE(cerr) << "[Blitz++] Precondition failure: Module " \
                                << __FILE__                                  \
@@ -175,8 +175,8 @@ _bz_global int  assertSuccessCount BZ_GLOBAL_INIT(0);
     #define BZASSERT(X)
     #define BZPRECONDITION(X)
     #define BZPOSTCONDITION(X)
-    #define BZSTATECHECK(X,Y)
-    #define BZPRECHECK(X,Y)
+    #define BZSTATECHECK(X, Y)
+    #define BZPRECHECK(X, Y)
     #define BZ_DEBUG_MESSAGE(X)
     #define BZ_DEBUG_PARAM(X)
     #define BZ_PRE_FAIL
@@ -200,7 +200,7 @@ public:
     { return "unknown"; }
 };
 
-#define BZ_DECL_SLFNT(X,Y) \
+#define BZ_DECL_SLFNT(X, Y) \
  template<>                 \
  class _bz_stringLiteralForNumericType< X > {  \
  public:                                       \

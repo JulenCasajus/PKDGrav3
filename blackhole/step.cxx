@@ -46,7 +46,7 @@ void smBHstep(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
         auto qRung = std::max(q.rung(), q.new_rung());
         return pRung < qRung;
     });
-    
+
     auto p = pkd->particles[pIn];
     auto q = pkd->particles[ii->pPart];
     auto uNewRung = std::max(q.rung(), q.new_rung());

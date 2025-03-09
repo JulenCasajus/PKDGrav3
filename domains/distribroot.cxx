@@ -21,10 +21,10 @@
 static_assert(std::is_void<ServiceDistribRoot::input>()  || std::is_trivial<ServiceDistribRoot::input>());
 static_assert(std::is_void<ServiceDistribRoot::output>() || std::is_trivial<ServiceDistribRoot::output>());
 
-int ServiceDistribRoot::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceDistribRoot::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
     auto pkd = pst->plcl->pkd;
-    pkdDistribRoot(pkd,in->r,&in->momc);
+    pkdDistribRoot(pkd, in->r, &in->momc);
     return 0;
 }

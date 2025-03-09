@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -44,10 +44,10 @@ BZ_NAMESPACE(blitz)
 
 template<typename T_numtype1, typename T_numtype2, int N_length>
 inline BZ_PROMOTE(T_numtype1, T_numtype2)
-dot(const TinyVector<T_numtype1, N_length>& a, 
+dot(const TinyVector<T_numtype1, N_length>& a,
     const TinyVector<T_numtype2, N_length>& b)
 {
-    return _bz_meta_vectorDot<N_length, 0>::f(a,b);
+    return _bz_meta_vectorDot<N_length, 0>::f(a, b);
 }
 
 template<typename T_numtype1, int N_length>
@@ -72,10 +72,10 @@ public:
 
   template<typename T_numtype1, typename T_numtype2, int N_length>
 static inline T_ret
-dot(const TinyVector<T_numtype1, N_length>& a, 
+dot(const TinyVector<T_numtype1, N_length>& a,
     const TinyVector<T_numtype2, N_length>& b)
 {
-  return _bz_meta_vectorDotRet<N_length, 0, T_ret>::f(a,b);
+  return _bz_meta_vectorDotRet<N_length, 0, T_ret>::f(a, b);
 };
 
 template<typename T_numtype1, int N_length>

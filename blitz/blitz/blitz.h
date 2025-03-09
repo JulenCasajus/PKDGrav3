@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -91,10 +91,10 @@ BZ_NAMESPACE(blitz)
  #define BZ_GLOBAL_INIT(X)   =X
 #else
  #define _bz_global extern
- #define BZ_GLOBAL_INIT(X) 
+ #define BZ_GLOBAL_INIT(X)
 #endif
 
-/* Define types for indexing, depending on whether 64- or 32-bit
+/* Define types for indexing, depending on whether 64- or 32- bit
    indices are desired. There are separate typedefs for sizeType and
    indexType, because it might be useful to have possibility of arrays
    with 64-bit numbers of elements without paying the size overhead of
@@ -103,9 +103,9 @@ BZ_NAMESPACE(blitz)
 // Used for dimensional indexes (not implemented yet).
 #ifdef BZ_FULLY64BIT
 #warning 64-bit array dimensions not yet implemented
-typedef ptrdiff_t indexType; 
+typedef ptrdiff_t indexType;
 #else
-typedef int indexType; 
+typedef int indexType;
 #endif
 typedef size_t sizeType; // Used for memory indexing
 typedef ptrdiff_t diffType; // Used for memory index differences, ie strides
@@ -161,7 +161,7 @@ BZ_NAMESPACE_END
  #include <pthread.h>
 
  #define BZ_MUTEX_DECLARE(name)   mutable pthread_mutex_t name;
- #define BZ_MUTEX_INIT(name)      pthread_mutex_init(&name,NULL); mutexLocking_ = true;    
+ #define BZ_MUTEX_INIT(name)      pthread_mutex_init(&name, NULL); mutexLocking_ = true;
 
  #define BZ_MUTEX_LOCK(name)      if (mutexLocking_) pthread_mutex_lock(&name);
  #define BZ_MUTEX_UNLOCK(name)    if (mutexLocking_) pthread_mutex_unlock(&name);

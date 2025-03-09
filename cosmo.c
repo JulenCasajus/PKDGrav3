@@ -127,7 +127,7 @@ void csmFinish(CSM csm) {
 
 /* For each linear species, we read in its background density rho
 ** and its density contrast delta. We will keep running totals in
-** the rho_lin and deltarho_lin arrays (deltarho since delta*rho
+** the rho_lin and deltarho_lin arrays (deltarho since delta * rho
 ** is additive, unlike delta).
 **/
 static void readLinearSpecies(CSM csm, double *out_delta, double *out_rho, hid_t file, int nLinear, const char *aLinear[] ) {
@@ -137,7 +137,7 @@ static void readLinearSpecies(CSM csm, double *out_delta, double *out_rho, hid_t
     int iLinear, i, j;
 
     double *rho_lin = (double *)calloc(size_bg, sizeof(double));
-    double *deltarho_lin = (double *)calloc(size_a*size_k, sizeof(double));
+    double *deltarho_lin = (double *)calloc(size_a * size_k, sizeof(double));
     double *logrho_lin = (double *)calloc(size_bg, sizeof(double));
     double *loga = (double *)calloc(size_bg, sizeof(double));
     csm->classGsl.background.logExp2logRho_lin_acc = gsl_interp_accel_alloc();
@@ -145,7 +145,7 @@ static void readLinearSpecies(CSM csm, double *out_delta, double *out_rho, hid_t
 
     for (i = 0; i < size_bg; i++) loga[i] = log(csm->val.classData.background.a[i]);
 
-    for (iLinear=0; iLinear < nLinear; ++iLinear) {
+    for (iLinear = 0; iLinear < nLinear; ++iLinear) {
         char hdf5_key[128];
         /* Read in the background density of the l'th linear species, overwriting the previous data. */
         snprintf(hdf5_key, sizeof(hdf5_key), "/background/rho_%s", aLinear[iLinear]);
@@ -158,13 +158,13 @@ static void readLinearSpecies(CSM csm, double *out_delta, double *out_rho, hid_t
         /* Read in the density contrast of the l'th linear species, overwriting the previous data. */
         snprintf(hdf5_key, sizeof(hdf5_key), "/perturbations/delta_%s", aLinear[iLinear]);
         if (H5LTread_dataset_double(file, hdf5_key, csm->val.classData.perturbations.delta_lin) < 0) abort();
-        /* Add the density perturbation delta*rho of the l'th linear species
+        /* Add the density perturbation delta * rho of the l'th linear species
         ** to the running total.
         **/
         for (i = 0; i < size_a; i++) {
             double a = csm->val.classData.perturbations.a[i];
             for (j = 0; j < size_k; j++) {
-                size_t index = i*size_k + j;
+                size_t index = i * size_k + j;
                 deltarho_lin[index] += csm->val.classData.perturbations.delta_lin[index]*csmRhoBar_lin(csm, a);
             }
         }
@@ -179,7 +179,7 @@ static void readLinearSpecies(CSM csm, double *out_delta, double *out_rho, hid_t
     for (i = 0; i < size_a; i++) {
         double a = csm->val.classData.perturbations.a[i];
         for (j = 0; j < size_k; j++) {
-            size_t index = i*size_k + j;
+            size_t index = i * size_k + j;
             out_delta[index] = deltarho_lin[index]/csmRhoBar_lin(csm, a);
         }
     }
@@ -229,7 +229,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     */
     attr = H5Aopen_by_name(file, "/units", "unit length", H5P_DEFAULT, H5P_DEFAULT);
     if (attr < 0) abort();
-    unit_length = (char *)malloc(128*sizeof(char));
+    unit_length = (char *)malloc(128 * sizeof(char));
     if (H5Aread(attr, string_type, &unit_length) < 0) abort();
     H5Aclose(attr);
     if (strcmp(unit_length, "Mpc") != 0) {
@@ -241,15 +241,15 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     }
     free(unit_length);
 
-    /* The matter species "m" is really the combination "cdm+b".
-    ** Here we check whether this is written as "cdm+b" or "b+cdm"
+    /* The matter species "m" is really the combination "cdm + b".
+    ** Here we check whether this is written as "cdm + b" or "b + cdm"
     ** in the HDF5 file.
     */
-    if (H5Lexists(file, "/background/rho_cdm+b", H5P_DEFAULT) > 0) {
-        matter_name = "cdm+b";
+    if (H5Lexists(file, "/background/rho_cdm + b", H5P_DEFAULT) > 0) {
+        matter_name = "cdm + b";
     }
-    else if (H5Lexists(file, "/background/rho_b+cdm", H5P_DEFAULT) > 0) {
-        matter_name = "b+cdm";
+    else if (H5Lexists(file, "/background/rho_b + cdm", H5P_DEFAULT) > 0) {
+        matter_name = "b + cdm";
     }
     else {
         fprintf(stderr,
@@ -264,11 +264,11 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     ** in csm->val. Note that we completely ignore massive neutrinos.
     */
     group = H5Gopen(file, "/background", H5P_DEFAULT); if (group < 0) abort();
-    /* The Hubble parameter h = H0/(100*km/(s*Mpc)) */
+    /* The Hubble parameter h = H0/(100 * km/(s * Mpc)) */
     attr = H5Aopen(group, "h", H5P_DEFAULT); if (attr < 0) abort();
     if (H5Aread(attr, H5T_NATIVE_DOUBLE, &h_class) < 0) abort();
     H5Aclose(attr);
-    if (h != 0 && fabs(h_class/h - 1) > EPSCONFLICT) {
+    if (h != 0 && fabs(h_class / h - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: h = %.12g vs %.12g\n",
                 h, h_class);
@@ -278,7 +278,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     attr = H5Aopen(group, "Omega_b", H5P_DEFAULT); if (attr < 0) abort();
     if (H5Aread(attr, H5T_NATIVE_DOUBLE, &Omega_b) < 0) abort();
     H5Aclose(attr);
-    if (csm->val.dOmegab != 0 && fabs(Omega_b/csm->val.dOmegab - 1) > EPSCONFLICT) {
+    if (csm->val.dOmegab != 0 && fabs(Omega_b / csm->val.dOmegab - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: dOmegab = %.12g vs %.12g\n",
                 csm->val.dOmegab, Omega_b);
@@ -289,7 +289,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     attr = H5Aopen(group, hdf5_key, H5P_DEFAULT); if (attr < 0) abort();
     if (H5Aread(attr, H5T_NATIVE_DOUBLE, &Omega_m) < 0) abort();
     H5Aclose(attr);
-    if (csm->val.dOmega0 != 0 && fabs(Omega_m/csm->val.dOmega0 - 1) > EPSCONFLICT) {
+    if (csm->val.dOmega0 != 0 && fabs(Omega_m / csm->val.dOmega0 - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: dOmega0 = %.12g vs %.12g\n",
                 csm->val.dOmega0, Omega_m);
@@ -318,7 +318,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
         if (H5Aread(attr, H5T_NATIVE_DOUBLE, &Omega_Lambda) < 0) abort();
         H5Aclose(attr);
     }
-    if (csm->val.dLambda != 0 && fabs(Omega_Lambda/csm->val.dLambda - 1) > EPSCONFLICT) {
+    if (csm->val.dLambda != 0 && fabs(Omega_Lambda / csm->val.dLambda - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: dLambda = %.12g vs %.12g\n",
                 csm->val.dLambda, Omega_Lambda);
@@ -333,7 +333,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
         if (H5Aread(attr, H5T_NATIVE_DOUBLE, &Omega_fld) < 0) abort();
         H5Aclose(attr);
     }
-    if (csm->val.dOmegaDE != 0 && fabs(Omega_fld/csm->val.dOmegaDE - 1) > EPSCONFLICT) {
+    if (csm->val.dOmegaDE != 0 && fabs(Omega_fld / csm->val.dOmegaDE - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: dOmegaDE = %.12g vs %.12g\n",
                 csm->val.dOmegaDE, Omega_fld);
@@ -352,12 +352,12 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
         if (H5Aread(attr, H5T_NATIVE_DOUBLE, &wa) < 0) abort();
         H5Aclose(attr);
     }
-    if (csm->val.w0 != -1.0 && fabs(w0/csm->val.w0 - 1) > EPSCONFLICT) {
+    if (csm->val.w0 != -1.0 && fabs(w0 / csm->val.w0 - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: w0 = %.12g vs %.12g\n",
                 csm->val.w0, w0);
     }
-    if (csm->val.wa != 0.0 && fabs(wa/csm->val.wa - 1) > EPSCONFLICT) {
+    if (csm->val.wa != 0.0 && fabs(wa / csm->val.wa - 1) > EPSCONFLICT) {
         conflicts += 1;
         fprintf(stderr, "WARNING: Parameter conflict: wa = %.12g vs %.12g\n",
                 csm->val.wa, wa);
@@ -368,8 +368,8 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     H5Gclose(group);
     if (conflicts != 0) abort();
 
-    /* The pivot scale dPivot is specified in 1/Mpc in the
-    ** parameter file, but we need it in h/Mpc. Save h for later.
+    /* The pivot scale dPivot is specified in 1 / Mpc in the
+    ** parameter file, but we need it in h / Mpc. Save h for later.
     */
     csm->val.h = h;
 
@@ -416,8 +416,8 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     if (H5LTread_dataset_double(file, "/perturbations/a",
                                 csm->val.classData.perturbations.a) < 0) abort();
     /* k
-    ** This is given in 1/Mpc in the HDF5 file,
-    ** but we want it in h/Mpc.
+    ** This is given in 1 / Mpc in the HDF5 file,
+    ** but we want it in h / Mpc.
     */
     if (H5LTget_dataset_info(file, "/perturbations/k", &size_k, NULL, NULL) < 0) abort();
     if (size_k > CLASS_PERTURBATIONS_K_SIZE) {
@@ -457,7 +457,7 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     ** we have enough information to be completely agnostic
     ** abouth the units actually used in the hdf5 file.
     */
-    unit_conversion_time = csm->val.dHubble0/csm->val.classData.background.H[size_bg - 1];
+    unit_conversion_time = csm->val.dHubble0 / csm->val.classData.background.H[size_bg - 1];
     count[0] = 1;
     offset[0] = size_bg - 1;
     offset_out[0] = 0;
@@ -499,8 +499,8 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     ** spectrum, we use the CLASS convention
     **   delta(k) = T_delta(k)*zeta(k),
     ** (similar for theta) with
-    **   zeta(k) = pi*sqrt(2*A_s)*k^(-3/2)*(k/k_pivot)^((n_s - 1)/2)
-    **             *exp(alpha_s/4*(log(k/k_pivot))^2).
+    **   zeta(k) = pi * sqrt(2 * A_s)*k^(-3 / 2)*(k / k_pivot)^((n_s - 1)/2)
+    **             *exp(alpha_s / 4*(log(k / k_pivot))^2).
     ** the comoving curvature perturbation and T_delta(k) the CLASS
     ** transfer function. This comoving curvature perturbation
     ** is implemented in csmZeta(). What we store in
@@ -515,15 +515,15 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     ** The transfer functions bears units. Specifically, the delta
     ** transfer functions are unitless while the theta transfer function
     ** has units of inverse time. From the above expression of zeta(k)
-    ** we see that delta(k) has units of length^(3/2). After an inverse
+    ** we see that delta(k) has units of length^(3 / 2). After an inverse
     ** 3D FFT, a unitless delta(\vec{x}) is obtained by multiplying by
-    ** the Fourier normalization boxsize^(-3/2). We include this
+    ** the Fourier normalization boxsize^(-3 / 2). We include this
     ** normalization directly on the transfer functions.
-    ** ACTUALLY, it turns out that we need a factor of boxsize^(-5/2),
+    ** ACTUALLY, it turns out that we need a factor of boxsize^(-5 / 2),
     ** for some reason?
     */
     /* delta_m[a, k] */
-    for (i = 0; i < size_a*size_k; i++) {
+    for (i = 0; i < size_a * size_k; i++) {
         csm->val.classData.perturbations.delta_m[i] *= pow(dBoxSize, -2.5);
     }
     /* theta_m[a, k]
@@ -536,18 +536,18 @@ void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
     for (i = 0; i < size_a; i++) {
         a = csm->val.classData.perturbations.a[i];
         for (j = 0; j < size_k; j++) {
-            csm->val.classData.perturbations.theta_m[i*size_k + j] *=
-                unit_conversion_time*a*pow(dBoxSize, -2.5);
+            csm->val.classData.perturbations.theta_m[i * size_k + j] *=
+                unit_conversion_time * a * pow(dBoxSize, -2.5);
         }
     }
     /* delta_lin[a, k] */
     if (nLinear) {
-        for (i = 0; i < size_a*size_k; i++) {
+        for (i = 0; i < size_a * size_k; i++) {
             csm->val.classData.perturbations.delta_lin[i] *= pow(dBoxSize, -2.5);
         }
     }
     if (nPower) {
-        for (i = 0; i < size_a*size_k; i++) {
+        for (i = 0; i < size_a * size_k; i++) {
             csm->val.classData.perturbations.delta_pk[i] *= pow(dBoxSize, -2.5);
         }
     }
@@ -946,7 +946,7 @@ double csmDeltaRho_lin(CSM csm, double a, double a_next, double k) {
     ** with t the cosmic time. The a^2 is needed because
     ** it is a^2\delta\rho that enters in the Poisson equation.
     ** The integration is done in t and not a as the momentum update is
-    ** proportional to time (dP/dt = F \propto k^2\phi \propto a^2\delta\rho).
+    ** proportional to time (dP / dt = F \propto k^2\phi \propto a^2\delta\rho).
     */
     assert(csm->val.classData.bClass);
     if (a == a_next) {
@@ -1006,7 +1006,7 @@ double csmDeltaRho_lin(CSM csm, double a, double a_next, double k) {
         w_arr = (double *)malloc(sizeof(double)*N);
         for (i = 0; i < N; i++) {
             a_i = a_left + (a_right - a_left)/(N - 1)*i;
-            w_arr[i] = a_i*a_i;
+            w_arr[i] = a_i * a_i;
             y_arr[i] = w_arr[i]*csmDelta_lin(csm, a_i, k)*csmRhoBar_lin(csm, a_i);
             t_arr[i] = csmExp2Time(csm, a_i);
         }
@@ -1021,7 +1021,7 @@ double csmDeltaRho_lin(CSM csm, double a, double a_next, double k) {
         integral_y = gsl_spline_eval_integ(spline, t, t_next, acc);
         gsl_spline_init(spline, t_arr, w_arr, N);
         integral_w = gsl_spline_eval_integ(spline, t, t_next, acc);
-        result = integral_y/integral_w;
+        result = integral_y / integral_w;
         /* Cleanup */
         gsl_interp_accel_free(acc);
         gsl_spline_free(spline);
@@ -1043,12 +1043,12 @@ double csmDeltaRho_lin(CSM csm, double a, double a_next, double k) {
                 t_i2 = csmExp2Time(csm, a_i2);
                 dt = t_i2 - t_i;
                 a_i = csmTime2Exp(csm, 0.5*(t_i + t_i2));
-                integral_w += dt*a_i*a_i;
-                integral_y += dt*a_i*a_i*csmDelta_lin(csm, a_i, k)*csmRhoBar_lin(csm, a_i);
+                integral_w += dt * a_i * a_i;
+                integral_y += dt * a_i * a_i * csmDelta_lin(csm, a_i, k)*csmRhoBar_lin(csm, a_i);
             }
             printf("TEST DeltaRho_lin average: a = %.17lg, a_next = %.17lg, "
                    "GSL = %.17e (N = %zu), Riemann = %.17e (N = %zu)\n",
-                   a, a_next, result, N, integral_y/integral_w, N_test);
+                   a, a_next, result, N, integral_y / integral_w, N_test);
         }
         /* Return the weighted average */
         return result;
@@ -1059,13 +1059,13 @@ double csmZeta(CSM csm, double k) {
     double A_s     = csm->val.dNormalization;
     double n_s     = csm->val.dSpectral;
     double alpha_s = csm->val.dRunning;
-    /* The pivot scale dPivot is specified in 1/Mpc in the
-    ** parameter file, but we need it in h/Mpc. Do the conversion.
+    /* The pivot scale dPivot is specified in 1 / Mpc in the
+    ** parameter file, but we need it in h / Mpc. Do the conversion.
     */
     double k_pivot = csm->val.dPivot / csm->val.h;
-    zeta = M_PI*sqrt(2*A_s)*pow(k, -1.5)*pow(k/k_pivot, 0.5*(n_s - 1));
+    zeta = M_PI * sqrt(2 * A_s)*pow(k, -1.5)*pow(k / k_pivot, 0.5*(n_s - 1));
     if (alpha_s != 0.0)
-        zeta *= exp(0.25*alpha_s*pow(log(k/k_pivot), 2));
+        zeta *= exp(0.25 * alpha_s * pow(log(k / k_pivot), 2));
     return zeta;
 }
 
@@ -1075,13 +1075,13 @@ double csmZeta(CSM csm, double k) {
 #define EPSCOSMO_Exp2TimeIntegrate 1e-13
 
 /*
- * ** by MK: Computes the scale factor a at radiation-matter equivalence.
+ * ** by MK: Computes the scale factor a at radiation - matter equivalence.
  * */
 double csmRadMatEquivalence(CSM csm) {
-    return csm->val.dOmegaRad/csm->val.dOmega0;
+    return csm->val.dOmegaRad / csm->val.dOmega0;
 }
 
-double csmTime2Hub(CSM csm,double dTime) {
+double csmTime2Hub(CSM csm, double dTime) {
     if (csm->val.classData.bClass) {
         return exp(csm_spline_eval(
                        csm->classGsl.background.logTime2logHub_spline,
@@ -1089,7 +1089,7 @@ double csmTime2Hub(CSM csm,double dTime) {
                        csm->classGsl.background.logTime2logHub_acc));
     }
 
-    double a = csmTime2Exp(csm,dTime);
+    double a = csmTime2Exp(csm, dTime);
 
     assert(a > 0.0);
     return csmExp2Hub(csm, a);
@@ -1098,24 +1098,24 @@ double csmTime2Hub(CSM csm,double dTime) {
 static double Exp2Time_integrand(double ak, void *params) {
     CSM csm = (CSM)params;
 
-    double dExp = pow(ak,2.0/3.0);
+    double dExp = pow(ak, 2.0 / 3.0);
     assert (dExp > 0.0);
 
-    return 2.0/(3.0*ak*csmExp2Hub(csm,dExp));
+    return 2.0/(3.0 * ak * csmExp2Hub(csm, dExp));
 }
 
-static double Exp2TimeIntegrate(CSM csm,double dExp) {
+static double Exp2TimeIntegrate(CSM csm, double dExp) {
     gsl_function F;
     F.function = &Exp2Time_integrand;
     F.params = csm;
-    double result,error;
+    double result, error;
     gsl_integration_qag(&F, 0.0, pow(dExp, 1.5),
                         0.0, EPSCOSMO_Exp2TimeIntegrate, LIMIT, GSL_INTEG_GAUSS61, csm->W, &result, &error);
-    //printf("a=%g,\t result of Exp2TimeIntegrate = %g\n", dExp, result);
+    //printf("a=%g, \t result of Exp2TimeIntegrate = %g\n", dExp, result);
     return result;
 }
 
-double csmExp2Time(CSM csm,double dExp) {
+double csmExp2Time(CSM csm, double dExp) {
     if (csm->val.classData.bClass) {
         if (dExp > csm->val.classData.background.a[csm->val.classData.background.size - 1]) {
             /* dExp is in the future; do linear extrapolation */
@@ -1136,7 +1136,7 @@ double csmExp2Time(CSM csm,double dExp) {
 
     double dOmega0 = csm->val.dOmega0;
     double dHubble0 = csm->val.dHubble0;
-    double a0,A,B,eta;
+    double a0, A, B, eta;
 
     if (!csm->val.bComove) {
         /*
@@ -1149,35 +1149,35 @@ double csmExp2Time(CSM csm,double dExp) {
         if (dOmega0 == 1.0) {
             assert(dHubble0 > 0.0);
             if (dExp == 0.0) return (0.0);
-            return (2.0/(3.0*dHubble0)*pow(dExp,1.5));
+            return (2.0/(3.0 * dHubble0)*pow(dExp, 1.5));
         }
         else if (dOmega0 > 1.0) {
             assert(dHubble0 >= 0.0);
             if (dHubble0 == 0.0) {
-                B = 1.0/sqrt(dOmega0);
-                eta = acos(1.0-dExp);
-                return (B*(eta-sin(eta)));
+                B = 1.0 / sqrt(dOmega0);
+                eta = acos(1.0 - dExp);
+                return (B*(eta - sin(eta)));
             }
             if (dExp == 0.0) return (0.0);
-            a0 = 1.0/dHubble0/sqrt(dOmega0-1.0);
-            A = 0.5*dOmega0/(dOmega0-1.0);
-            B = A*a0;
-            eta = acos(1.0-dExp/A);
-            return (B*(eta-sin(eta)));
+            a0 = 1.0 / dHubble0 / sqrt(dOmega0 - 1.0);
+            A = 0.5 * dOmega0/(dOmega0 - 1.0);
+            B = A * a0;
+            eta = acos(1.0 - dExp / A);
+            return (B*(eta - sin(eta)));
         }
         else if (dOmega0 > 0.0) {
             assert(dHubble0 > 0.0);
             if (dExp == 0.0) return (0.0);
-            a0 = 1.0/dHubble0/sqrt(1.0-dOmega0);
-            A = 0.5*dOmega0/(1.0-dOmega0);
-            B = A*a0;
-            eta = acosh(dExp/A+1.0);
+            a0 = 1.0 / dHubble0 / sqrt(1.0 - dOmega0);
+            A = 0.5 * dOmega0/(1.0 - dOmega0);
+            B = A * a0;
+            eta = acosh(dExp / A + 1.0);
             return (B*(sinh(eta)-eta));
         }
         else if (dOmega0 == 0.0) {
             assert(dHubble0 > 0.0);
             if (dExp == 0.0) return (0.0);
-            return (dExp/dHubble0);
+            return (dExp / dHubble0);
         }
         else {
             /*
@@ -1188,13 +1188,13 @@ double csmExp2Time(CSM csm,double dExp) {
         }
     }
     else {
-        return Exp2TimeIntegrate(csm,dExp);
+        return Exp2TimeIntegrate(csm, dExp);
     }
 }
 
 #define MAX_ITER 100
 
-double csmTime2Exp(CSM csm,double dTime) {
+double csmTime2Exp(CSM csm, double dTime) {
     if (csm->val.classData.bClass) {
         if (dTime > csm->val.classData.background.t[csm->val.classData.background.size - 1]) {
             /* dTime is in the future; do linear extrapolation */
@@ -1213,39 +1213,39 @@ double csmTime2Exp(CSM csm,double dTime) {
                        csm->classGsl.background.logTime2logExp_acc));
     }
 
-    double al=0,ah=1,a0,a1=1,at,a;
-    double th,f,f1,h,ho;
+    double al = 0, ah = 1, a0, a1 = 1, at, a;
+    double th, f, f1, h, ho;
     int j;
 
     if (!csm->val.bComove) return (1.0);
     else {
         assert(dTime > 0);
-        th = csmExp2Time(csm,ah);
+        th = csmExp2Time(csm, ah);
         /*
         ** Search for upper bracket if needed.
         */
         while (dTime > th) {
             a0 = a1;
             a1 = ah;
-            ah = a1+a0;
-            th = csmExp2Time(csm,ah);
+            ah = a1 + a0;
+            th = csmExp2Time(csm, ah);
         }
-        a = 0.5*(al+ah);
-        ho = ah-al;
+        a = 0.5*(al + ah);
+        ho = ah - al;
         h = ho;
 
-        f = dTime - Exp2TimeIntegrate(csm,a);
-        f1 = 1/(a*csmExp2Hub(csm,a));
-        for (j=0; j<MAX_ITER; ++j) {
-            if (a+f/f1 < al || a+f/f1 > ah || fabs(2*f) > fabs(ho*f1)) {
+        f = dTime - Exp2TimeIntegrate(csm, a);
+        f1 = 1/(a * csmExp2Hub(csm, a));
+        for (j = 0; j < MAX_ITER; ++j) {
+            if (a + f / f1 < al || a + f/f1 > ah || fabs(2 * f) > fabs(ho * f1)) {
                 /*
                 ** Bisection Step.
                 */
                 ho = h;
-                h = 0.5*(ah-al);
-                a = al+h;
+                h = 0.5*(ah - al);
+                a = al + h;
                 /*
-                        printf("bisect al:%.14g ah:%.14g a:%.14g\n",al,ah,a);
+                        printf("bisect al:%.14g ah:%.14g a:%.14g\n", al, ah, a);
                 */
                 if (a == al) return a;
             }
@@ -1254,18 +1254,18 @@ double csmTime2Exp(CSM csm,double dTime) {
                 ** Newton Step.
                 */
                 ho = h;
-                h = f/f1;
+                h = f / f1;
                 at = a;
                 a += h;
                 /*
-                        printf("newton al:%.14g ah:%.14g a:%.14g\n",al,ah,a);
+                        printf("newton al:%.14g ah:%.14g a:%.14g\n", al, ah, a);
                 */
                 if (a == at) return a;
             }
             if (fabs(h) < EPSCOSMO_Time2Exp) {
                 /*
                         printf("converged al:%.14g ah:%.14g a:%.14g t:%.14g == %.14g\n",
-                               al,ah,a,dRombergO(csm, (double (*)(void *, double)) csmCosmoTint,0.0,pow(a,1.5),EPSCOSMO*1e-1),
+                               al, ah, a, dRombergO(csm, (double (*)(void *, double)) csmCosmoTint, 0.0, pow(a, 1.5), EPSCOSMO * 1e-1),
                                dTime);
                 */
                 return a;
@@ -1274,8 +1274,8 @@ double csmTime2Exp(CSM csm,double dTime) {
             if (h == ho) {
                 return a;
             }
-            f = dTime - Exp2TimeIntegrate(csm,a);
-            f1 = 1/(a*csmExp2Hub(csm,a));
+            f = dTime - Exp2TimeIntegrate(csm, a);
+            f1 = 1/(a * csmExp2Hub(csm, a));
             if (f < 0) ah = a;
             else al = a;
         }
@@ -1286,62 +1286,62 @@ double csmTime2Exp(CSM csm,double dTime) {
 
 
 double csmComoveDriftInt(CSM csm, double dIExp) {
-    return -dIExp/(csmExp2Hub(csm, 1.0/dIExp));
+    return -dIExp/(csmExp2Hub(csm, 1.0 / dIExp));
 }
 static double ComoveDrift_integrand(double diExp, void *params) {
-    return csmComoveDriftInt(params,diExp);
+    return csmComoveDriftInt(params, diExp);
 }
 
 /*
- ** Make the substitution y = 1/a to integrate da/(a^2*H(a))
+ ** Make the substitution y = 1 / a to integrate da/(a^2 * H(a))
  */
 double csmComoveKickInt(CSM csm, double dIExp) {
-    return -1.0/(csmExp2Hub(csm, 1.0/dIExp));
+    return -1.0/(csmExp2Hub(csm, 1.0 / dIExp));
 }
 
 static double ComoveKick_integrand(double diExp, void *params) {
-    return csmComoveKickInt(params,diExp);
+    return csmComoveKickInt(params, diExp);
 }
 
 /*
  ** This function integrates the time dependence of the "drift"-Hamiltonian.
  */
-double csmComoveDriftFac(CSM csm,double dTime,double dDelta) {
+double csmComoveDriftFac(CSM csm, double dTime, double dDelta) {
     double dOmega0 = csm->val.dOmega0;
     double dHubble0 = csm->val.dHubble0;
-    double a0,A,B,a1,a2,eta1,eta2;
+    double a0, A, B, a1, a2, eta1, eta2;
 
     if (!csm->val.bComove) return (dDelta);
 
     else if (csm->val.classData.bClass == 0 && csm->val.dLambda == 0.0 && csm->val.dOmegaDE == 0.0 && csm->val.dOmegaRad == 0.0) {
-        a1 = csmTime2Exp(csm,dTime);
-        a2 = csmTime2Exp(csm,dTime+dDelta);
+        a1 = csmTime2Exp(csm, dTime);
+        a2 = csmTime2Exp(csm, dTime + dDelta);
         if (dOmega0 == 1.0) {
-            return ((2.0/dHubble0)*(1.0/sqrt(a1) - 1.0/sqrt(a2)));
+            return ((2.0 / dHubble0)*(1.0 / sqrt(a1) - 1.0 / sqrt(a2)));
         }
         else if (dOmega0 > 1.0) {
             assert(dHubble0 >= 0.0);
             if (dHubble0 == 0.0) {
                 A = 1.0;
-                B = 1.0/sqrt(dOmega0);
+                B = 1.0 / sqrt(dOmega0);
             }
             else {
-                a0 = 1.0/dHubble0/sqrt(dOmega0-1.0);
-                A = 0.5*dOmega0/(dOmega0-1.0);
-                B = A*a0;
+                a0 = 1.0 / dHubble0 / sqrt(dOmega0 - 1.0);
+                A = 0.5 * dOmega0/(dOmega0 - 1.0);
+                B = A * a0;
             }
-            eta1 = acos(1.0-a1/A);
-            eta2 = acos(1.0-a2/A);
-            return (B/A/A*(1.0/tan(0.5*eta1) - 1.0/tan(0.5*eta2)));
+            eta1 = acos(1.0 - a1 / A);
+            eta2 = acos(1.0 - a2 / A);
+            return (B / A / A*(1.0 / tan(0.5 * eta1) - 1.0 / tan(0.5 * eta2)));
         }
         else if (dOmega0 > 0.0) {
             assert(dHubble0 > 0.0);
-            a0 = 1.0/dHubble0/sqrt(1.0-dOmega0);
-            A = 0.5*dOmega0/(1.0-dOmega0);
-            B = A*a0;
-            eta1 = acosh(a1/A+1.0);
-            eta2 = acosh(a2/A+1.0);
-            return (B/A/A*(1.0/tanh(0.5*eta1) - 1.0/tanh(0.5*eta2)));
+            a0 = 1.0 / dHubble0 / sqrt(1.0 - dOmega0);
+            A = 0.5 * dOmega0/(1.0 - dOmega0);
+            B = A * a0;
+            eta1 = acosh(a1 / A + 1.0);
+            eta2 = acosh(a2 / A + 1.0);
+            return (B / A / A*(1.0 / tanh(0.5 * eta1) - 1.0 / tanh(0.5 * eta2)));
         }
         else if (dOmega0 == 0.0) {
             /*
@@ -1362,9 +1362,9 @@ double csmComoveDriftFac(CSM csm,double dTime,double dDelta) {
         gsl_function F;
         F.function = &ComoveDrift_integrand;
         F.params = csm;
-        double result,error;
+        double result, error;
         gsl_integration_qag(&F,
-                            1.0/csmTime2Exp(csm, dTime), 1.0/csmTime2Exp(csm, dTime + dDelta),
+                            1.0 / csmTime2Exp(csm, dTime), 1.0 / csmTime2Exp(csm, dTime + dDelta),
                             0.0, EPSCOSMO, LIMIT, GSL_INTEG_GAUSS61, csm->W, &result, &error);
         return result;
     }
@@ -1375,41 +1375,41 @@ double csmComoveDriftFac(CSM csm,double dTime,double dDelta) {
 /*
  ** This function integrates the time dependence of the "kick"-Hamiltonian.
  */
-double csmComoveKickFac(CSM csm,double dTime,double dDelta) {
+double csmComoveKickFac(CSM csm, double dTime, double dDelta) {
     double dOmega0 = csm->val.dOmega0;
     double dHubble0 = csm->val.dHubble0;
-    double a0,A,B,a1,a2,eta1,eta2;
+    double a0, A, B, a1, a2, eta1, eta2;
 
     if (!csm->val.bComove) return (dDelta);
     else if (csm->val.classData.bClass == 0 && csm->val.dLambda == 0.0 && csm->val.dOmegaDE == 0.0 && csm->val.dOmegaRad == 0.0) {
-        a1 = csmTime2Exp(csm,dTime);
-        a2 = csmTime2Exp(csm,dTime+dDelta);
+        a1 = csmTime2Exp(csm, dTime);
+        a2 = csmTime2Exp(csm, dTime + dDelta);
         if (dOmega0 == 1.0) {
-            return ((2.0/dHubble0)*(sqrt(a2) - sqrt(a1)));
+            return ((2.0 / dHubble0)*(sqrt(a2) - sqrt(a1)));
         }
         else if (dOmega0 > 1.0) {
             assert(dHubble0 >= 0.0);
             if (dHubble0 == 0.0) {
                 A = 1.0;
-                B = 1.0/sqrt(dOmega0);
+                B = 1.0 / sqrt(dOmega0);
             }
             else {
-                a0 = 1.0/dHubble0/sqrt(dOmega0-1.0);
-                A = 0.5*dOmega0/(dOmega0-1.0);
-                B = A*a0;
+                a0 = 1.0 / dHubble0 / sqrt(dOmega0 - 1.0);
+                A = 0.5 * dOmega0/(dOmega0 - 1.0);
+                B = A * a0;
             }
-            eta1 = acos(1.0-a1/A);
-            eta2 = acos(1.0-a2/A);
-            return (B/A*(eta2 - eta1));
+            eta1 = acos(1.0 - a1 / A);
+            eta2 = acos(1.0 - a2 / A);
+            return (B / A*(eta2 - eta1));
         }
         else if (dOmega0 > 0.0) {
             assert(dHubble0 > 0.0);
-            a0 = 1.0/dHubble0/sqrt(1.0-dOmega0);
-            A = 0.5*dOmega0/(1.0-dOmega0);
-            B = A*a0;
-            eta1 = acosh(a1/A+1.0);
-            eta2 = acosh(a2/A+1.0);
-            return (B/A*(eta2 - eta1));
+            a0 = 1.0 / dHubble0 / sqrt(1.0 - dOmega0);
+            A = 0.5 * dOmega0/(1.0 - dOmega0);
+            B = A * a0;
+            eta1 = acosh(a1 / A + 1.0);
+            eta2 = acosh(a2 / A + 1.0);
+            return (B / A*(eta2 - eta1));
         }
         else if (dOmega0 == 0.0) {
             /*
@@ -1430,16 +1430,16 @@ double csmComoveKickFac(CSM csm,double dTime,double dDelta) {
         gsl_function F;
         F.function = &ComoveKick_integrand;
         F.params = csm;
-        double result,error;
+        double result, error;
         gsl_integration_qag(&F,
-                            1.0/csmTime2Exp(csm, dTime), 1.0/csmTime2Exp(csm, dTime + dDelta),
+                            1.0 / csmTime2Exp(csm, dTime), 1.0 / csmTime2Exp(csm, dTime + dDelta),
                             0.0, EPSCOSMO, LIMIT, GSL_INTEG_GAUSS61, csm->W, &result, &error);
         return result;
     }
     return 0.0;
 }
 
-double csmComoveLookbackTime2Exp(CSM csm,double dComoveTime) {
+double csmComoveLookbackTime2Exp(CSM csm, double dComoveTime) {
     if (!csm->val.bComove) return (1.0);
     else {
         double dExpOld = 0.0;
@@ -1457,9 +1457,9 @@ double csmComoveLookbackTime2Exp(CSM csm,double dComoveTime) {
             double dTimeNew = csmExp2Time(csm, dExpNew);
             double f = dComoveTime
                        - csmComoveKickFac(csm, dTimeNew, dT0 - dTimeNew);
-            double fprime = -1.0/(dExpNew*dExpNew*csmExp2Hub(csm, dExpNew));
+            double fprime = -1.0/(dExpNew * dExpNew * csmExp2Hub(csm, dExpNew));
             dExpOld = dExpNew;
-            dExpNew += f/fprime;
+            dExpNew += f / fprime;
             it++;
             assert(it < 20);
         } while (fabs(dExpNew - dExpOld)/dExpNew > EPSCOSMO);
@@ -1469,25 +1469,25 @@ double csmComoveLookbackTime2Exp(CSM csm,double dComoveTime) {
 
 static double RK4_f1(CSM csm, double lna, double G) {
     double a = exp(lna);
-    return G/csmExp2Hub(csm, a);
+    return G / csmExp2Hub(csm, a);
 }
 
 static double RK4_g1(CSM csm, double lna, double D, double G) {
     double a = exp(lna);
     double inva = 1./a;
-    return -2.0 * G + 1.5 * csm->val.dOmega0 * csm->val.dHubble0*csm->val.dHubble0 * inva*inva*inva * D/csmExp2Hub(csm, a);
+    return -2.0 * G + 1.5 * csm->val.dOmega0 * csm->val.dHubble0 * csm->val.dHubble0 * inva * inva * inva * D / csmExp2Hub(csm, a);
 }
 
 // This function is in principle redundant as it is exactly the same as RK4_f1
 static double RK4_f2(CSM csm, double lna, double G) {
     double a = exp(lna);
-    return G/csmExp2Hub(csm, a);
+    return G / csmExp2Hub(csm, a);
 }
 
 static double RK4_g2(CSM csm, double lna, double D1, double D2, double G) {
     double a = exp(lna);
     double inva = 1./a;
-    return -2.0 * G + 1.5 * csm->val.dOmega0 * csm->val.dHubble0*csm->val.dHubble0 * inva*inva*inva * (D2 - D1*D1)/csmExp2Hub(csm, a);
+    return -2.0 * G + 1.5 * csm->val.dOmega0 * csm->val.dHubble0 * csm->val.dHubble0 * inva * inva * inva * (D2 - D1 * D1)/csmExp2Hub(csm, a);
 }
 
 
@@ -1569,26 +1569,26 @@ void csmComoveGrowth(CSM csm, double a, double *D1LPT, double *D2LPT, double *f1
     double stepwidth = (log(a)- lna_init)/NSTEPS;
 
     // NOTICE: Storing the following quantities into data structures is by far not optimal (we actually never need the old values after the update).
-    double ln_timesteps[NSTEPS+1];
+    double ln_timesteps[NSTEPS + 1];
     // -- 1LPT
-    double D1[NSTEPS+1]; // 1LPT Growth factor D1(a)
-    double G1[NSTEPS+1]; // G1(a) = dD1(a)/dln(a) *H  ==>  Growth rate: f1(a) = G1/(H*D1)
+    double D1[NSTEPS + 1]; // 1LPT Growth factor D1(a)
+    double G1[NSTEPS + 1]; // G1(a) = dD1(a)/dln(a) *H  ==>  Growth rate: f1(a) = G1/(H * D1)
     // -- 2LPT
-    double D2[NSTEPS+1]; // 2LPT Growth factor D2(a)
-    double G2[NSTEPS+1]; // G2(a) = dD2(a)/dln(a) *H  ==>  Growth rate: f2(a) = G1/(H*D1)
+    double D2[NSTEPS + 1]; // 2LPT Growth factor D2(a)
+    double G2[NSTEPS + 1]; // G2(a) = dD2(a)/dln(a) *H  ==>  Growth rate: f2(a) = G1/(H * D1)
 
     /*
     ** Set boundary conditions
     */
     a_init = exp(lna_init);
-    D1[0] = a_init + 2.0/3.0*csmRadMatEquivalence(csm);
+    D1[0] = a_init + 2.0 / 3.0 * csmRadMatEquivalence(csm);
     G1[0] = csmExp2Hub(csm, a_init)*a_init;
 
     // This is the analytical approximation
-    //double AnApprox = -3. * D1[0]*D1[0]/(7. * pow(csm->val.dOmega0,1./143.));
+    //double AnApprox = -3. * D1[0]*D1[0]/(7. * pow(csm->val.dOmega0, 1./143.));
 
-    D2[0] = -2.0/3.0*csmRadMatEquivalence(csm)*a_init;
-    G2[0] = -2.0/3.0*csmRadMatEquivalence(csm)*a_init*csmExp2Hub(csm, a_init);
+    D2[0] = -2.0 / 3.0 * csmRadMatEquivalence(csm)*a_init;
+    G2[0] = -2.0 / 3.0 * csmRadMatEquivalence(csm)*a_init * csmExp2Hub(csm, a_init);
 
 
     //Classical RK4 Solver
@@ -1598,12 +1598,12 @@ void csmComoveGrowth(CSM csm, double a, double *D1LPT, double *D2LPT, double *f1
     double n0, n1, n2, n3;
 
     //FILE *fp;
-    //fp = fopen("GrowthFactorTable.NewBC.dat","a");
+    //fp = fopen("GrowthFactorTable.NewBC.dat", "a");
 
     int i; // running loop variable
-    for (i=0; i<NSTEPS; i++) {
-        ln_timesteps[i] = lna_init + i*stepwidth;
-        //fprintf(file, "%.15f, %.5f,%.20f\n", exp(ln_timesteps[i]),1.0/exp(ln_timesteps[i])-1.0, D[i]+ 0.0001977011);
+    for (i = 0; i < NSTEPS; i++) {
+        ln_timesteps[i] = lna_init + i * stepwidth;
+        //fprintf(file, "%.15f, %.5f, %.20f\n", exp(ln_timesteps[i]), 1.0 / exp(ln_timesteps[i])-1.0, D[i]+ 0.0001977011);
 
         //RK4 step 1
         k0 = stepwidth * RK4_f1(csm, ln_timesteps[i], G1[i]);
@@ -1613,18 +1613,18 @@ void csmComoveGrowth(CSM csm, double a, double *D1LPT, double *D2LPT, double *f1
         n0 = stepwidth * RK4_g2(csm, ln_timesteps[i], D1[i], D2[i], G2[i]);
 
         //RK4 step 2
-        k1 = stepwidth * RK4_f1(csm, ln_timesteps[i] + stepwidth/2.0, G1[i] + l0/2.0);
-        l1 = stepwidth * RK4_g1(csm, ln_timesteps[i] + stepwidth/2.0, D1[i] + k0/2.0, G1[i] + l0/2.0);
+        k1 = stepwidth * RK4_f1(csm, ln_timesteps[i] + stepwidth / 2.0, G1[i] + l0 / 2.0);
+        l1 = stepwidth * RK4_g1(csm, ln_timesteps[i] + stepwidth / 2.0, D1[i] + k0 / 2.0, G1[i] + l0 / 2.0);
 
-        m1 = stepwidth * RK4_f2(csm, ln_timesteps[i] + stepwidth/2.0, G2[i] + n0/2.0);
-        n1 = stepwidth * RK4_g2(csm, ln_timesteps[i] + stepwidth/2.0, D1[i] + k0/2.0, D2[i] + m0/2.0, G2[i] + n0/2.0);
+        m1 = stepwidth * RK4_f2(csm, ln_timesteps[i] + stepwidth / 2.0, G2[i] + n0 / 2.0);
+        n1 = stepwidth * RK4_g2(csm, ln_timesteps[i] + stepwidth / 2.0, D1[i] + k0 / 2.0, D2[i] + m0 / 2.0, G2[i] + n0 / 2.0);
 
         //RK4 step 3
-        k2 = stepwidth * RK4_f1(csm, ln_timesteps[i] + stepwidth/2.0, G1[i] + l1/2.0);
-        l2 = stepwidth * RK4_g1(csm, ln_timesteps[i] + stepwidth/2.0, D1[i] + k1/2.0, G1[i] + l1/2.0);
+        k2 = stepwidth * RK4_f1(csm, ln_timesteps[i] + stepwidth / 2.0, G1[i] + l1 / 2.0);
+        l2 = stepwidth * RK4_g1(csm, ln_timesteps[i] + stepwidth / 2.0, D1[i] + k1 / 2.0, G1[i] + l1 / 2.0);
 
-        m2 = stepwidth * RK4_f2(csm, ln_timesteps[i] + stepwidth/2.0, G2[i] + n1/2.0);
-        n2 = stepwidth * RK4_g2(csm, ln_timesteps[i] + stepwidth/2.0, D1[i] + k1/2.0, D2[i] + m1/2.0, G2[i] + n1/2.0);
+        m2 = stepwidth * RK4_f2(csm, ln_timesteps[i] + stepwidth / 2.0, G2[i] + n1 / 2.0);
+        n2 = stepwidth * RK4_g2(csm, ln_timesteps[i] + stepwidth / 2.0, D1[i] + k1 / 2.0, D2[i] + m1 / 2.0, G2[i] + n1 / 2.0);
 
         //RK4 step 4
         k3 = stepwidth * RK4_f1(csm, ln_timesteps[i] + stepwidth, G1[i] + l2);
@@ -1634,22 +1634,22 @@ void csmComoveGrowth(CSM csm, double a, double *D1LPT, double *D2LPT, double *f1
         n3 = stepwidth * RK4_g2(csm, ln_timesteps[i] + stepwidth, D1[i] + k2, D2[i] + m2, G2[i] + n2);
 
         //Update
-        D1[i+1] = D1[i] + (k0 + 2*k1 + 2*k2 + k3)/6.0;
-        G1[i+1] = G1[i] + (l0 + 2*l1 + 2*l2 + l3)/6.0;
+        D1[i + 1] = D1[i] + (k0 + 2 * k1 + 2 * k2 + k3)/6.0;
+        G1[i + 1] = G1[i] + (l0 + 2 * l1 + 2 * l2 + l3)/6.0;
 
-        D2[i+1] = D2[i] + (m0 + 2*m1 + 2*m2 + m3)/6.0;
-        G2[i+1] = G2[i] + (n0 + 2*n1 + 2*n2 + n3)/6.0;
+        D2[i + 1] = D2[i] + (m0 + 2 * m1 + 2 * m2 + m3)/6.0;
+        G2[i + 1] = G2[i] + (n0 + 2 * n1 + 2 * n2 + n3)/6.0;
 
-        //fprintf(fp, "%.20g, %.20g, %.20g\n", exp(lna_init + i*stepwidth), D1[i], D2[i]);
+        //fprintf(fp, "%.20g, %.20g, %.20g\n", exp(lna_init + i * stepwidth), D1[i], D2[i]);
     }
 
     //fclose(fp);
 
     *D1LPT = D1[NSTEPS];
-    *f1LPT = G1[NSTEPS]/(csmExp2Hub(csm,a) * *D1LPT);
+    *f1LPT = G1[NSTEPS]/(csmExp2Hub(csm, a) * *D1LPT);
 
     *D2LPT = D2[NSTEPS];
-    *f2LPT = G2[NSTEPS]/(csmExp2Hub(csm,a) * *D2LPT);
+    *f2LPT = G2[NSTEPS]/(csmExp2Hub(csm, a) * *D2LPT);
     return;
 }
 

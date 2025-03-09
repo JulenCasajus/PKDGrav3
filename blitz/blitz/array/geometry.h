@@ -9,7 +9,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -19,11 +19,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -51,7 +51,7 @@ class UniformCubicGeometry {
     T recip_h_;
     T recip2_h_;
     T recip3_h_;
-    TinyVector<T,N_dim> zero_;
+    TinyVector<T, N_dim> zero_;
 
 public:
     typedef T T_coord;
@@ -72,14 +72,14 @@ public:
         setup();
     }
 
-    UniformCubicGeometry(T spatialStep, TinyVector<T,N_dim> zeroCoordinates)
-    {   
+    UniformCubicGeometry(T spatialStep, TinyVector<T, N_dim> zeroCoordinates)
+    {
         h_ = spatialStep;
         zero_ = zeroCoordinates;
         setup();
-    }    
+    }
 
-    TinyVector<T,N_dim> toSpatial(TinyVector<int,N_dim> logicalCoord) const
+    TinyVector<T, N_dim> toSpatial(TinyVector<int, N_dim> logicalCoord) const
     {
         return zero_ + h_ * logicalCoord;
     }

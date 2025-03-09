@@ -23,8 +23,8 @@
 class ServiceRsHaloCount : public ServiceFileSizes {
 public:
     explicit ServiceRsHaloCount(PST pst)
-        : ServiceFileSizes(pst,PST_RS_HALO_COUNT,"RsHaloCount") {}
-    virtual uint64_t GetSize(const std::string &filename,uint64_t file_size) override;
+        : ServiceFileSizes(pst, PST_RS_HALO_COUNT, "RsHaloCount") {}
+    virtual uint64_t GetSize(const std::string &filename, uint64_t file_size) override;
 };
 
 #endif /* FD041C3A_4183_478E_A8E7_CA209613BB18 */

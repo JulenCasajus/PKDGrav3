@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -42,9 +42,9 @@ BZ_NAMESPACE(blitz)
  * tuples to the element type they contain.  For example:
  *
  * multicomponent_traits<complex<float> >::T_numtype is float,
- * multicomponent_traits<TinyVector<int,3> >::T_numtype is int.
+ * multicomponent_traits<TinyVector<int, 3> >::T_numtype is int.
  *
- * This is used to support Array<T,N>::operator[], which extracts components
+ * This is used to support Array<T, N>::operator[], which extracts components
  * from a multicomponent array.
  */
 
@@ -57,16 +57,16 @@ struct multicomponent_traits {
 
 // TinyVector
 template<typename T_numtype, int N_rank>
-struct multicomponent_traits<TinyVector<T_numtype,N_rank> > {
+struct multicomponent_traits<TinyVector<T_numtype, N_rank> > {
     typedef T_numtype T_element;
     static const int numComponents = N_rank;
 };
 
 // TinyMatrix
 template<typename T_numtype, int N_rows, int N_cols>
-struct multicomponent_traits<TinyMatrix<T_numtype,N_rows, N_cols> > {
+struct multicomponent_traits<TinyMatrix<T_numtype, N_rows, N_cols> > {
     typedef T_numtype T_element;
-    static const int numComponents = N_rows*N_cols;
+    static const int numComponents = N_rows * N_cols;
 };
 
 #ifdef BZ_HAVE_COMPLEX
@@ -81,7 +81,7 @@ struct multicomponent_traits<complex<T> > {
 // This macro is provided so that users can register their own
 // multicomponent types.
 
-#define BZ_DECLARE_MULTICOMPONENT_TYPE(T_tuple,T,N)          \
+#define BZ_DECLARE_MULTICOMPONENT_TYPE(T_tuple, T, N)          \
   BZ_NAMESPACE(blitz)                                        \
   template<>                                                 \
   struct multicomponent_traits<T_tuple > {                   \

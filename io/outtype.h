@@ -70,7 +70,7 @@ enum OUT_TYPE {
     #include <zlib.h>
 #endif
 
-#define PKDOUT_BUFFER_SIZE (1024*1024)
+#define PKDOUT_BUFFER_SIZE (1024 * 1024)
 typedef struct pkdOutBuffer {
     struct pkdOutBuffer *next;
     uint32_t nBytes;
@@ -94,26 +94,26 @@ typedef struct pkdout {
     char *inOffset;
     PKDOUTBUFFER *outBuffer;
     PKDOUTBUFFER *headBuffer;
-    void (*fnOut)(PKD pkd,struct pkdout *ctx,PARTICLE *p,int iType,int iDim);
-    void (*fnHdr)(PKD pkd,struct pkdout *ctx,uint64_t N);
-    void (*fnWrite)(PKD pkd,struct pkdout *ctx);
-    void (*fnFlush)(PKD pkd,struct pkdout *ctx,int final);
-    void (*fnClose)(PKD pkd,struct pkdout *ctx);
+    void (*fnOut)(PKD pkd, struct pkdout *ctx, PARTICLE *p, int iType, int iDim);
+    void (*fnHdr)(PKD pkd, struct pkdout *ctx, uint64_t N);
+    void (*fnWrite)(PKD pkd, struct pkdout *ctx);
+    void (*fnFlush)(PKD pkd, struct pkdout *ctx, int final);
+    void (*fnClose)(PKD pkd, struct pkdout *ctx);
 } *PKDOUT;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-PKDOUT pkdOpenOutASCII(PKD pkd,char *pszFileName,const char *mode,int iFile,int iType);
-void pkdCloseOutASCII(PKD pkd,PKDOUT ctx);
-void pkdOutHdr(PKD pkd,PKDOUT ctx,uint64_t N);
-void pkdOutASCII(PKD pkd,PKDOUT ctx,int iType,int iDim);
+PKDOUT pkdOpenOutASCII(PKD pkd, char *pszFileName, const char *mode, int iFile, int iType);
+void pkdCloseOutASCII(PKD pkd, PKDOUT ctx);
+void pkdOutHdr(PKD pkd, PKDOUT ctx, uint64_t N);
+void pkdOutASCII(PKD pkd, PKDOUT ctx, int iType, int iDim);
 
-PKDOUT pkdStartOutASCII(PKD pkd,int iFile, int iType);
-void pkdFinishOutASCII(PKD pkd,PKDOUT ctx);
-uint64_t pkdCountOutASCII(PKD pkd,PKDOUT ctx);
-void pkdDumpOutASCII(PKD pkd,PKDOUT ctx,FILE *fp);
-void pkdFreeOutASCII(PKD pkd,PKDOUT ctx);
+PKDOUT pkdStartOutASCII(PKD pkd, int iFile, int iType);
+void pkdFinishOutASCII(PKD pkd, PKDOUT ctx);
+uint64_t pkdCountOutASCII(PKD pkd, PKDOUT ctx);
+void pkdDumpOutASCII(PKD pkd, PKDOUT ctx, FILE *fp);
+void pkdFreeOutASCII(PKD pkd, PKDOUT ctx);
 #ifdef __cplusplus
 }
 #endif

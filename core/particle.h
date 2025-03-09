@@ -37,8 +37,8 @@
 #define PKD_MAX_CLASSES 256
 
 #define INTEGER_FACTOR 0x80000000u
-#define pkdDblToIntPos(pkd,d) (int32_t)((d)*INTEGER_FACTOR)
-#define pkdIntPosToDbl(pkd,pos) ((pos)*(1.0/INTEGER_FACTOR))
+#define pkdDblToIntPos(pkd, d) (int32_t)((d)*INTEGER_FACTOR)
+#define pkdIntPosToDbl(pkd, pos) ((pos)*(1.0 / INTEGER_FACTOR))
 
 #ifdef NN_FLAG_IN_PARTICLE
     #define IORDERBITS 42
@@ -64,7 +64,7 @@ struct PARTICLE {
 static_assert(sizeof(PARTICLE)==sizeof(uint64_t));
 
 /* Abbreviated particle header with group id */
-#define IGROUPBITS (32-IRUNGBITS-1)
+#define IGROUPBITS (32 - IRUNGBITS - 1)
 #define IGROUPMAX ((1<<IGROUPBITS)-1)
 
 typedef struct uparticle {
@@ -81,19 +81,19 @@ struct PARTCLASS {
     FIO_SPECIES eSpecies; /* Species: dark, star, etc. */
 
     bool operator <(const PARTCLASS &b) const {
-        if ( fMass < b.fMass ) return true;
-        else if ( fMass > b.fMass ) return false;
-        else if ( fSoft < b.fSoft ) return true;
-        else if ( fSoft > b.fSoft ) return false;
-        else if ( iMat  < b.iMat  ) return true;
-        else if ( iMat  > b.iMat  ) return false;
+        if (fMass < b.fMass) return true;
+        else if (fMass > b.fMass) return false;
+        else if (fSoft < b.fSoft) return true;
+        else if (fSoft > b.fSoft) return false;
+        else if (iMat  < b.iMat ) return true;
+        else if (iMat  > b.iMat ) return false;
         else return eSpecies < b.eSpecies;
     }
     bool operator==(const PARTCLASS &b) const {
-        return fMass==b.fMass && fSoft==b.fSoft && iMat==b.iMat && eSpecies==b.eSpecies;
+        return fMass == b.fMass && fSoft == b.fSoft && iMat == b.iMat && eSpecies == b.eSpecies;
     }
     PARTCLASS() = default;
-    PARTCLASS(FIO_SPECIES eSpecies,float fMass,float fSoft,int iMat)
+    PARTCLASS(FIO_SPECIES eSpecies, float fMass, float fSoft, int iMat)
         : fMass(fMass), fSoft(fSoft), iMat(iMat), eSpecies(eSpecies) {}
 };
 static_assert(std::is_trivial<PARTCLASS>());
@@ -116,25 +116,25 @@ struct FIELDS {
     BOOST_HANA_DEFINE_STRUCT(
         FIELDS,
 
-        (blitz::TinyVector<double,6>, B), // IA: B matrix to 'easily' reconstruct faces'. Reminder: it is symmetric
-        (myreal, Ncond),/* IA: Condition number for pathological configurations */
+        (blitz::TinyVector<double, 6>, B), // IA: B matrix to 'easily' reconstruct faces'. Reminder: it is symmetric
+        (myreal, Ncond), /* IA: Condition number for pathological configurations */
 
         /* IA: Gradients */
-        (blitz::TinyVector<myreal,3>, gradRho),
-        (blitz::TinyVector<myreal,3>, gradVx),
-        (blitz::TinyVector<myreal,3>, gradVy),
-        (blitz::TinyVector<myreal,3>, gradVz),
-        (blitz::TinyVector<myreal,3>, gradP),
+        (blitz::TinyVector<myreal, 3>, gradRho),
+        (blitz::TinyVector<myreal, 3>, gradVx),
+        (blitz::TinyVector<myreal, 3>, gradVy),
+        (blitz::TinyVector<myreal, 3>, gradVz),
+        (blitz::TinyVector<myreal, 3>, gradP),
 
         /* IA: last time this particle's primitve variables were updated */
         (myreal, lastUpdateTime),
-        (blitz::TinyVector<myreal,3>, lastAcc),
-        (blitz::TinyVector<myreal,3>, lastMom),
+        (blitz::TinyVector<myreal, 3>, lastAcc),
+        (blitz::TinyVector<myreal, 3>, lastMom),
         (myreal, lastE),
         (myreal, lastUint),
         (myreal, lastHubble), // TODO: Maybe there is a more intelligent way to avoid saving this...
 #ifndef USE_MFM
-        (blitz::TinyVector<myreal,3>, lastDrDotFrho),
+        (blitz::TinyVector<myreal, 3>, lastDrDotFrho),
 #endif
         (float, c),        /* sound speed */
 
@@ -146,14 +146,14 @@ struct FIELDS {
 
         /* IA: Fluxes */
         (myreal, Frho),
-        (blitz::TinyVector<myreal,3>,  Fmom),
+        (blitz::TinyVector<myreal, 3>,  Fmom),
         (myreal, Fene),
 
 #ifndef USE_MFM
-        (blitz::TinyVector<double,3>, drDotFrho),
+        (blitz::TinyVector<double, 3>, drDotFrho),
 #endif
         /* IA: Conserved variables */
-        (blitz::TinyVector<double,3>,  mom),
+        (blitz::TinyVector<double, 3>,  mom),
         (double, E),
         /* IA: Internal energy, which is evolved in parallel and used for updating the pressure if we are in a cold flow */
         (double, Uint),
@@ -179,13 +179,13 @@ struct FIELDS {
         (float, SFR),
 #endif
 
-        (blitz::TinyVector<float,ELEMENT_COUNT>, ElemMass),
+        (blitz::TinyVector<float, ELEMENT_COUNT>, ElemMass),
 #ifdef HAVE_METALLICITY
         (float, fMetalMass),
 #endif
 
 #ifdef STELLAR_EVOLUTION
-        (blitz::TinyVector<float,3>, ReceivedMom),
+        (blitz::TinyVector<float, 3>, ReceivedMom),
         (float, fReceivedMass),
         (float, fReceivedE),
 #endif
@@ -218,7 +218,7 @@ struct STAR {
         STAR,
         (double, omega),
 #ifdef STELLAR_EVOLUTION
-        (blitz::TinyVector<float,ELEMENT_COUNT>, ElemAbun), /* Formation abundances */
+        (blitz::TinyVector<float, ELEMENT_COUNT>, ElemAbun), /* Formation abundances */
         (float, fMetalAbun),            /* Formation metallicity */
         (float, fInitialMass),
         (float, fLastEnrichTime),
@@ -288,7 +288,7 @@ struct FIELDS {
         (float, oldRho),       // Rho corresponding to where u is at
         (float, expImb2),      // exp(-imbalance^2)
         (float, T),            // Temperature
-        (blitz::TinyVector<float,3>, vpred)  // predicted velocities
+        (blitz::TinyVector<float, 3>, vpred)  // predicted velocities
     );
 }; // FIELDS
 
@@ -297,7 +297,7 @@ struct FIELDS {
 struct VELSMOOTH {
     BOOST_HANA_DEFINE_STRUCT(
         VELSMOOTH,
-        (blitz::TinyVector<float,3>, vmean),
+        (blitz::TinyVector<float, 3>, vmean),
         (float, divv),
         (float, veldisp2)
     );
@@ -333,7 +333,7 @@ enum PKD_FIELD {
 //!
 //! The particleStore provides functions to access elements of the particle array,
 //! and the individual fields of which there may be a varying number.
-class particleStore : public dataStore<PARTICLE,PKD_FIELD>, protected Integerize {
+class particleStore : public dataStore < PARTICLE, PKD_FIELD>, protected Integerize {
 protected:
     friend class Particle;
     bool bIntegerPosition = false;
@@ -346,9 +346,9 @@ protected:
     rung_type uMinRungActive = 0;
     rung_type uMaxRungActive = std::numeric_limits<rung_type>::max();
 public:
-    using coord = blitz::TinyVector<double,3>;
-    using icoord= blitz::TinyVector<int32_t,3>;
-    void PhysicalSoft(double dSoftMax,double dFac,int bSoftMaxMul) {
+    using coord = blitz::TinyVector<double, 3>;
+    using icoord= blitz::TinyVector<int32_t, 3>;
+    void PhysicalSoft(double dSoftMax, double dFac, int bSoftMaxMul) {
         fSoftFac = dFac;
         fSoftMax = bSoftMaxMul ? HUGE_VALF : dSoftMax;
     }
@@ -359,86 +359,86 @@ public:
         uMinRungActive = iRungMin;
         uMaxRungActive = iRungMax;
     }
-    void ActiveRung(int iRungMin=0) {
-        ActiveRung(iRungMin,std::numeric_limits<rung_type>::max());
+    void ActiveRung(int iRungMin = 0) {
+        ActiveRung(iRungMin, std::numeric_limits<rung_type>::max());
     }
 
     // Naming convention. If a field is always part of the particle, then we can return
     // a reference and we use the name of the field (e.g. density). If the field has to
     // be converted or can come from different places then we use dont't return a reference,
     // and one needs to use the set version to set (e.g. set_position).
-    coord position( PARTICLE *p ) const {
-        if (bIntegerPosition) return convert(get<int32_t[3]>(p,PKD_FIELD::oPosition));
-        else return get<double[3]>(p,PKD_FIELD::oPosition);
+    coord position(PARTICLE *p) const {
+        if (bIntegerPosition) return convert.get<int32_t[3]>(p, PKD_FIELD::oPosition));
+        else return.get<double[3]>(p, PKD_FIELD::oPosition);
     }
-    double position( const PARTICLE *p, int d ) const {
-        if (bIntegerPosition) return convert(get<int32_t[3]>(p,PKD_FIELD::oPosition)[d]);
-        else return get<double[3]>(p,PKD_FIELD::oPosition)[d];
+    double position(const PARTICLE *p, int d) const {
+        if (bIntegerPosition) return convert.get<int32_t[3]>(p, PKD_FIELD::oPosition)[d]);
+        else return.get<double[3]>(p, PKD_FIELD::oPosition)[d];
     }
-    void set_position( PARTICLE *p, coord r ) const {
-        if (bIntegerPosition) get<int32_t[3]>(p,PKD_FIELD::oPosition) = convert(r);
-        else get<double[3]>(p,PKD_FIELD::oPosition) = r;
+    void set_position(PARTICLE *p, coord r) const {
+        if (bIntegerPosition).get<int32_t[3]>(p, PKD_FIELD::oPosition) = convert(r);
+        else.get<double[3]>(p, PKD_FIELD::oPosition) = r;
     }
-    float mass( const PARTICLE *p ) const {
+    float mass(const PARTICLE *p) const {
         if (present(PKD_FIELD::oMass)) {
-            return get<float>(p,PKD_FIELD::oMass);
+            return.get<float>(p, PKD_FIELD::oMass);
         }
         else if (bNoParticleOrder) return ParticleClasses[0].fMass;
         else return ParticleClasses[p->iClass].fMass;
     }
-    void set_mass( PARTICLE *p, float mass ) const {
+    void set_mass(PARTICLE *p, float mass) const {
         assert(present(PKD_FIELD::oMass));
-        get<float>(p,PKD_FIELD::oMass) = mass;
+       .get<float>(p, PKD_FIELD::oMass) = mass;
     }
     uint32_t group(const PARTICLE *p ) const {
         if (bNoParticleOrder) return reinterpret_cast<const UPARTICLE *>(p)->iGroup;
-        return get<int32_t>(p,PKD_FIELD::oGroup);
+        return.get<int32_t>(p, PKD_FIELD::oGroup);
     }
-    void set_group( PARTICLE *p, uint32_t gid ) const {
+    void set_group(PARTICLE *p, uint32_t gid) const {
         if (bNoParticleOrder) reinterpret_cast<UPARTICLE *>(p)->iGroup = gid;
-        else if (present(PKD_FIELD::oGroup)) get<int32_t>(p,PKD_FIELD::oGroup) = gid;
+        else if (present(PKD_FIELD::oGroup)).get<int32_t>(p, PKD_FIELD::oGroup) = gid;
     }
     template<typename T>
-    auto &raw_position( PARTICLE *p ) const {
-        return get<T[3]>(p,PKD_FIELD::oPosition);
+    auto &raw_position(PARTICLE *p) const {
+        return.get<T[3]>(p, PKD_FIELD::oPosition);
     }
     template<typename T>
-    auto &raw_position( PARTICLE *p, int i ) const {
-        return get<T[3]>(p,PKD_FIELD::oPosition)[i];
+    auto &raw_position(PARTICLE *p, int i) const {
+        return.get<T[3]>(p, PKD_FIELD::oPosition)[i];
     }
-    const auto &velocity(     const PARTICLE *p ) const {return get<float[3]>(p,PKD_FIELD::oVelocity);}
-    auto       &velocity(           PARTICLE *p ) const {return get<float[3]>(p,PKD_FIELD::oVelocity);}
-    const auto &acceleration( const PARTICLE *p ) const {return get<float[3]>(p,PKD_FIELD::oAcceleration);}
-    auto       &acceleration(       PARTICLE *p ) const {return get<float[3]>(p,PKD_FIELD::oAcceleration);}
-    auto       &potential(          PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oPotential);}
-    const auto &potential(    const PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oPotential);}
-    auto       &density(            PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oDensity);}
-    const auto &density(      const PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oDensity);}
-    auto       &ball(               PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oBall);}
-    const auto &ball(         const PARTICLE *p ) const {return get<float>(p,PKD_FIELD::oBall);}
-    auto       &global_gid(         PARTICLE *p ) const {return get<int64_t>(p,PKD_FIELD::oGlobalGid);}
-    const auto &global_gid(   const PARTICLE *p ) const {return get<int64_t>(p,PKD_FIELD::oGlobalGid);}
-    auto       &ParticleID(         PARTICLE *p ) const {return get<uint64_t>(p,PKD_FIELD::oParticleID);}
-    const auto &ParticleID(   const PARTICLE *p ) const {return get<uint64_t>(p,PKD_FIELD::oParticleID);}
-    auto       &RungDest(           PARTICLE *p ) const {return get<uint16_t[8]>(p,PKD_FIELD::oRungDest);}
-    const auto &RungDest(     const PARTICLE *p ) const {return get<uint16_t[8]>(p,PKD_FIELD::oRungDest);}
-    auto       &VelSmooth(          PARTICLE *p ) const {return get<VELSMOOTH>(p,PKD_FIELD::oVelSmooth);}
-    const auto &VelSmooth(    const PARTICLE *p ) const {return get<VELSMOOTH>(p,PKD_FIELD::oVelSmooth);}
+    const auto &velocity(const PARTICLE *p) const {return.get<float[3]>(p, PKD_FIELD::oVelocity);}
+    auto       &velocity(PARTICLE *p) const {return.get<float[3]>(p, PKD_FIELD::oVelocity);}
+    const auto &acceleration(const PARTICLE *p) const {return.get<float[3]>(p, PKD_FIELD::oAcceleration);}
+    auto       &acceleration(PARTICLE *p) const {return.get<float[3]>(p, PKD_FIELD::oAcceleration);}
+    auto       &potential(PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oPotential);}
+    const auto &potential(const PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oPotential);}
+    auto       &density(PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oDensity);}
+    const auto &density(const PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oDensity);}
+    auto       &ball(PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oBall);}
+    const auto &ball(const PARTICLE *p) const {return.get<float>(p, PKD_FIELD::oBall);}
+    auto       &global_gid(PARTICLE *p) const {return.get<int64_t>(p, PKD_FIELD::oGlobalGid);}
+    const auto &global_gid(const PARTICLE *p) const {return.get<int64_t>(p, PKD_FIELD::oGlobalGid);}
+    auto       &ParticleID(PARTICLE *p) const {return.get<uint64_t>(p, PKD_FIELD::oParticleID);}
+    const auto &ParticleID(const PARTICLE *p) const {return.get<uint64_t>(p, PKD_FIELD::oParticleID);}
+    auto       &RungDest(PARTICLE *p) const {return.get<uint16_t[8]>(p, PKD_FIELD::oRungDest);}
+    const auto &RungDest(const PARTICLE *p) const {return.get<uint16_t[8]>(p, PKD_FIELD::oRungDest);}
+    auto       &VelSmooth(PARTICLE *p) const {return.get<VELSMOOTH>(p, PKD_FIELD::oVelSmooth);}
+    const auto &VelSmooth(const PARTICLE *p) const {return.get<VELSMOOTH>(p, PKD_FIELD::oVelSmooth);}
 
-    float soft0( const PARTICLE *p ) const {
+    float soft0(const PARTICLE *p) const {
         if (present(PKD_FIELD::oSoft)) {
-            return get<float>(p,PKD_FIELD::oSoft);
+            return.get<float>(p, PKD_FIELD::oSoft);
         }
         else if (bNoParticleOrder) return ParticleClasses[0].fSoft;
         else return ParticleClasses[p->iClass].fSoft;
     }
     float fixedsoft() const { return fSoftFix; }
-    float soft( const PARTICLE *p ) const {
+    float soft(const PARTICLE *p) const {
         float fSoft = fSoftFac * (fSoftFix >= 0.0 ? fSoftFix : soft0(p));
-        if ( fSoft > fSoftMax ) fSoft = fSoftMax;
+        if (fSoft > fSoftMax) fSoft = fSoftMax;
         return fSoft;
     }
-    FIO_SPECIES species( PARTICLE *p ) const {
+    FIO_SPECIES species(PARTICLE *p) const {
         if (bNoParticleOrder) return ParticleClasses[0].eSpecies;
         else return ParticleClasses[p->iClass].eSpecies;
     }
@@ -454,75 +454,75 @@ public:
         return materials;
     }
 
-    void set_density( PARTICLE *p, float fDensity ) const {
-        if (present(PKD_FIELD::oDensity)) get<float>(p,PKD_FIELD::oDensity) = fDensity;
+    void set_density(PARTICLE *p, float fDensity) const {
+        if (present(PKD_FIELD::oDensity)).get<float>(p, PKD_FIELD::oDensity) = fDensity;
     }
     void set_ball(PARTICLE *p, float fBall) const {
-        if (present(PKD_FIELD::oBall)) get<float>(p,PKD_FIELD::oBall) = fBall;
+        if (present(PKD_FIELD::oBall)).get<float>(p, PKD_FIELD::oBall) = fBall;
     }
     /* Sph variables */
-    auto &sph( PARTICLE *p ) const {
+    auto &sph(PARTICLE *p) const {
 #if defined(OPTIM_UNION_EXTRAFIELDS) && defined(DEBUG_UNION_EXTRAFIELDS)
         assert( species(p)==FIO_SPECIES_SPH);
 #endif
-        return get<meshless::FIELDS>(p,PKD_FIELD::oSph);
+        return.get<meshless::FIELDS>(p, PKD_FIELD::oSph);
     }
-    const auto &sph( const PARTICLE *p ) const {
+    const auto &sph(const PARTICLE *p) const {
 #if defined(OPTIM_UNION_EXTRAFIELDS) && defined(DEBUG_UNION_EXTRAFIELDS)
         assert( species(p)==FIO_SPECIES_SPH);
 #endif
-        return get<meshless::FIELDS>(p,PKD_FIELD::oSph);
+        return.get<meshless::FIELDS>(p, PKD_FIELD::oSph);
     }
     /* NewSph variables */
-    auto &newsph( PARTICLE *p ) const {
-        return get<sph::FIELDS>(p,PKD_FIELD::oNewSph);
+    auto &newsph(PARTICLE *p) const {
+        return.get<sph::FIELDS>(p, PKD_FIELD::oNewSph);
     }
-    const auto &newsph( const PARTICLE *p ) const {
-        return get<sph::FIELDS>(p,PKD_FIELD::oNewSph);
+    const auto &newsph(const PARTICLE *p) const {
+        return.get<sph::FIELDS>(p, PKD_FIELD::oNewSph);
     }
 
-    auto &star( PARTICLE *p ) const {
+    auto &star(PARTICLE *p) const {
 #ifdef OPTIM_UNION_EXTRAFIELDS
 #ifdef DEBUG_UNION_EXTRAFIELDS
         assert( species(p)==FIO_SPECIES_STAR);
 #endif //DEBUG
-        return get<meshless::STAR>(p,PKD_FIELD::oSph);
+        return.get<meshless::STAR>(p, PKD_FIELD::oSph);
 #else
-        return get<meshless::STAR>(p,PKD_FIELD::oStar);
+        return.get<meshless::STAR>(p, PKD_FIELD::oStar);
 #endif
     }
-    const auto &star( const PARTICLE *p ) const {
+    const auto &star(const PARTICLE *p) const {
 #ifdef OPTIM_UNION_EXTRAFIELDS
 #ifdef DEBUG_UNION_EXTRAFIELDS
         assert( species(p)==FIO_SPECIES_STAR);
 #endif //DEBUG
-        return get<meshless::STAR>(p,PKD_FIELD::oSph);
+        return.get<meshless::STAR>(p, PKD_FIELD::oSph);
 #else
-        return get<meshless::STAR>(p,PKD_FIELD::oStar);
+        return.get<meshless::STAR>(p, PKD_FIELD::oStar);
 #endif
     }
-    auto &BH( PARTICLE *p ) const {
+    auto &BH(PARTICLE *p) const {
 #ifdef OPTIM_UNION_EXTRAFIELDS
 #ifdef DEBUG_UNION_EXTRAFIELDS
         assert( dpecies(p)==FIO_SPECIES_BH);
 #endif //DEBUG
-        return get<meshless::BLACKHOLE>(p,PKD_FIELD::oSph);
+        return.get<meshless::BLACKHOLE>(p, PKD_FIELD::oSph);
 #else
-        return get<meshless::BLACKHOLE>(p,PKD_FIELD::oBH);
+        return.get<meshless::BLACKHOLE>(p, PKD_FIELD::oBH);
 #endif
     }
-    const auto &BH( const PARTICLE *p ) const {
+    const auto &BH(const PARTICLE *p) const {
 #ifdef OPTIM_UNION_EXTRAFIELDS
 #ifdef DEBUG_UNION_EXTRAFIELDS
         assert( dpecies(p)==FIO_SPECIES_BH);
 #endif //DEBUG
-        return get<meshless::BLACKHOLE>(p,PKD_FIELD::oSph);
+        return.get<meshless::BLACKHOLE>(p, PKD_FIELD::oSph);
 #else
-        return get<meshless::BLACKHOLE>(p,PKD_FIELD::oBH);
+        return.get<meshless::BLACKHOLE>(p, PKD_FIELD::oBH);
 #endif
     }
-    auto Timer( PARTICLE *p ) const {
-        return &get<meshless::STAR>(p,PKD_FIELD::oStar).fTimer;
+    auto Timer(PARTICLE *p) const {
+        return .get<meshless::STAR>(p, PKD_FIELD::oStar).fTimer;
     }
     auto is_deleted(PARTICLE *p) const {
         return (species(p) == FIO_SPECIES_UNKNOWN);
@@ -534,11 +534,11 @@ public:
         return p->bMarked;
     }
     uint8_t rung(PARTICLE *p) const { return p->uRung; }
-    bool is_rung_range(PARTICLE *p,uint8_t uRungLo,uint8_t uRungHi) const {
+    bool is_rung_range(PARTICLE *p, uint8_t uRungLo, uint8_t uRungHi) const {
         return ((p->uRung >= uRungLo)&&(p->uRung <= uRungHi));
     }
     bool is_active(PARTICLE *p) const {
-        return is_rung_range(p,uMinRungActive,uMaxRungActive);
+        return is_rung_range(p, uMinRungActive, uMaxRungActive);
     }
 public:
     /// @brief Proxy object for a particle
@@ -546,14 +546,14 @@ public:
     /// A particle in pkdgrav3 has a variable size which is tracked with a series of offsets.
     /// This class keeps track of the pointer to the particle, and a reference to the particle layout
     /// which is kept in the particle store.
-    class Particle : public SingleElement<PARTICLE,particleStore> {
+    class Particle : public SingleElement < PARTICLE, particleStore> {
     public:
         using SingleElement::SingleElement;
     public:
-        static double IntPosToDbl(int32_t pos) {return pos*1.0/INTEGER_FACTOR;}
+        static double IntPosToDbl(int32_t pos) {return pos * 1.0 / INTEGER_FACTOR;}
     public:
-        using coord = blitz::TinyVector<double,3>;
-        using icoord= blitz::TinyVector<int32_t,3>;
+        using coord = blitz::TinyVector<double, 3>;
+        using icoord= blitz::TinyVector<int32_t, 3>;
         bool have_position()     const {return have(PKD_FIELD::oPosition);}
         bool have_velocity()     const {return have(PKD_FIELD::oVelocity);}
         bool have_acceleration() const {return have(PKD_FIELD::oAcceleration);}
@@ -573,7 +573,7 @@ public:
         bool have_global_gid()   const {return have(PKD_FIELD::oGlobalGid);}
 
         auto position()          const {return store().position(p); }
-        auto position(int d)     const {return store().position(p,d); }
+        auto position(int d)     const {return store().position(p, d); }
         auto mass()              const {return store().mass(p);}
         auto group()             const {return store().group(p);}
         bool marked()            const {return p->bMarked;}
@@ -588,22 +588,22 @@ public:
         bool NN_flag()           const {return false;}
         void set_NN_flag(bool bFlag)    const {}
 #endif
-        void set_position(coord r)      const {store().set_position(p,r);}
-        void set_mass( float mass)      const {store().set_mass(p,mass);}
-        void set_group( uint32_t gid )  const {store().set_group(p,gid); }
+        void set_position(coord r)      const {store().set_position(p, r);}
+        void set_mass( float mass)      const {store().set_mass(p, mass);}
+        void set_group(uint32_t gid)  const {store().set_group(p, gid); }
         bool set_marked(bool bMarked)   const {return (p->bMarked = bMarked);}
         auto set_rung(uint8_t uRung)    const {return (p->uRung = uRung);}
         auto set_new_rung(uint8_t uRung)const {return (p->uNewRung = uRung);}
         auto set_class(uint8_t uClass)  const {return (p->iClass = uClass);}
         void set_class( float fMass, float fSoft, int iMat, FIO_SPECIES eSpecies) {
-            store().setClass(fMass,fSoft,iMat,eSpecies,p);
+            store().setClass(fMass, fSoft, iMat, eSpecies, p);
         }
         auto set_order(uint64_t uOrder) const {return (p->iOrder = uOrder);}
 
         template<typename T>
         auto &raw_position()        const {return store().raw_position<T>(p);}
         template<typename T>
-        auto &raw_position(int i)   const {return store().raw_position<T>(p,i);}
+        auto &raw_position(int i)   const {return store().raw_position<T>(p, i);}
         auto &velocity()            const {return store().velocity(p);}
         auto &acceleration()        const {return store().acceleration(p);}
         auto &potential()           const {return store().potential(p);}
@@ -629,9 +629,9 @@ public:
         auto is_new()       const { return store().isNew(p); }
         auto is_marked()    const { return store().isMarked(p); }
         auto is_active()    const { return store().is_active(p);}
-        auto is_rung_range(uint8_t uRungLo,uint8_t uRungHi)  const { return store().is_rung_range(p,uRungLo,uRungHi); }
-        void set_density(float fDensity) {store().set_density(p,fDensity);}
-        void set_ball(float fBall) {store().set_ball(p,fBall);}
+        auto is_rung_range(uint8_t uRungLo, uint8_t uRungHi)  const { return store().is_rung_range(p, uRungLo, uRungHi); }
+        void set_density(float fDensity) {store().set_density(p, fDensity);}
+        void set_ball(float fBall) {store().set_ball(p, fBall);}
 
         auto is_dark()      const {return species() == FIO_SPECIES_DARK;}
         auto is_gas()       const {return species() == FIO_SPECIES_SPH;}
@@ -641,9 +641,9 @@ public:
 
     /// @brief A "pointer" reference to a "particle"
     ///
-    /// This uses the default copy/assignment semantics (the internal pointers are copied).
+    /// This uses the default copy / assignment semantics (the internal pointers are copied).
     /// The Particle class uses direct assignment.
-    using ParticlePointer = SinglePointer<Particle>;
+    using ParticlePointer = SinglePointer < Particle>;
 
     /// @brief A "reference" to a particle
     /// This allows a particle to be assigned and swapped
@@ -653,29 +653,29 @@ public:
     /// @param i Index of the particle
     /// @return pointer proxy
     auto operator[](int i) {
-        return ParticleReference(*this,i);
+        return ParticleReference(*this, i);
     }
     auto operator[](PARTICLE *p) {
-        return ParticleReference(*this,p);
+        return ParticleReference(*this, p);
     }
     const auto operator[](const PARTICLE *p) const {
-        return ParticleReference(*this,p);
+        return ParticleReference(*this, p);
     }
 
     auto NewParticle() {
         assert(Local()<FreeStore());
         auto i = Local();
         SetLocal(Local()+1);
-        auto p = ParticlePointer(*this,i);
+        auto p = ParticlePointer(*this, i);
         if (!bNoParticleOrder) p->set_order(IORDERMAX);
         return p;
     }
 
 public:
-    void initialize(bool bIntegerPosition,bool bNoParticleOrder) {
+    void initialize(bool bIntegerPosition, bool bNoParticleOrder) {
         this->bIntegerPosition = bIntegerPosition;
         this->bNoParticleOrder = bNoParticleOrder;
-        dataStore<PARTICLE,PKD_FIELD>::initialize(bNoParticleOrder ? sizeof(UPARTICLE) : sizeof(PARTICLE));
+        dataStore < PARTICLE, PKD_FIELD>::initialize(bNoParticleOrder ? sizeof(UPARTICLE) : sizeof(PARTICLE));
         ParticleClasses.reserve(PKD_MAX_CLASSES);
     }
     auto integerized() const {return bIntegerPosition;}
@@ -686,57 +686,57 @@ public:
     typedef element_iterator<Particle> iterator;
     typedef element_iterator<Particle const> const_iterator;
 
-    auto begin()        noexcept { return iterator(*this,Base()); }
-    auto begin()  const noexcept { return const_iterator(*this,Base()); }
-    auto cbegin() const noexcept { return const_iterator(*this,Base()); }
-    auto end()          noexcept { return iterator(*this,Element(Local())); }
-    auto end()    const noexcept { return const_iterator(*this,Element(Local())); }
-    auto cend()   const noexcept { return const_iterator(*this,Element(Local())); }
+    auto begin()        noexcept { return iterator(*this, Base()); }
+    auto begin()  const noexcept { return const_iterator(*this, Base()); }
+    auto cbegin() const noexcept { return const_iterator(*this, Base()); }
+    auto end()          noexcept { return iterator(*this, Element(Local())); }
+    auto end()    const noexcept { return const_iterator(*this, Element(Local())); }
+    auto cend()   const noexcept { return const_iterator(*this, Element(Local())); }
 
 public:
-    void setClass( float fMass, float fSoft, int iMat, FIO_SPECIES eSpecies, PARTICLE *p ) {
+    void setClass(float fMass, float fSoft, int iMat, FIO_SPECIES eSpecies, PARTICLE *p) {
         if ( present(PKD_FIELD::oMass) ) {
-            get<float>(p,PKD_FIELD::oMass) = fMass;
+           .get<float>(p, PKD_FIELD::oMass) = fMass;
             fMass = 0.0;
         }
         if ( present(PKD_FIELD::oSoft) ) {
-            get<float>(p,PKD_FIELD::oSoft) = fSoft;
+           .get<float>(p, PKD_FIELD::oSoft) = fSoft;
             fSoft = 0.0;
         }
         /* NOTE: The above can both be true, in which case a "zero" class is recorded */
         /* NOTE: Species is always part of the class table, so there will be at least one class per species */
-        PARTCLASS newClass(eSpecies,fMass,fSoft,iMat);
+        PARTCLASS newClass(eSpecies, fMass, fSoft, iMat);
 
         /* TODO: This is a linear search which is fine for a small number of classes */
-        auto iclass = std::find(ParticleClasses.begin(),ParticleClasses.end(),newClass);
-        if (iclass==ParticleClasses.end()) {
+        auto iclass = std::find(ParticleClasses.begin(), ParticleClasses.end(), newClass);
+        if (iclass == ParticleClasses.end()) {
             assert( ParticleClasses.size() < PKD_MAX_CLASSES );
             p->iClass = ParticleClasses.size();
             ParticleClasses.emplace_back(newClass);
         }
-        else p->iClass = std::distance(ParticleClasses.begin(),iclass);
-        if (bNoParticleOrder) { assert(p->iClass==0); }
+        else p->iClass = std::distance(ParticleClasses.begin(), iclass);
+        if (bNoParticleOrder) { assert(p->iClass == 0); }
     }
 
-    int getClasses( int nMax, PARTCLASS *pClass ) {
-        std::copy(ParticleClasses.begin(),ParticleClasses.end(),pClass);
+    int getClasses(int nMax, PARTCLASS *pClass) {
+        std::copy(ParticleClasses.begin(), ParticleClasses.end(), pClass);
         return ParticleClasses.size();
     }
 
-    void setClasses( int n, PARTCLASS *pClass, int bUpdate ) {
+    void setClasses(int n, PARTCLASS *pClass, int bUpdate) {
         uint8_t map[PKD_MAX_CLASSES];
         PARTICLE *p;
 
         if ( bUpdate && ParticleClasses.size() && !bNoParticleOrder) {
             /* Build a map from the old class to the new class */
             assert( n >= ParticleClasses.size() );
-            for (auto i=0; i<ParticleClasses.size(); ++i) {
-                auto jj = std::find(pClass,pClass+n,ParticleClasses[i]);
-                map[i] = std::distance(pClass,jj);
+            for (auto i = 0; i < ParticleClasses.size(); ++i) {
+                auto jj = std::find(pClass, pClass + n, ParticleClasses[i]);
+                map[i] = std::distance(pClass, jj);
             }
 
             /* Now update the class with the new value */
-            for (auto i=0; i<Local(); ++i) {
+            for (auto i = 0; i < Local(); ++i) {
                 p = Element(i);
                 assert( p->iClass < ParticleClasses.size() );
                 p->iClass = map[p->iClass];
@@ -745,7 +745,7 @@ public:
 
         /* Finally, set the new class table */
         ParticleClasses.clear();
-        ParticleClasses.insert(ParticleClasses.end(),pClass,pClass+n);
+        ParticleClasses.insert(ParticleClasses.end(), pClass, pClass + n);
     }
 
     void clearClasses() {ParticleClasses.clear();}
@@ -756,31 +756,31 @@ public:
     /// @param e ending particle iterator
     /// @return bounding box of the particles
     template<typename T>
-    typename bound_type<T>::type raw_bound(iterator b,iterator e) {
-        blitz::TinyVector<T,3> vmin(std::numeric_limits<T>::max()),vmax(std::numeric_limits<T>::lowest());
-        std::for_each(b,e,
-        [&vmin,&vmax](auto &p) {
+    typename bound_type<T>::type raw_bound(iterator b, iterator e) {
+        blitz::TinyVector<T, 3> vmin(std::numeric_limits<T>::max()), vmax(std::numeric_limits<T>::lowest());
+        std::for_each(b, e,
+        [&vmin, &vmax](auto &p) {
             auto v = p.template raw_position<T>();
-            vmin = blitz::min(vmin,v);
-            vmax = blitz::max(vmax,v);
+            vmin = blitz::min(vmin, v);
+            vmax = blitz::max(vmax, v);
         });
-        return typename bound_type<T>::type(vmin,vmax);
+        return typename bound_type<T>::type(vmin, vmax);
     }
 
-    Bound bound(iterator b,iterator e);
+    Bound bound(iterator b, iterator e);
     Bound bound();
 
     int CountSelected();
-    int SelActive(int setIfTrue=true, int clearIfFalse=true);
-    int SelBlackholes(int setIfTrue=true, int clearIfFalse=true);
-    int SelSpecies(uint64_t mSpecies, int setIfTrue=true, int clearIfFalse=true);
-    int SelGroup(int iGroup, int setIfTrue=true, int clearIfFalse=true);
-    int SelMass(double dMinMass, double dMaxMass, int setIfTrue=true, int clearIfFalse=true );
-    int SelPhaseDensity(double dMinDensity, double dMaxDensity, int setIfTrue=true, int clearIfFalse=true );
-    int SelById(uint64_t idStart, uint64_t idEnd, int setIfTrue=true, int clearIfFalse=true );
-    int SelBox(blitz::TinyVector<double,3> dCenter, blitz::TinyVector<double,3> dSize, int setIfTrue=true, int clearIfFalse=true );
-    int SelSphere(blitz::TinyVector<double,3> r, double dRadius, int setIfTrue=true, int clearIfFalse=true );
-    int SelCylinder(blitz::TinyVector<double,3> dP1, blitz::TinyVector<double,3> dP2, double dRadius, int setIfTrue=true, int clearIfFalse=true );
+    int SelActive(int setIfTrue = true, int clearIfFalse = true);
+    int SelBlackholes(int setIfTrue = true, int clearIfFalse = true);
+    int SelSpecies(uint64_t mSpecies, int setIfTrue = true, int clearIfFalse = true);
+    int SelGroup(int iGroup, int setIfTrue = true, int clearIfFalse = true);
+    int SelMass(double dMinMass, double dMaxMass, int setIfTrue = true, int clearIfFalse = true );
+    int SelPhaseDensity(double dMinDensity, double dMaxDensity, int setIfTrue = true, int clearIfFalse = true );
+    int SelById(uint64_t idStart, uint64_t idEnd, int setIfTrue = true, int clearIfFalse = true );
+    int SelBox(blitz::TinyVector<double, 3> dCenter, blitz::TinyVector<double, 3> dSize, int setIfTrue = true, int clearIfFalse = true );
+    int SelSphere(blitz::TinyVector<double, 3> r, double dRadius, int setIfTrue = true, int clearIfFalse = true );
+    int SelCylinder(blitz::TinyVector<double, 3> dP1, blitz::TinyVector<double, 3> dP2, double dRadius, int setIfTrue = true, int clearIfFalse = true );
 };
 
 #endif

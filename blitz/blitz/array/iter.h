@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -40,13 +40,13 @@
 #endif
 
 #if defined(BZ_DEBUG)
-#define CheckIteratorValidity(X,Y)                                     \
+#define CheckIteratorValidity(X, Y)                                     \
         BZPRECHECK(data_!=0, X " invalid iterator (empty array)");     \
-        BZPRECHECK((data_>=beg_+Y && data_<=end_+Y), ((data_<beg_+Y) ? \
+        BZPRECHECK((data_>=beg_ + Y && data_<=end_ + Y), ((data_ < beg_ + Y) ? \
             X " invalid iterator (before beginning of array)" :        \
-            X " invalid iterator (past end of array)")); 
+            X " invalid iterator (past end of array)"));
 #else
-#define CheckIteratorValidity(X,Y)
+#define CheckIteratorValidity(X, Y)
 #endif
 
 BZ_NAMESPACE(blitz)
@@ -54,17 +54,17 @@ BZ_NAMESPACE(blitz)
 template<typename T, int N>
 class ConstArrayIterator {
 private:
-    //  Initialization common to begin,end constructors.
+    //  Initialization common to begin, end constructors.
     //
-    void Init(const Array<T,N>& array) {
+    void Init(const Array<T, N>& array) {
         // Making internal copies of these avoids keeping
         // a pointer to the array and doing indirection.
         lbound_ = array.lbound();
         order_ = array.ordering();
-        
+
         ubound_(0) = array.ubound(0)+1;
         dataincr_(order_(0)) = array.stride(order_(0));
-        for (int i=1,r,s=order_(0);i<N;s=r,++i) {
+        for (int i = 1, r, s = order_(0);i < N;s = r, ++i) {
             r = order_(i);
             ubound_(i) = array.ubound(i)+1;
             dataincr_(r) = array.stride(r)-array.extent(s)*array.stride(s);
@@ -72,83 +72,83 @@ private:
 #if defined(BZ_DEBUG)
         beg_ = array.data();
         end_ = end_value(array)-1;
-        if (beg_>end_)
-            std::swap(beg_,end_);
+        if (beg_ > end_)
+            std::swap(beg_, end_);
 #endif
     }
 
 public:
     ConstArrayIterator() : data_(0) { }
 
-    ConstArrayIterator(const Array<T,N>& array) : 
+    ConstArrayIterator(const Array<T, N>& array) :
         data_(const_cast<T*>(array.data())) {
         Init(array);
         pos_ = lbound_;
     }
 
-    ConstArrayIterator(const Array<T,N>& array, const int) : 
+    ConstArrayIterator(const Array<T, N>& array, const int) :
         data_(end_value(array)) {
         Init(array);
         pos_ = array.ubound();
         ++pos_(order_(0));
     }
 
-    ConstArrayIterator(const Array<T,N>& array, const TinyVector<int,N> & pos) : 
+    ConstArrayIterator(const Array<T, N>& array, const TinyVector<int, N> & pos) :
         data_(const_cast<T*>(&array(pos))) {
         Init(array);
         pos_ = pos;
     }
 
-    bool operator==(const ConstArrayIterator<T,N>& x) const 
+    bool operator==(const ConstArrayIterator<T, N>& x) const
     { return data_ == x.data_; }
-    
-    bool operator!=(const ConstArrayIterator<T,N>& x) const 
+
+    bool operator!=(const ConstArrayIterator<T, N>& x) const
     { return data_ != x.data_; }
- 
+
     const T& operator*() const {
-        CheckIteratorValidity("Attempted to dereference",0);
+        CheckIteratorValidity("Attempted to dereference", 0);
         return *data_;
     }
 
     const T* restrict operator->() const {
-        CheckIteratorValidity("Attempted to dereference",0);
+        CheckIteratorValidity("Attempted to dereference", 0);
         return data_;
     }
 
-    ConstArrayIterator<T,N>& operator++();
-    ConstArrayIterator<T,N>& operator--();
+    ConstArrayIterator<T, N>& operator++();
+    ConstArrayIterator<T, N>& operator--();
 
-    ConstArrayIterator<T,N> operator++(int) {
-        ConstArrayIterator<T,N> tmp = *this;
-        ++(*this); 
+    ConstArrayIterator<T, N> operator++(int) {
+        ConstArrayIterator<T, N> tmp = *this;
+        ++(*this);
         return tmp;
     }
 
-    ConstArrayIterator<T,N> operator--(int) {
-        ConstArrayIterator<T,N> tmp = *this;
-        --(*this); 
+    ConstArrayIterator<T, N> operator--(int) {
+        ConstArrayIterator<T, N> tmp = *this;
+        --(*this);
         return tmp;
     }
 
     // get the current position of the Array iterator in index space
-    const TinyVector<int,N>& position() const { 
-        CheckIteratorValidity("Array<T,N>::iterator::position() called on",0);
-        return pos_; 
+    const TinyVector<int, N>& position() const {
+        CheckIteratorValidity("Array<T, N>::iterator::position() called on", 0);
+        return pos_;
     }
-   
-private:
-    TinyVector<int,N> dataincr_, lbound_, ubound_, order_;
 
-    static T* end_value(const Array<T,N>& array) {
+private:
+    TinyVector<int, N> dataincr_, lbound_, ubound_, order_;
+
+    static T* end_value(const Array<T, N>& array) {
         T* endval = const_cast<T*>(array.data()) +
                                    array.stride(array.ordering(0));
-        for (int i=0;i<N;++i)
+        for (int i = 0;i < N;++i)
             endval +=  array.stride(i)*(array.extent(i)-1);
         return endval;
     }
 
 protected:
-    TinyVector<int,N> pos_;
+    TinyVector<int, N> pos_;
     T * restrict data_;
 #if defined(BZ_DEBUG)
     const T* restrict beg_;
@@ -158,9 +158,9 @@ protected:
 
 
 template<typename T, int N>
-class ArrayIterator : public ConstArrayIterator<T,N> {
+class ArrayIterator : public ConstArrayIterator<T, N> {
 private:
-    typedef ConstArrayIterator<T,N> T_base;
+    typedef ConstArrayIterator<T, N> T_base;
     using T_base::data_;
 
 #if defined(BZ_DEBUG)
@@ -171,48 +171,48 @@ private:
 public:
     ArrayIterator() { }
 
-    ArrayIterator(Array<T,N>& x) : T_base(x) { }
+    ArrayIterator(Array<T, N>& x) : T_base(x) { }
 
-    ArrayIterator(const Array<T,N>& array, const int): T_base(array,0) { }
+    ArrayIterator(const Array<T, N>& array, const int): T_base(array, 0) { }
 
-    ArrayIterator(const Array<T,N>& array, const TinyVector<int,N> &pos) : T_base(array,pos) { }
+    ArrayIterator(const Array<T, N>& array, const TinyVector<int, N> &pos) : T_base(array, pos) { }
 
     T& operator*() const {
-        CheckIteratorValidity("Attempted to dereference",0);
+        CheckIteratorValidity("Attempted to dereference", 0);
         return *data_;
     }
 
     T* restrict operator->() const {
-        CheckIteratorValidity("Attempted to dereference",0);
+        CheckIteratorValidity("Attempted to dereference", 0);
         return data_;
     }
 
-    ArrayIterator<T,N>& operator++() {
+    ArrayIterator<T, N>& operator++() {
         T_base::operator++();
         return *this;
     }
 
-    ArrayIterator<T,N> operator++(int) {
-        ArrayIterator<T,N> tmp = *this;
-        ++(*this); 
+    ArrayIterator<T, N> operator++(int) {
+        ArrayIterator<T, N> tmp = *this;
+        ++(*this);
         return tmp;
     }
 
-    ArrayIterator<T,N>& operator--() {
+    ArrayIterator<T, N>& operator--() {
         T_base::operator--();
         return *this;
     }
 
-    ArrayIterator<T,N> operator--(int) {
-        ArrayIterator<T,N> tmp = *this;
-        --(*this); 
+    ArrayIterator<T, N> operator--(int) {
+        ArrayIterator<T, N> tmp = *this;
+        --(*this);
         return tmp;
     }
 };
 
 template<typename T, int N>
-ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator++() {
-    CheckIteratorValidity("Attempted to increment",0);
+ConstArrayIterator<T, N>& ConstArrayIterator<T, N>::operator++() {
+    CheckIteratorValidity("Attempted to increment", 0);
 
     //   The first loop iteration is peeled as it increases performance.
     //   The same improvement can be obtained by telling the compiler that
@@ -222,7 +222,7 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator++() {
     // With a compiler peeling loops correctly (or with an effective BZ_LIKELY
     // macro, this could be simply written as:
     //
-    // for (int i=0;i<N;++i) {
+    // for (int i = 0;i < N;++i) {
     //     const int r = order_(i);
     //     data_ += dataincr_[r];
     //     if (BZ_LIKELY(++pos_(r)!=ubound_(r)))
@@ -237,7 +237,7 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator++() {
         return *this;
     pos_(r0) = lbound_(r0);
 
-    for (int i=1;i<N;++i) {
+    for (int i = 1;i < N;++i) {
         const int r = order_(i);
         data_ += dataincr_[r];
         if (BZ_LIKELY(++pos_(r)!=ubound_(r)))
@@ -247,8 +247,8 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator++() {
 
     // At this place the value of data_ should match that of the end iterator.
     // Do the proper correction to achieve that.
-    
-    for (int i=1;i<N;++i) {
+
+    for (int i = 1;i < N;++i) {
         const int r = order_(i);
         data_ -= dataincr_[r];
         pos_(r) = ubound_(r)-1;
@@ -259,8 +259,8 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator++() {
 }
 
 template<typename T, int N>
-ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator--() {
-    CheckIteratorValidity("Attempted to decrement",1);
+ConstArrayIterator<T, N>& ConstArrayIterator<T, N>::operator--() {
+    CheckIteratorValidity("Attempted to decrement", 1);
 
     //   The first loop iteration is peeled as it increases performance.
     //   The same improvement can be obtained by telling the compiler that
@@ -270,7 +270,7 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator--() {
     // With a compiler peeling loops correctly (or with an effective BZ_LIKELY
     // macro, this could be simply written as:
     //
-    // for (int i=0;i<N;++i) {
+    // for (int i = 0;i < N;++i) {
     //     const int r = order_(i);
     //     data_ -= dataincr_[r];
     //     if (BZ_LIKELY(pos_(r)--!=lbound_(r)))
@@ -285,7 +285,7 @@ ConstArrayIterator<T,N>& ConstArrayIterator<T,N>::operator--() {
         return *this;
     pos_(r0) = ubound_(r0)-1;
 
-    for (int i=1;i<N;++i) {
+    for (int i = 1;i < N;++i) {
         const int r = order_(i);
         data_ -= dataincr_[r];
         if (BZ_LIKELY(pos_(r)--!=lbound_(r)))
@@ -306,8 +306,8 @@ BZ_NAMESPACE_END
 // support for std::iterator_traits
 BZ_NAMESPACE(std)
 
-template <typename T, int N>
-struct iterator_traits< BZ_BLITZ_SCOPE(ConstArrayIterator)<T,N> > {
+template<typename T, int N>
+struct iterator_traits< BZ_BLITZ_SCOPE(ConstArrayIterator)<T, N> > {
     typedef bidirectional_iterator_tag         iterator_category;
     typedef T                                  value_type;
     typedef blitz::diffType                    difference_type;
@@ -315,8 +315,8 @@ struct iterator_traits< BZ_BLITZ_SCOPE(ConstArrayIterator)<T,N> > {
     typedef const T&                           reference;
 };
 
-template <typename T, int N>
-struct iterator_traits< BZ_BLITZ_SCOPE(ArrayIterator)<T,N> > {
+template<typename T, int N>
+struct iterator_traits< BZ_BLITZ_SCOPE(ArrayIterator)<T, N> > {
     typedef bidirectional_iterator_tag         iterator_category;
     typedef T                                  value_type;
     typedef blitz::diffType                    difference_type;

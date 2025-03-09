@@ -29,15 +29,15 @@ protected:
     int cache_id;
     auto &local() { return *localStore; }
 public:
-    remoteStore(mdl::mdlClass *mdl,STORE &localStore,int cache_id)
+    remoteStore(mdl::mdlClass *mdl, STORE &localStore, int cache_id)
         : mdl(mdl), localStore(&localStore), cache_id(cache_id) {}
 
     auto operator()(int iIndex) {
         return local()[iIndex];
     }
-    auto operator()(int iIndex,int iID) {
-        if (iID==mdl->Self()) return (*this)(iIndex);
-        else return local()[reinterpret_cast<typename STORE::value_type *>(mdlFetch(mdl,cache_id,iIndex,iID))];
+    auto operator()(int iIndex, int iID) {
+        if (iID == mdl->Self()) return (*this)(iIndex);
+        else return local()[reinterpret_cast<typename STORE::value_type *>(mdlFetch(mdl, cache_id, iIndex, iID))];
     }
 };
 

@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -33,7 +33,7 @@
  * Initialization lists provide a convenient way to set the elements
  * of an array.  For example,
  *
- * Array<int,2> A(3,3);
+ * Array<int, 2> A(3, 3);
  * A = 1, 0, 0,
  *     0, 1, 0,
  *     0, 0, 1;
@@ -53,7 +53,7 @@ public:
     {
     }
 
-    ListInitializer<T_numtype, T_iterator> operator,(T_numtype x)
+    ListInitializer<T_numtype, T_iterator> operator, (T_numtype x)
     {
         *iter_ = x;
 	++iter_;
@@ -73,24 +73,24 @@ class ListInitializationSwitch {
 public:
     typedef _bz_typename T_array::T_numtype T_numtype;
 
-    ListInitializationSwitch(const ListInitializationSwitch<T_array>& lis)
-        : array_(lis.array_), value_(lis.value_), 
+    ListInitializationSwitch (const ListInitializationSwitch < T_array>& lis)
+        : array_(lis.array_), value_(lis.value_),
           wipeOnDestruct_(true)
     {
         lis.disable();
     }
 
-    ListInitializationSwitch(T_array& array, T_numtype value)
+    ListInitializationSwitch (T_array& array, T_numtype value)
         : array_(array), value_(value), wipeOnDestruct_(true)
     { }
 
-    ~ListInitializationSwitch()
+    ~ListInitializationSwitch ()
     {
         if (wipeOnDestruct_)
             array_.initialize(value_);
     }
 
-    ListInitializer<T_numtype, T_iterator> operator,(T_numtype x)
+    ListInitializer<T_numtype, T_iterator> operator, (T_numtype x)
     {
         wipeOnDestruct_ = false;
         T_iterator iter = array_.getInitializationIterator();
@@ -108,7 +108,7 @@ public:
     }
 
 private:
-    ListInitializationSwitch();
+    ListInitializationSwitch ();
 
 protected:
     T_array& array_;

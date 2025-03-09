@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -36,34 +36,34 @@ BZ_NAMESPACE(blitz)
 
 // NEEDS_WORK???
 // This version of operator<< is updated on August 2005
-// by Sergei Mingaleev <mingaleev@gmail.com>. 
+// by Sergei Mingaleev <mingaleev@gmail.com>.
 // Also, the corresponding operator>> is updated.
 
-template <typename P_numtype, int N_rows, int N_columns>
+template<typename P_numtype, int N_rows, int N_columns>
 ostream& operator<<(ostream& os,
     const TinyMatrix<P_numtype, N_rows, N_columns>& x)
 {
     os << "(";
-    for (int i=0; i < N_rows-1; ++i) 
+    for (int i = 0; i < N_rows - 1; ++i)
     {
-        os << x(i,0);
-        for (int j=1; j < N_columns; ++j)
+        os << x(i, 0);
+        for (int j = 1; j < N_columns; ++j)
         {
-            os << "," << x(i,j);
+            os << ", " << x(i, j);
         }
         os << "; ";
     }
-    os << x(N_rows-1,0);
-    for (int j=1; j < N_columns; ++j) 
+    os << x(N_rows - 1, 0);
+    for (int j = 1; j < N_columns; ++j)
     {
-       os << "," << x(N_rows-1,j);
+       os << ", " << x(N_rows - 1, j);
     }
     os << ")";
     return os;
 }
 
-template <typename P_numtype, int N_rows, int N_columns>
-istream& operator>>(istream& is, 
+template<typename P_numtype, int N_rows, int N_columns>
+istream& operator>>(istream& is,
     TinyMatrix<P_numtype, N_rows, N_columns>& x)
 {
     char sep;
@@ -71,24 +71,24 @@ istream& operator>>(istream& is,
     BZPRECHECK(sep == '(', "Format error while scanning input TinyMatrix"
       << endl << " (expected '(' opening TinyMatrix)");
 
-    for (int i=0; i<N_rows-1; i++) {
-      is >> x(i,0);
-      for (int j=1; j<N_columns; j++) {
+    for (int i = 0; i < N_rows - 1; i++) {
+      is >> x(i, 0);
+      for (int j = 1; j < N_columns; j++) {
         is >> sep;
-        BZPRECHECK(sep == ',', "Format error while scanning input TinyMatrix" 
-	  << endl << " (expected ',' between TinyMatrix components)");
-        is >> x(i,j);
+        BZPRECHECK(sep == ', ', "Format error while scanning input TinyMatrix"
+	  << endl << " (expected ', ' between TinyMatrix components)");
+        is >> x(i, j);
       }
       is >> sep;
       BZPRECHECK(sep == ';', "Format error while scanning input TinyMatrix"
         << endl << " (expected ';' between TinyMatrix rows)");
     }
-    is >> x(N_rows-1,0);
-    for (int j=1; j<N_columns; j++) {
+    is >> x(N_rows - 1, 0);
+    for (int j = 1; j < N_columns; j++) {
       is >> sep;
-      BZPRECHECK(sep == ',', "Format error while scanning input TinyMatrix"
-        << endl << " (expected ',' between TinyMatrix components)");
-      is >> x(N_rows-1,j);
+      BZPRECHECK(sep == ', ', "Format error while scanning input TinyMatrix"
+        << endl << " (expected ', ' between TinyMatrix components)");
+      is >> x(N_rows - 1, j);
     }
     is >> sep;
     BZPRECHECK(sep == ')', "Format error while scanning input TinyMatrix"

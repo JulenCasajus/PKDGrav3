@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/array/stencil-et.h  Expression-template-capable stencils
+ * blitz/array/stencil-et.h  Expression - template - capable stencils
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -50,12 +50,12 @@ BZ_NAMESPACE(blitz)
 // higher dims.
 template<int N_rank, int N_rank2>
 RectDomain<N_rank> _bz_shrinkDomain(const RectDomain<N_rank>& d,
-				    const TinyVector<int,N_rank2>& minb,
-				    const TinyVector<int,N_rank2>& maxb)
+				    const TinyVector<int, N_rank2>& minb,
+				    const TinyVector<int, N_rank2>& maxb)
 {
   TinyVector<int, N_rank> lb(d.lbound()), ub(d.ubound());
   // no slicing w tinyvector
-  for(int i=0; i<N_rank2; ++i) {
+  for (int i = 0; i < N_rank2; ++i) {
     lb[i] = lb[i] - ((minb[i]<0) ? minb[i] : 0);
     ub[i] = ub[i] - ((maxb[i]>0) ? maxb[i] : 0);
   }
@@ -102,8 +102,8 @@ class _bz_StencilExpr {
   typedef P_result T_numtype;
   typedef T_expr T_ctorArg1;
   typedef int    T_ctorArg2;    // dummy
-  
-  static const int 
+
+  static const int
     numArrayOperands = T_expr::numArrayOperands,
     numTVOperands = T_expr::numTVOperands,
     numTMOperands = T_expr::numTMOperands,
@@ -112,11 +112,11 @@ class _bz_StencilExpr {
     minWidth = 0, //T_expr::minWidth,
     maxWidth = 0, //T_expr::maxWidth,
     rank_ = T_expr::rank_;
-  
+
  _bz_StencilExpr(const _bz_StencilExpr<T_expr, T_numtype>& a)
    : iter_(a.iter_)
     { }
-  
+
  _bz_StencilExpr(BZ_ETPARM(T_expr) a)
    : iter_(a)
   { }
@@ -135,22 +135,22 @@ class _bz_StencilExpr {
   int ascending(const int rank) const { return iter_.ascending(rank); }
   int ordering(const int rank)  const { return iter_.ordering(rank);  }
   int lbound(const int rank) const
-  { 
-    return iter_.lbound(rank);    
+  {
+    return iter_.lbound(rank);
   }
-  int ubound(const int rank) const 
+  int ubound(const int rank) const
   {
     return iter_.ubound(rank);
   }
 
   // defer calculation to lbound/ubound
-  RectDomain<rank_> domain() const 
-    { 
+  RectDomain<rank_> domain() const
+    {
       TinyVector<int, rank_> lb, ub;
-      for(int r=0; r<rank_; ++r) {
-	lb[r]=lbound(r); ub[r]=ubound(r); 
+      for (int r = 0; r < rank_; ++r) {
+	lb[r]=lbound(r); ub[r]=ubound(r);
       }
-      return RectDomain<rank_>(lb,ub);
+      return RectDomain<rank_>(lb, ub);
     }
 
   //T_numtype first_value() const { return iter_(iter_.lbound()); }
@@ -195,22 +195,22 @@ class _bz_StencilExpr {
     iter_.advanceUnitStride();
   }
 
-  void moveTo(const TinyVector<int,_bz_StencilExpr::rank_>& i)
+  void moveTo(const TinyVector<int, _bz_StencilExpr::rank_>& i)
   {
     iter_.moveTo(i);
   }
 
   bool canCollapse(int outerLoopRank, int innerLoopRank) const
-  { 
+  {
     // BZ_DEBUG_MESSAGE("_bz_StencilExpr<>::canCollapse");
-    return iter_.canCollapse(outerLoopRank, innerLoopRank); 
+    return iter_.canCollapse(outerLoopRank, innerLoopRank);
   }
 
   diffType suggestStride(int rank) const
   { return iter_.suggestStride(rank); }
 
   bool isStride(int rank, diffType stride) const
-  { return iter_.isStride(rank,stride); }
+  { return iter_.isStride(rank, stride); }
 
   void _bz_offsetData(sizeType i) { iter_._bz_offsetData(i); }
 
@@ -245,7 +245,7 @@ class _bz_StencilExpr2 {
   typedef T_expr1 T_ctorArg1;
   typedef T_expr2 T_ctorArg2;
 
-  static const int 
+  static const int
   numArrayOperands = T_expr1::numArrayOperands
     + T_expr2::numArrayOperands,
     numTVOperands = T_expr1::numTVOperands + T_expr2::numTVOperands,
@@ -256,11 +256,11 @@ class _bz_StencilExpr2 {
     minWidth = 0, //BZ_MIN(T_expr1::minWidth, T_expr2::minWidth),
     maxWidth = 0, //BZ_MAX(T_expr1::maxWidth, T_expr2::maxWidth),
       rank_ = BZ_MAX(T_expr1::rank_, T_expr2::rank_);
-  
+
   _bz_StencilExpr2(const _bz_StencilExpr2<T_expr1, T_expr2, T_numtype>& a)
     : iter1_(a.iter1_), iter2_(a.iter2_)
     { }
-  
+
   _bz_StencilExpr2(BZ_ETPARM(T_expr1) a, BZ_ETPARM(T_expr2) b)
     : iter1_(a), iter2_(b)
   { }
@@ -287,7 +287,7 @@ class _bz_StencilExpr2 {
         return bounds::compute_ordering(rank, iter1_.ordering(rank), iter2_.ordering(rank));
     }
 
-    int lbound(const int rank) const { 
+    int lbound(const int rank) const {
         return bounds::compute_lbound(rank, iter1_.lbound(rank), iter2_.lbound(rank));
     }
 
@@ -295,14 +295,14 @@ class _bz_StencilExpr2 {
         return bounds::compute_ubound(rank, iter1_.ubound(rank), iter2_.ubound(rank));
     }
 
-  // defer calculation to lbound/ubound
-  RectDomain<rank_> domain() const 
-  { 
+  // defer calculation to lbound / ubound
+  RectDomain<rank_> domain() const
+  {
     TinyVector<int, rank_> lb, ub;
-    for(int r=0; r<rank_; ++r) {
-      lb[r]=lbound(r); ub[r]=ubound(r); 
+    for (int r = 0; r < rank_; ++r) {
+      lb[r]=lbound(r); ub[r]=ubound(r);
     }
-    return RectDomain<rank_>(lb,ub);
+    return RectDomain<rank_>(lb, ub);
   }
 
   /** Vectorization doesn't make sense for stencils, so we say so. */
@@ -310,20 +310,20 @@ class _bz_StencilExpr2 {
     return false; }
 
     void push(int position)
-    { 
-        iter1_.push(position); 
+    {
+        iter1_.push(position);
         iter2_.push(position);
     }
 
     void pop(int position)
-    { 
-        iter1_.pop(position); 
+    {
+        iter1_.pop(position);
         iter2_.pop(position);
     }
 
     void advance()
-    { 
-        iter1_.advance(); 
+    {
+        iter1_.advance();
         iter2_.advance();
     }
 
@@ -334,8 +334,8 @@ class _bz_StencilExpr2 {
     }
 
     void loadStride(int rank)
-    { 
-        iter1_.loadStride(rank); 
+    {
+        iter1_.loadStride(rank);
         iter2_.loadStride(rank);
     }
 
@@ -348,9 +348,9 @@ class _bz_StencilExpr2 {
 
     bool isStride(int rank, diffType stride) const
     {
-        return iter1_.isStride(rank,stride) && iter2_.isStride(rank,stride);
+        return iter1_.isStride(rank, stride) && iter2_.isStride(rank, stride);
     }
-    
+
     bool isUnitStride(int rank) const
     { return iter1_.isUnitStride(rank) && iter2_.isUnitStride(rank); }
 
@@ -358,24 +358,24 @@ class _bz_StencilExpr2 {
     { return iter1_.isUnitStride() && iter2_.isUnitStride(); }
 
     void advanceUnitStride()
-    { 
-        iter1_.advanceUnitStride(); 
+    {
+        iter1_.advanceUnitStride();
         iter2_.advanceUnitStride();
     }
 
     bool canCollapse(int outerLoopRank, int innerLoopRank) const
-    { 
+    {
         return iter1_.canCollapse(outerLoopRank, innerLoopRank)
             && iter2_.canCollapse(outerLoopRank, innerLoopRank);
     }
 
-    void moveTo(const TinyVector<int,rank_>& i)
+    void moveTo(const TinyVector<int, rank_>& i)
     {
         iter1_.moveTo(i);
         iter2_.moveTo(i);
     }
 
-  void _bz_offsetData(sizeType i) 
+  void _bz_offsetData(sizeType i)
   {
     iter1_._bz_offsetData(i);
     iter2_._bz_offsetData(i);

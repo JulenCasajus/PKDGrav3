@@ -76,7 +76,7 @@ Derivation
 
 It is helpful to introduce the value of the gravitational constant.
 
-.. math:: 
+.. math::
     G = 4.30091727063\times 10^{-9}~\text{Mpc}~M_\odot^{-1}\left(\text{km}/\text{s}\right)^2
 
 Recall that:
@@ -96,7 +96,7 @@ This means that :math:`1` Mpc
 is :math:`\pi^{-1}\times 9.69394202136\times 10^{19}` km, so we can rewrite
 :math:`G` as the product of a density and time squared.
 
-.. math:: 
+.. math::
     G &= 4.30091727063\times 10^{-9}\frac{Mpc}{M_\odot}\left(\frac{\text{km}}{\text{s}}\right)^2 \times
         \left(\frac{\pi}{9.69394202136\times 10^{19}}\right)^2\left(\frac{\text{Mpc}}{\text{km}}\right)^2\\
       &= \frac{4.30091727063\times 10^{-9}\times\pi^2}{9.69394202136^2\times 10^{38}}
@@ -105,7 +105,7 @@ is :math:`\pi^{-1}\times 9.69394202136\times 10^{19}` km, so we can rewrite
 
 Also recall that:
 
-.. math:: 
+.. math::
     H_0 = 100h \left[\text{km}/\text{s}/\text{Mpc}\right]
 
 Length
@@ -137,7 +137,7 @@ Velocity
 
 The :math:`G=1` criteria allows us to derive the velocity unit by factoring out the mass unit and the length unit.
 
-.. math:: 
+.. math::
     \left(\frac{\text{km}}{\text{s}}\right)^2 &=
         G\times \frac{M_{box}}{L}\\
         &= G\times \frac{M_{box}}{L}\times\rho_c\frac{L^3}{M_{box}}\\
@@ -149,12 +149,12 @@ The :math:`G=1` criteria allows us to derive the velocity unit by factoring out 
 
 Thus when :math:`L` is expressed in :math:`h^{-1}` Mpc:
 
-.. math:: 
+.. math::
     V_{unit} = \frac{\sqrt{\frac{8}{3}\pi}}{L\times 100}
 
 Or in proper (non-comoving) units:
 
-.. math:: 
+.. math::
     V_{unit} = \frac{\sqrt{\frac{8}{3}\pi}}{L\times a\times 100}
 
 
@@ -163,12 +163,12 @@ Time
 
 The :math:`G=1` criteria also allows us to derive the time unit by factoring out the density unit.
 
-.. math:: 
+.. math::
     G &= 4.51710305052\times 10^{-48}\frac{\text{Mpc}^3}{M_\odot}\frac{1}{s^2}\\
 
 Multiplying by our density unit gives:
 
-.. math:: 
+.. math::
     \frac{1}{t_{unit}^2} &= G\times\rho_{unit}\\
         &= 4.51710305052\times 10^{-48}\frac{\text{Mpc}^3}{M_\odot}\frac{1}{s^2} \times 2.77536627208\times 10^{11}\frac{M_\odot}{\text{Mpc}^3}\\
       &= 1.25366154539\times 10^{-36}\frac{1}{s^2}\\
@@ -186,25 +186,25 @@ kpc & km/s
 It is often convenient to fix the length unit to be kpc, and the velocity unit to be km/s. With :math:`G=1` as before,
 we can calculate the mass unit:
 
-.. math:: 
+.. math::
 
     G &= 4.30091727063\times 10^{-9}~\text{Mpc}~M_\odot^{-1}(\text{km}/\text{s})^2\\
       &= 4.30091727063\times 10^{-6}~\text{kpc}~M_\odot^{-1}(\text{km}/\text{s})^2\\
 
 Thus, for :math:`G=1`, the mass unit must be:
 
-.. math:: 
+.. math::
     M_{unit} = \frac{1}{4.30091727063\times 10^{-6}} = 2.32508541103\times 10^5~M_\odot
 
 The length unit is kpc, so the density unit is:
 
-.. math:: 
+.. math::
     \rho_{unit} = 2.32508541103\times 10^5\frac{M_\odot}{\text{kpc}^3}
 
 
 Similarily the time unit must be:
 
-.. math:: 
+.. math::
     \frac{1}{t_{unit}^2} &= G\times\rho_{unit}\\
         &= 4.51710305052\times 10^{-48}\frac{\text{Mpc}^3}{M_\odot}\frac{1}{\text{s}^2} \times 2.32508541103\times 10^5\frac{M_\odot}{\text{kpc}^3}\\
         &= 4.51710305052\times 10^{-48}\frac{\text{Mpc}^3}{M_\odot}\frac{1}{\text{s}^2} \times 2.32508541103\times 10^{14}\frac{M_\odot}{\text{Mpc}^3}\\
@@ -220,19 +220,19 @@ kpc & Gyrs
 One can also fix the length unit to kpc, the time unit to Gyrs and thus the velocity unit to kpc/Gyr. The mass unit is then:
 
 
-.. math:: 
+.. math::
     G &= 4.51710305052\times 10^{-48}\frac{Mpc^3}{M_\odot}\frac{1}{s^2}\\
       &= 4.51710305052\times 10^{-39}\frac{kpc^3}{M_\odot}\frac{1}{s^2}\\
 
 With :math:`3.15581184\times 10^7` seconds in a year and :math:`3.15581184\times 10^{16}` seconds in a Gyr, we get:
 
-.. math:: 
+.. math::
     G &= 4.51710305052\times 10^{-39}\frac{kpc^3}{M_\odot}\frac{1}{s^2} \times \left(3.15581184\times 10^{16}\frac{s}{Gyr}\right)^2\\
       &= 4.49864994804\times 10^{-6}\frac{kpc^3}{M_\odot Gyr}
 
 This means that the mass unit is:
 
-.. math:: 
+.. math::
     M_{unit} = \frac{1}{4.49864994804\times 10^{-6}}~M_\odot = 2.22288911462\times 10^5~M_\odot
 
 Velocity
@@ -240,7 +240,7 @@ Velocity
 
 It should be noted that kpc/Gyr is very nearly km/s. This should be obvious because the time unit in the kpc and km/s unit system is very nearly 1 Gyr (but not exactly).
 
-.. math:: 
+.. math::
     V = \frac{kpc}{Gyr}
       = \frac{\pi^{-1}\times 9.69394202136\times 10^{16}\frac{km}{kpc}}{3.15581184\times 10^{16}\frac{\text{s}}{\text{Gyr}}}
       = 0.97777615965~\text{km}/\text{s}

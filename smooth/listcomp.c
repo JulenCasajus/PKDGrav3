@@ -60,48 +60,48 @@ uint32_t ones32(register uint32_t x) {
 }
 
 
-void lcodePrintList(LIST *p,int nList) {
+void lcodePrintList(LIST *p, int nList) {
     int i;
 
-    for (i=0; i<nList;) {
-        printf("%d:%d ",p[i].iPid,p[i].iIndex);
+    for (i = 0; i < nList;) {
+        printf("%d:%d ", p[i].iPid, p[i].iIndex);
         if ((++i)%20 == 0) printf("\n");
     }
-    if (i%20 != 0) printf("\n");
+    if (i % 20 != 0) printf("\n");
 }
 
-void uint2bin(uint32_t s,char *bin) {
+void uint2bin(uint32_t s, char *bin) {
     int i;
 
-    for (i=0; i<32; ++i) {
-        bin[i] = '0' + (s&1);
+    for (i = 0; i < 32; ++i) {
+        bin[i] = '0' + (s & 1);
         s = s>>1;
     }
     bin[32] = 0;
 }
 
 
-int lcodeCmpList(const void *v1,const void *v2) {
+int lcodeCmpList(const void *v1, const void *v2) {
     LIST *p1 = (LIST *)v1;
     LIST *p2 = (LIST *)v2;
     int iRet;
-    iRet = p1->iPid-p2->iPid;
+    iRet = p1->iPid - p2->iPid;
     if (iRet) return (iRet);
-    else return (p1->iIndex-p2->iIndex);
+    else return (p1->iIndex - p2->iIndex);
 }
 
 
-LCODE lcodeInit(uint32_t nThreads,uint32_t idSelf,uint32_t nLocal,uint32_t nSmooth) {
+LCODE lcodeInit(uint32_t nThreads, uint32_t idSelf, uint32_t nLocal, uint32_t nSmooth) {
     LCODE ctx;
 
     ctx = malloc(sizeof(struct lcodeContext));
     assert(ctx != NULL);
-    ctx->mPid = swar32(nThreads-1);
-    ctx->mPrefix = swar32(nLocal-1);
+    ctx->mPid = swar32(nThreads - 1);
+    ctx->mPrefix = swar32(nLocal - 1);
     /*
-        printf("%d\n",ctx->mPrefix);
+        printf("%d\n", ctx->mPrefix);
     */
-    ctx->mSuffix = swar32(nSmooth-1);
+    ctx->mSuffix = swar32(nSmooth - 1);
     ctx->mSuffix >>= 0;  /* shift back to an interval with most likely runs */
     ctx->mPrefix ^= ctx->mSuffix;
     ctx->nPid = ones32(ctx->mPid);
@@ -109,7 +109,7 @@ LCODE lcodeInit(uint32_t nThreads,uint32_t idSelf,uint32_t nLocal,uint32_t nSmoo
     ctx->nPrefix = ones32(ctx->mPrefix);
     ctx->nSuffix = ones32(ctx->mSuffix);
     /*
-        printf("\nnBitsPrefix:%d nBitsSuffix:%d\n",ctx->nPrefix,ctx->nSuffix);
+        printf("\nnBitsPrefix:%d nBitsSuffix:%d\n", ctx->nPrefix, ctx->nSuffix);
     */
     ctx->aCode = NULL;
     ctx->nCode = 0;
@@ -129,7 +129,7 @@ void lcodeFinish(LCODE ctx) {
 static inline void OutOne(LCODE ctx) {
     if (ctx->uIndex == ctx->nCode) {
         ctx->nCode += 256;
-        ctx->aCode = realloc(ctx->aCode,ctx->nCode);
+        ctx->aCode = realloc(ctx->aCode, ctx->nCode);
         assert(ctx->aCode != NULL);
     }
     ctx->aCode[ctx->uIndex] |= ctx->uMask;
@@ -143,7 +143,7 @@ static inline void OutOne(LCODE ctx) {
 static inline void OutZero(LCODE ctx) {
     if (ctx->uIndex == ctx->nCode) {
         ctx->nCode += 256;
-        ctx->aCode = realloc(ctx->aCode,ctx->nCode);
+        ctx->aCode = realloc(ctx->aCode, ctx->nCode);
         assert(ctx->aCode != NULL);
     }
     ctx->aCode[ctx->uIndex] &= ~ctx->uMask;
@@ -154,31 +154,31 @@ static inline void OutZero(LCODE ctx) {
     }
 }
 
-static inline int OutPid(LCODE ctx,uint32_t uPid) {
+static inline int OutPid(LCODE ctx, uint32_t uPid) {
     int i;
     OutOne(ctx);
-    for (i=ctx->nPid-1; i>=0; --i) {
+    for (i = ctx->nPid - 1; i >= 0; --i) {
         if (uPid & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
-    return (1+ctx->nPid);
+    return (1 + ctx->nPid);
 }
 
 
-static inline void InPid(LCODE ctx,uint32_t *uPid) {
+static inline void InPid(LCODE ctx, uint32_t *uPid) {
     int i;
     *uPid = 0;
-    for (i=0; i<ctx->nPid; ++i) {
+    for (i = 0; i < ctx->nPid; ++i) {
         *uPid <<= 1;
         if (InOne(ctx)) *uPid |= 1;
     }
 }
 
 
-static inline int OutPrefix(LCODE ctx,uint32_t uPrefix) {
+static inline int OutPrefix(LCODE ctx, uint32_t uPrefix) {
     int i;
     uPrefix >>= ctx->nSuffix;
-    for (i=ctx->nPrefix-1; i>=0; --i) {
+    for (i = ctx->nPrefix - 1; i >= 0; --i) {
         if (uPrefix & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
@@ -189,7 +189,7 @@ static inline int OutPrefix(LCODE ctx,uint32_t uPrefix) {
 static inline void SkipPrefix(LCODE ctx) {
     int i;
 
-    for (i=0; i<ctx->nPrefix; ++i) {
+    for (i = 0; i < ctx->nPrefix; ++i) {
         ctx->uMask <<= 1;
         if (!ctx->uMask) {
             ++ctx->uIndex;
@@ -198,25 +198,25 @@ static inline void SkipPrefix(LCODE ctx) {
     }
 }
 
-static inline int OutRun(LCODE ctx,uint32_t uStart,uint32_t uEnd) {
+static inline int OutRun(LCODE ctx, uint32_t uStart, uint32_t uEnd) {
     int i;
     OutOne(ctx);
-    for (i=ctx->nSuffix-1; i>=0; --i) {
+    for (i = ctx->nSuffix - 1; i >= 0; --i) {
         if (uStart & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
-    for (i=ctx->nSuffix-1; i>=0; --i) {
+    for (i = ctx->nSuffix - 1; i >= 0; --i) {
         if (uEnd & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
-    return (1+2*ctx->nSuffix);
+    return (1 + 2 * ctx->nSuffix);
 }
 
 
 static inline void SkipRun(LCODE ctx) {
     int i;
 
-    for (i=0; i<(2*ctx->nSuffix); ++i) {
+    for (i = 0; i<(2 * ctx->nSuffix); ++i) {
         ctx->uMask <<= 1;
         if (!ctx->uMask) {
             ++ctx->uIndex;
@@ -225,20 +225,20 @@ static inline void SkipRun(LCODE ctx) {
     }
 }
 
-static inline int OutSingle(LCODE ctx,uint32_t uStart) {
+static inline int OutSingle(LCODE ctx, uint32_t uStart) {
     int i;
     OutZero(ctx);
-    for (i=ctx->nSuffix-1; i>=0; --i) {
+    for (i = ctx->nSuffix - 1; i >= 0; --i) {
         if (uStart & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
-    return (1+ctx->nSuffix);
+    return (1 + ctx->nSuffix);
 }
 
 static inline void SkipSingle(LCODE ctx) {
     int i;
 
-    for (i=0; i<ctx->nSuffix; ++i) {
+    for (i = 0; i < ctx->nSuffix; ++i) {
         ctx->uMask <<= 1;
         if (!ctx->uMask) {
             ++ctx->uIndex;
@@ -248,9 +248,9 @@ static inline void SkipSingle(LCODE ctx) {
 }
 
 #if 0
-static inline int OutSuffix(LCODE ctx,uint32_t uStart) {
+static inline int OutSuffix(LCODE ctx, uint32_t uStart) {
     int i;
-    for (i=ctx->nSuffix-1; i>=0; --i) {
+    for (i = ctx->nSuffix - 1; i >= 0; --i) {
         if (uStart & (1<<i)) OutOne(ctx);
         else OutZero(ctx);
     }
@@ -260,7 +260,7 @@ static inline int OutSuffix(LCODE ctx,uint32_t uStart) {
 static inline void BackSkipSuffix(LCODE ctx) {
     int i;
 
-    for (i=0; i<ctx->nSuffix; ++i) {
+    for (i = 0; i < ctx->nSuffix; ++i) {
         ctx->uMask >>= 1;
         if (!ctx->uMask) {
             --ctx->uIndex;
@@ -270,11 +270,11 @@ static inline void BackSkipSuffix(LCODE ctx) {
 }
 #endif
 
-int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
-    uint32_t uPrefix,iPid;
+int lcodeEncode(LCODE ctx, LIST *aList, uint32_t nList, char **ppOutput) {
+    uint32_t uPrefix, iPid;
     uint32_t nOutBits;
-    uint32_t ip,il,isStart,isEnd;
-    int nBytes,i;
+    uint32_t ip, il, isStart, isEnd;
+    int nBytes, i;
     /*
     ** Start of encoding. First local members, so skip forward until
     ** iPid in the list first equals ctx->idSelf.
@@ -282,37 +282,37 @@ int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
     ctx->uIndex = 0;
     ctx->uMask = 1;
     nOutBits = 0;
-    for (ip=0; ip<nList; ++ip) if (aList[ip].iPid == ctx->idSelf) break;
-    for (il=ip; il<nList; ++il) if (aList[il].iPid != ctx->idSelf) break;
+    for (ip = 0; ip < nList; ++ip) if (aList[ip].iPid == ctx->idSelf) break;
+    for (il = ip; il < nList; ++il) if (aList[il].iPid != ctx->idSelf) break;
     while (ip < il) {
         uPrefix = aList[ip].iIndex & ctx->mPrefix;
         OutOne(ctx);
         ++nOutBits;
-        nOutBits += OutPrefix(ctx,uPrefix);
+        nOutBits += OutPrefix(ctx, uPrefix);
         /*
         ** Determine whether there are runs to do.
         */
         isStart = ip;
-        isEnd = isStart+1;
+        isEnd = isStart + 1;
         while (1) {
             if (isEnd == il) {
-                if (isEnd-1 > isStart) {
-                    nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+                if (isEnd - 1 > isStart) {
+                    nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                 }
                 break;
             }
             else if ((aList[isEnd].iIndex & ctx->mPrefix) != uPrefix) {
-                if (isEnd-1 > isStart) {
-                    nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+                if (isEnd - 1 > isStart) {
+                    nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                 }
                 break;
             }
-            else if (((aList[isEnd].iIndex-1)&ctx->mSuffix) != (aList[isEnd-1].iIndex&ctx->mSuffix)) {
-                if (isEnd-1 > isStart) {
-                    nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+            else if (((aList[isEnd].iIndex - 1)&ctx->mSuffix) != (aList[isEnd - 1].iIndex & ctx->mSuffix)) {
+                if (isEnd - 1 > isStart) {
+                    nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                 }
                 isStart = isEnd;
-                isEnd = isStart+1;
+                isEnd = isStart + 1;
             }
             else {
                 ++isEnd;
@@ -321,28 +321,28 @@ int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
         OutZero(ctx);
         ++nOutBits;
         isStart = ip;
-        isEnd = isStart+1;
+        isEnd = isStart + 1;
         while (1) {
             if (isEnd == il) {
-                if (isEnd-1 == isStart) {
-                    nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                if (isEnd - 1 == isStart) {
+                    nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                 }
                 ip = isEnd;
                 break;
             }
             else if ((aList[isEnd].iIndex & ctx->mPrefix) != uPrefix) {
-                if (isEnd-1 == isStart) {
-                    nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                if (isEnd - 1 == isStart) {
+                    nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                 }
                 ip = isEnd;
                 break;
             }
-            else if (((aList[isEnd].iIndex-1)&ctx->mSuffix) != (aList[isEnd-1].iIndex&ctx->mSuffix)) {
-                if (isEnd-1 == isStart) {
-                    nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+            else if (((aList[isEnd].iIndex - 1)&ctx->mSuffix) != (aList[isEnd - 1].iIndex & ctx->mSuffix)) {
+                if (isEnd - 1 == isStart) {
+                    nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                 }
                 isStart = isEnd;
-                isEnd = isStart+1;
+                isEnd = isStart + 1;
             }
             else {
                 ++isEnd;
@@ -353,43 +353,43 @@ int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
     }
     OutZero(ctx);
     ++nOutBits;
-    ip=0;
-    il=nList;
+    ip = 0;
+    il = nList;
     while (ip < il) {
         iPid = aList[ip].iPid;
         if (iPid == ctx->idSelf) {
             ++ip;
             continue;
         }
-        nOutBits += OutPid(ctx,iPid);
+        nOutBits += OutPid(ctx, iPid);
         while (1) {
             uPrefix = aList[ip].iIndex & ctx->mPrefix;
-            nOutBits += OutPrefix(ctx,uPrefix);
+            nOutBits += OutPrefix(ctx, uPrefix);
             /*
             ** Determine whether there are runs to do.
             */
             isStart = ip;
-            isEnd = isStart+1;
+            isEnd = isStart + 1;
             while (1) {
                 if (isEnd == il) {
-                    if (isEnd-1 > isStart) {
-                        nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+                    if (isEnd - 1 > isStart) {
+                        nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                     }
                     break;
                 }
                 else if ((aList[isEnd].iIndex & ctx->mPrefix) != uPrefix ||
                          aList[isEnd].iPid != iPid) {
-                    if (isEnd-1 > isStart) {
-                        nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+                    if (isEnd - 1 > isStart) {
+                        nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                     }
                     break;
                 }
-                else if (((aList[isEnd].iIndex-1)&ctx->mSuffix) != (aList[isEnd-1].iIndex&ctx->mSuffix)) {
-                    if (isEnd-1 > isStart) {
-                        nOutBits += OutRun(ctx,aList[isStart].iIndex,aList[isEnd-1].iIndex);
+                else if (((aList[isEnd].iIndex - 1)&ctx->mSuffix) != (aList[isEnd - 1].iIndex & ctx->mSuffix)) {
+                    if (isEnd - 1 > isStart) {
+                        nOutBits += OutRun(ctx, aList[isStart].iIndex, aList[isEnd - 1].iIndex);
                     }
                     isStart = isEnd;
-                    isEnd = isStart+1;
+                    isEnd = isStart + 1;
                 }
                 else {
                     ++isEnd;
@@ -398,36 +398,36 @@ int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
             OutZero(ctx);
             ++nOutBits;
             isStart = ip;
-            isEnd = isStart+1;
+            isEnd = isStart + 1;
             while (1) {
                 if (isEnd == il) {
-                    if (isEnd-1 == isStart) {
-                        nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                    if (isEnd - 1 == isStart) {
+                        nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                     }
                     ip = isEnd;
                     break;
                 }
                 else if (aList[isEnd].iPid != iPid) {
-                    if (isEnd-1 == isStart) {
-                        nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                    if (isEnd - 1 == isStart) {
+                        nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                     }
                     il = isEnd; /* we need this to generate a new iPid */
                     ip = isEnd;
                     break;
                 }
                 else if ((aList[isEnd].iIndex & ctx->mPrefix) != uPrefix) {
-                    if (isEnd-1 == isStart) {
-                        nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                    if (isEnd - 1 == isStart) {
+                        nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                     }
                     ip = isEnd;
                     break;
                 }
-                else if (((aList[isEnd].iIndex-1)&ctx->mSuffix) != (aList[isEnd-1].iIndex&ctx->mSuffix)) {
-                    if (isEnd-1 == isStart) {
-                        nOutBits += OutSingle(ctx,aList[isStart].iIndex);
+                else if (((aList[isEnd].iIndex - 1)&ctx->mSuffix) != (aList[isEnd - 1].iIndex & ctx->mSuffix)) {
+                    if (isEnd - 1 == isStart) {
+                        nOutBits += OutSingle(ctx, aList[isStart].iIndex);
                     }
                     isStart = isEnd;
-                    isEnd = isStart+1;
+                    isEnd = isStart + 1;
                 }
                 else {
                     ++isEnd;
@@ -450,51 +450,51 @@ int lcodeEncode(LCODE ctx,LIST *aList,uint32_t nList,char **ppOutput) {
     OutZero(ctx);
     ++nOutBits;
     /*
-        printf("nOutBits:%d\n",nOutBits);
+        printf("nOutBits:%d\n", nOutBits);
     */
-    nBytes = (ctx->uMask == 1)?ctx->uIndex:ctx->uIndex+1;
-    assert(nBytes*8 >= nOutBits);
+    nBytes = (ctx->uMask == 1)?ctx->uIndex:ctx->uIndex + 1;
+    assert(nBytes * 8 >= nOutBits);
     *ppOutput = malloc(nBytes);
     assert(*ppOutput != NULL);
     /*
     ** Now copy the code to the output, but only the number of bytes actually needed.
     */
-    for (i=0; i<nBytes; ++i) {
+    for (i = 0; i < nBytes; ++i) {
         (*ppOutput)[i] = ctx->aCode[i];
     }
     return (nBytes);
 }
 
 
-int lcodeDecode(LCODE ctx,char *pInput,LIST **ppList,int *pnMaxList,int *pnList) {
+int lcodeDecode(LCODE ctx, char *pInput, LIST **ppList, int *pnMaxList, int *pnList) {
     int nList = 0;
     int nBytes;
     uint32_t uPrefix;
-    uint32_t uStart,uEnd,u,uPid;
+    uint32_t uStart, uEnd, u, uPid;
 
     ctx->uIndex = 0;
     ctx->uMask = 1;
     ctx->inCode = pInput;
     while (InOne(ctx)) {
-        InPrefix(ctx,&uPrefix);
+        InPrefix(ctx, &uPrefix);
         while (InOne(ctx)) {
-            InRun(ctx,uPrefix,&uStart,&uEnd);
-            if (nList+(uEnd-uStart+1) > *pnMaxList) {
-                *pnMaxList = nList+(uEnd-uStart+1)+LIST_GROW;
-                *ppList = realloc(*ppList,(*pnMaxList)*sizeof(LIST));
+            InRun(ctx, uPrefix, &uStart, &uEnd);
+            if (nList+(uEnd - uStart + 1) > *pnMaxList) {
+                *pnMaxList = nList+(uEnd - uStart + 1)+LIST_GROW;
+                *ppList = realloc(*ppList, (*pnMaxList)*sizeof(LIST));
                 assert(*ppList != NULL);
             }
-            for (u=uStart; u<=uEnd; ++u) {
+            for (u = uStart; u <= uEnd; ++u) {
                 (*ppList)[nList].iIndex = u;
                 (*ppList)[nList].iPid = ctx->idSelf;
                 ++nList;
             }
         }
         while (!InOne(ctx)) {
-            InSingle(ctx,uPrefix,&u);
+            InSingle(ctx, uPrefix, &u);
             if (nList == *pnMaxList) {
-                *pnMaxList = nList+1+LIST_GROW;
-                *ppList = realloc(*ppList,(*pnMaxList)*sizeof(LIST));
+                *pnMaxList = nList + 1 + LIST_GROW;
+                *ppList = realloc(*ppList, (*pnMaxList)*sizeof(LIST));
                 assert(*ppList != NULL);
             }
             (*ppList)[nList].iIndex = u;
@@ -506,27 +506,27 @@ int lcodeDecode(LCODE ctx,char *pInput,LIST **ppList,int *pnMaxList,int *pnList)
         /*
         ** Non-local members.
         */
-        InPid(ctx,&uPid);
+        InPid(ctx, &uPid);
         do {
-            InPrefix(ctx,&uPrefix);
+            InPrefix(ctx, &uPrefix);
             while (InOne(ctx)) {
-                InRun(ctx,uPrefix,&uStart,&uEnd);
-                if (nList+(uEnd-uStart+1) > *pnMaxList) {
-                    *pnMaxList = nList+(uEnd-uStart+1)+LIST_GROW;
-                    *ppList = realloc(*ppList,(*pnMaxList)*sizeof(LIST));
+                InRun(ctx, uPrefix, &uStart, &uEnd);
+                if (nList+(uEnd - uStart + 1) > *pnMaxList) {
+                    *pnMaxList = nList+(uEnd - uStart + 1)+LIST_GROW;
+                    *ppList = realloc(*ppList, (*pnMaxList)*sizeof(LIST));
                     assert(*ppList != NULL);
                 }
-                for (u=uStart; u<=uEnd; ++u) {
+                for (u = uStart; u <= uEnd; ++u) {
                     (*ppList)[nList].iIndex = u;
                     (*ppList)[nList].iPid = uPid;
                     ++nList;
                 }
             }
             while (!InOne(ctx)) {
-                InSingle(ctx,uPrefix,&u);
+                InSingle(ctx, uPrefix, &u);
                 if (nList == *pnMaxList) {
-                    *pnMaxList = nList+1+LIST_GROW;
-                    *ppList = realloc(*ppList,(*pnMaxList)*sizeof(LIST));
+                    *pnMaxList = nList + 1 + LIST_GROW;
+                    *ppList = realloc(*ppList, (*pnMaxList)*sizeof(LIST));
                     assert(*ppList != NULL);
                 }
                 (*ppList)[nList].iIndex = u;
@@ -536,7 +536,7 @@ int lcodeDecode(LCODE ctx,char *pInput,LIST **ppList,int *pnMaxList,int *pnList)
         } while (InOne(ctx));
     }
     *pnList = nList;
-    nBytes = (ctx->uMask == 1)?ctx->uIndex:ctx->uIndex+1;
+    nBytes = (ctx->uMask == 1)?ctx->uIndex:ctx->uIndex + 1;
     return (nBytes);
 }
 
@@ -546,24 +546,24 @@ int lcodeDecode(LCODE ctx,char *pInput,LIST **ppList,int *pnMaxList,int *pnList)
 ** This function is supposed to directly remove elements from a list, but the bookkeepping is
 ** a bit of a pain, so will implement it completely later.
 */
-int bListRemoveLocal(LCODE ctx,uint32_t iIndex) {
+int bListRemoveLocal(LCODE ctx, uint32_t iIndex) {
     int nList = 0;
     uint32_t uPrefix;
-    uint32_t uStart,uEnd,u[2];
+    uint32_t uStart, uEnd, u[2];
     int nOutSingle;
 
     ctx->uIndex = 0;
     ctx->uMask = 1;
     while (InOne(ctx)) {
-        InPrefix(ctx,&uPrefix);
+        InPrefix(ctx, &uPrefix);
         while (InOne(ctx)) {
-            InRun(ctx,uPrefix,&uStart,&uEnd);
+            InRun(ctx, uPrefix, &uStart, &uEnd);
             if (iIndex >= uStart && iIndex <= uEnd) {
                 /*
                 ** Found in this run, start copy up to this point.
                 */
                 CurrentToCopy(ctx);
-                if (uEnd-uStart < 2) {
+                if (uEnd - uStart < 2) {
                     /*
                     ** Run disappears and one single is added under this
                     ** prefix. There were only 2 elements in the run.
@@ -580,7 +580,7 @@ int bListRemoveLocal(LCODE ctx,uint32_t iIndex) {
                     */
                     BackSkipSuffix(ctx);
                     BackSkipSuffix(ctx);
-                    OutSuffix(ctx,iIndex);
+                    OutSuffix(ctx, iIndex);
                     SkipSingle(ctx);
                     nOutSingle = 0;
                 }
@@ -589,10 +589,10 @@ int bListRemoveLocal(LCODE ctx,uint32_t iIndex) {
                     ** Run remains and end is modified.
                     */
                     BackSkipSuffix(ctx);
-                    OutSuffix(ctx,iIndex);
+                    OutSuffix(ctx, iIndex);
                     nOutSingle = 0;
                 }
-                else if (uEnd-uStart == 2) {
+                else if (uEnd - uStart == 2) {
                     /*
                     ** Run disappears and 2 singles, uStart and uEnd are
                     ** added under this prefix. We need to make 1-bit of
@@ -602,47 +602,47 @@ int bListRemoveLocal(LCODE ctx,uint32_t iIndex) {
                     u[1] = uEnd;
                     nOutSingle = 2;
                 }
-                else if (uStart == iIndex-1) {
+                else if (uStart == iIndex - 1) {
                     /*
                     ** Run remains with modified start, and a single (uStart)
-                    ** is added under this prefix. We need 1+ctx->nSuffix
+                    ** is added under this prefix. We need 1 + ctx->nSuffix
                     ** extra bits in this case.
                     */
                     BackSkipSuffix(ctx);
                     BackSkipSuffix(ctx);
-                    OutSuffix(ctx,iIndex+1);
+                    OutSuffix(ctx, iIndex + 1);
                     SkipSingle(ctx);
                     u[0] = uStart;
                     nOutSingle = 1;
                 }
-                else if (uEnd == iIndex+1) {
+                else if (uEnd == iIndex + 1) {
                     /*
                     ** Run remains with modified uEnd, and a single (uEnd)
-                    ** is added under this prefix. We need 1+ctx->nSuffix
+                    ** is added under this prefix. We need 1 + ctx->nSuffix
                     ** extra bits in this case.
                     */
                     BackSkipSuffix(ctx);
-                    OutSuffix(ctx,iIndex-1);
+                    OutSuffix(ctx, iIndex - 1);
                     u[0] = uEnd;
                     nOutSingle = 1;
                 }
                 else {
-                    assert(uEnd-uStart > 3);
+                    assert(uEnd - uStart > 3);
                     /*
-                    ** The run is end modified (iIndex-1) and a new run
-                    ** from (iIndex+1,uEnd) is added. We need 1+2*ctx->nSuffix
+                    ** The run is end modified (iIndex - 1) and a new run
+                    ** from (iIndex + 1, uEnd) is added. We need 1 + 2 * ctx->nSuffix
                     ** extra bits in this case.
                     */
                     BackSkipSuffix(ctx);
-                    OutSuffix(ctx,iIndex-1);
-                    InsertRun(ctx,iIndex+1,uEnd);
+                    OutSuffix(ctx, iIndex - 1);
+                    InsertRun(ctx, iIndex + 1, uEnd);
                     nOutSingle = 0;
                 }
                 return (1);
             }
         }
         while (!InOne(ctx)) {
-            InSingle(ctx,uPrefix,&u[0]);
+            InSingle(ctx, uPrefix, &u[0]);
             if (iIndex == u[0]) {
                 /*
                 ** Single is removed, but if this is the only single under
@@ -657,22 +657,22 @@ int bListRemoveLocal(LCODE ctx,uint32_t iIndex) {
 }
 #endif
 
-int bInList(LCODE ctx,char *pInput,uint32_t iIndex,uint32_t iPid) {
+int bInList(LCODE ctx, char *pInput, uint32_t iIndex, uint32_t iPid) {
     uint32_t uPrefix;
-    uint32_t uStart,uEnd,u,uPid;
+    uint32_t uStart, uEnd, u, uPid;
 
     ctx->uIndex = 0;
     ctx->uMask = 1;
     ctx->inCode = pInput;
     if (iPid == ctx->idSelf) {
         while (InOne(ctx)) {
-            InPrefix(ctx,&uPrefix);
+            InPrefix(ctx, &uPrefix);
             while (InOne(ctx)) {
-                InRun(ctx,uPrefix,&uStart,&uEnd);
+                InRun(ctx, uPrefix, &uStart, &uEnd);
                 if (iIndex >= uStart && iIndex <= uEnd) return (1);
             }
             while (!InOne(ctx)) {
-                InSingle(ctx,uPrefix,&u);
+                InSingle(ctx, uPrefix, &u);
                 if (iIndex == u) return (1);
             }
         }
@@ -693,16 +693,16 @@ int bInList(LCODE ctx,char *pInput,uint32_t iIndex,uint32_t iPid) {
         /*
         ** Non-local members.
         */
-        InPid(ctx,&uPid);
+        InPid(ctx, &uPid);
         if (uPid == iPid) {
             do {
-                InPrefix(ctx,&uPrefix);
+                InPrefix(ctx, &uPrefix);
                 while (InOne(ctx)) {
-                    InRun(ctx,uPrefix,&uStart,&uEnd);
+                    InRun(ctx, uPrefix, &uStart, &uEnd);
                     if (iIndex >= uStart && iIndex <= uEnd) return (1);
                 }
                 while (!InOne(ctx)) {
-                    InSingle(ctx,uPrefix,&u);
+                    InSingle(ctx, uPrefix, &u);
                     if (iIndex == u) return (1);
                 }
             } while (InOne(ctx));
@@ -728,47 +728,47 @@ int main(void) {
     LCODE ctx;
     LIST aList[1000];
     LIST *bList;
-    int nbListMax=0;
-    int nList=0;
+    int nbListMax = 0;
+    int nList = 0;
     uint32_t nLocal;
-    uint32_t nSmooth=32;
+    uint32_t nSmooth = 32;
     uint32_t iPid;
-    int i,nOutBytes,nInBytes;
+    int i, nOutBytes, nInBytes;
     char *code;
 
-    while (scanf("id:%d",&iPid) == 1) {
-        while (scanf("%d",&aList[nList].iIndex) == 1) {
+    while (scanf("id:%d", &iPid) == 1) {
+        while (scanf("%d", &aList[nList].iIndex) == 1) {
             aList[nList].iPid = iPid;
             ++nList;
         }
     }
-    qsort(aList,nList,sizeof(LIST),lcodeCmpList);
+    qsort(aList, nList, sizeof(LIST), lcodeCmpList);
 
-    lcodePrintList(aList,nList);
+    lcodePrintList(aList, nList);
 
     /*
-        nLocal = 10*aList[nList-1].iIndex;
+        nLocal = 10 * aList[nList - 1].iIndex;
     */
     nLocal = (1<<10);
-    ctx = lcodeInit(8,4,nLocal,nSmooth);
-    nOutBytes = lcodeEncode(ctx,aList,nList,&code);
-    printf("\nnOutBytes = %d = %f bytes/element = %5.2f%%\n",
-           nOutBytes,1.0*nOutBytes/nList,100.0*nOutBytes/4/nList);
+    ctx = lcodeInit(8, 4, nLocal, nSmooth);
+    nOutBytes = lcodeEncode(ctx, aList, nList, &code);
+    printf("\nnOutBytes = %d = %f bytes/element/= %5.2f%%\n",
+           nOutBytes, 1.0 * nOutBytes / nList, 100.0 * nOutBytes / 4 / nList);
 
     /*
     ** Start of decoding.
     */
-    nInBytes = lcodeDecode(ctx,code,&bList,&nbListMax,&nList);
+    nInBytes = lcodeDecode(ctx, code, &bList, &nbListMax, &nList);
     assert(nInBytes == nOutBytes);
 
-    lcodePrintList(bList,nList);
+    lcodePrintList(bList, nList);
 
-    for (i=0; i<nList; ++i) {
-        if (bInList(ctx,code,aList[i].iIndex,aList[i].iPid)) {
-            printf("%d:%d found\n",aList[i].iPid,aList[i].iIndex);
+    for (i = 0; i < nList; ++i) {
+        if (bInList(ctx, code, aList[i].iIndex, aList[i].iPid)) {
+            printf("%d:%d found\n", aList[i].iPid, aList[i].iIndex);
         }
         else {
-            printf("%d:%d NOT FOUND\n",aList[i].iPid,aList[i].iIndex);
+            printf("%d:%d NOT FOUND\n", aList[i].iPid, aList[i].iIndex);
         }
     }
 }

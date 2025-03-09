@@ -99,7 +99,7 @@ void get_cooling_redshifts(struct cooling_function_data *cooling) {
             }
         }
 
-        /* Verify that the file was self-consistent */
+        /* Verify that the file was self - consistent */
         if (count != N_Redshifts) {
             printf(
                 "Redshift file (%s) does not contain the correct number of redshifts "
@@ -311,7 +311,7 @@ void allocate_cooling_tables(struct cooling_function_data *restrict cooling) {
 //                     eagle_cooling_N_loaded_redshifts *
 //                         num_elements_metal_heating * sizeof(float)) != 0)
 //    error("Failed to allocate metal_heating array");
-//  cooling->table.metal_heating = (void **) malloc(eagle_cooling_N_loaded_redshifts * num_elements_metal_heating*sizeof(float));
+//  cooling->table.metal_heating = (void **) malloc(eagle_cooling_N_loaded_redshifts * num_elements_metal_heating * sizeof(float));
 
     if (swift_memalign("cooling-tables",
                        (void **)&cooling->table.electron_abundance,
@@ -486,7 +486,7 @@ void get_redshift_invariant_table(
         }
     }
 
-    /* read in cooling rates due to H + He */
+    /* read in cooling rates due to H+He */
     strcpy(set_name, "/Metal_free/Net_Cooling");
     hid_t dataset = H5Dopen(file_id, set_name, H5P_DEFAULT);
     herr_t status = H5Dread(dataset, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL,
@@ -504,7 +504,7 @@ void get_redshift_invariant_table(
     status = H5Dclose(dataset);
     if (status < 0) printf("error closing cooling dataset");
 
-    /* read in H + He electron abundances */
+    /* read in H+He electron abundances */
     strcpy(set_name, "/Metal_free/Electron_density_over_n_h");
     dataset = H5Dopen(file_id, set_name, H5P_DEFAULT);
     status = H5Dread(dataset, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT,
@@ -713,7 +713,7 @@ void get_cooling_table(struct cooling_function_data *restrict cooling,
             }
         }
 
-        /* read in cooling rates due to H + He */
+        /* read in cooling rates due to H+He */
         strcpy(set_name, "/Metal_free/Net_Cooling");
         hid_t dataset = H5Dopen(file_id, set_name, H5P_DEFAULT);
         herr_t status = H5Dread(dataset, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL,
@@ -731,7 +731,7 @@ void get_cooling_table(struct cooling_function_data *restrict cooling,
         status = H5Dclose(dataset);
         if (status < 0) printf("error closing cooling dataset");
 
-        /* Read in H + He electron abundance */
+        /* Read in H+He electron abundance */
         strcpy(set_name, "/Metal_free/Electron_density_over_n_h");
         dataset = H5Dopen(file_id, set_name, H5P_DEFAULT);
         status = H5Dread(dataset, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT,

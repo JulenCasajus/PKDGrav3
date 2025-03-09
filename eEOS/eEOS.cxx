@@ -2,7 +2,7 @@
 
 #if defined(EEOS_POLYTROPE) || defined(EEOS_JEANS)
 
-eEOSparam::eEOSparam(class pkd_parameters &parameters,struct CALC &calc) {
+eEOSparam::eEOSparam(class pkd_parameters &parameters, struct CALC &calc) {
 #ifdef EEOS_POLYTROPE
     dPolyFloorMinOD = calc.dEOSPolyFloorMinBaryonOD;
     dPolyFloorExponent = calc.dEOSPolyFloorExponent;
@@ -39,12 +39,12 @@ void MSR::SetEOSParam() {
 
 int MSR::ValidateEOSParam() {
     if (!parameters.has_dOmegab() && parameters.has_dEOSFloorMinOD()) {
-        fprintf(stderr,"ERROR: dEOSFloorMinOD is specified but dOmegab is not set\n");
+        fprintf(stderr, "ERROR: dEOSFloorMinOD is specified but dOmegab is not set\n");
         return 0;
     }
 #ifdef EEOS_POLYTROPE
     if (!parameters.has_dOmegab() && parameters.has_dEOSPolyFloorMinOD()) {
-        fprintf(stderr,"ERROR: dEOSPolyFloorMinOD is specified but dOmegab is not set\n");
+        fprintf(stderr, "ERROR: dEOSPolyFloorMinOD is specified but dOmegab is not set\n");
         return 0;
     }
 #endif

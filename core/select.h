@@ -20,9 +20,9 @@ class ServiceCountSelected : public TraverseCount<uint64_t> {
 public:
     typedef void input;
     explicit ServiceCountSelected(PST pst)
-        : TraverseCount(pst,PST_COUNTSELECTED,"CountSelected") {}
+        : TraverseCount(pst, PST_COUNTSELECTED, "CountSelected") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelActives : public TraverseCount<uint64_t> {
@@ -31,13 +31,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(int setIfTrue=true,int clearIfFalse=true)
+        input(int setIfTrue = true, int clearIfFalse = true)
             : setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelActives(PST pst)
-        : TraverseCount(pst,PST_SELACTIVES,sizeof(input),"SelectActives") {}
+        : TraverseCount(pst, PST_SELACTIVES, sizeof(input), "SelectActives") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 class ServiceSelBlackholes : public TraverseCount<uint64_t> {
 public:
@@ -45,13 +45,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(int setIfTrue=true,int clearIfFalse=true)
+        input(int setIfTrue = true, int clearIfFalse = true)
             : setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelBlackholes(PST pst)
-        : TraverseCount(pst,PST_SELBLACKHOLES,sizeof(input),"SelectBlackholes") {}
+        : TraverseCount(pst, PST_SELBLACKHOLES, sizeof(input), "SelectBlackholes") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelSpecies : public TraverseCount<uint64_t> {
@@ -61,13 +61,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(uint64_t mSpecies,int setIfTrue=true,int clearIfFalse=true)
+        input(uint64_t mSpecies, int setIfTrue = true, int clearIfFalse = true)
             : mSpecies(mSpecies), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelSpecies(PST pst)
-        : TraverseCount(pst,PST_SELSPECIES,sizeof(input),"SelSpecies") {}
+        : TraverseCount(pst, PST_SELSPECIES, sizeof(input), "SelSpecies") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelGroup : public TraverseCount<uint64_t> {
@@ -77,13 +77,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(uint64_t iGroup,int setIfTrue=true,int clearIfFalse=true)
+        input(uint64_t iGroup, int setIfTrue = true, int clearIfFalse = true)
             : iGroup(iGroup), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelGroup(PST pst)
-        : TraverseCount(pst,PST_SELGROUP,sizeof(input),"SelGroup") {}
+        : TraverseCount(pst, PST_SELGROUP, sizeof(input), "SelGroup") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelMass : public TraverseCount<uint64_t> {
@@ -94,13 +94,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(double dMinMass,double dMaxMass,int setIfTrue=true,int clearIfFalse=true)
+        input(double dMinMass, double dMaxMass, int setIfTrue = true, int clearIfFalse = true)
             : dMinMass(dMinMass), dMaxMass(dMaxMass), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelMass(PST pst)
-        : TraverseCount(pst,PST_SELMASS,sizeof(input),"SelMass") {}
+        : TraverseCount(pst, PST_SELMASS, sizeof(input), "SelMass") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelPhaseDensity : public TraverseCount<uint64_t> {
@@ -111,13 +111,13 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(double dMinDensity,double dMaxDensity,int setIfTrue=true,int clearIfFalse=true)
+        input(double dMinDensity, double dMaxDensity, int setIfTrue = true, int clearIfFalse = true)
             : dMinDensity(dMinDensity), dMaxDensity(dMaxDensity), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelPhaseDensity(PST pst)
-        : TraverseCount(pst,PST_SELPHASEDENSITY,sizeof(input),"SelPhaseDensity") {}
+        : TraverseCount(pst, PST_SELPHASEDENSITY, sizeof(input), "SelPhaseDensity") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelById : public TraverseCount<uint64_t> {
@@ -128,78 +128,78 @@ public:
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(uint64_t idStart, uint64_t idEnd,int setIfTrue=true,int clearIfFalse=true)
+        input(uint64_t idStart, uint64_t idEnd, int setIfTrue = true, int clearIfFalse = true)
             : idStart(idStart), idEnd(idEnd), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelById(PST pst)
-        : TraverseCount(pst,PST_SELBYID,sizeof(input),"SelById") {}
+        : TraverseCount(pst, PST_SELBYID, sizeof(input), "SelById") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelBox : public TraverseCount<uint64_t> {
 public:
     struct input {
-        blitz::TinyVector<double,3> dCenter;
-        blitz::TinyVector<double,3> dSize;
+        blitz::TinyVector<double, 3> dCenter;
+        blitz::TinyVector<double, 3> dSize;
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(blitz::TinyVector<double,3> center,blitz::TinyVector<double,3> size,int setIfTrue=true,int clearIfFalse=true)
+        input(blitz::TinyVector<double, 3> center, blitz::TinyVector<double, 3> size, int setIfTrue = true, int clearIfFalse = true)
             : dCenter{center}, dSize{size}, setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(const double *dCenter,const double *dSize,int setIfTrue=true,int clearIfFalse=true)
-            : dCenter{dCenter[0],dCenter[1],dCenter[2]}, dSize{dSize[0],dSize[1],dSize[2]},
+        input(const double *dCenter, const double *dSize, int setIfTrue = true, int clearIfFalse = true)
+            : dCenter{dCenter[0], dCenter[1], dCenter[2]}, dSize{dSize[0], dSize[1], dSize[2]},
               setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(double p0, double p1,double p2,double s0,double s1,double s2,int setIfTrue=true,int clearIfFalse=true)
-            : dCenter{p0,p1,p2}, dSize{s0,s1,s2}, setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
+        input(double p0, double p1, double p2, double s0, double s1, double s2, int setIfTrue = true, int clearIfFalse = true)
+            : dCenter{p0, p1, p2}, dSize{s0, s1, s2}, setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelBox(PST pst)
-        : TraverseCount(pst,PST_SELBOX,sizeof(input),"SelBox") {}
+        : TraverseCount(pst, PST_SELBOX, sizeof(input), "SelBox") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelSphere : public TraverseCount<uint64_t> {
 public:
     struct input {
-        blitz::TinyVector<double,3> r;
+        blitz::TinyVector<double, 3> r;
         double dRadius;
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(blitz::TinyVector<double,3> r,double dRadius,int setIfTrue=true,int clearIfFalse=true)
+        input(blitz::TinyVector<double, 3> r, double dRadius, int setIfTrue = true, int clearIfFalse = true)
             : r{r}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(const double *r,double dRadius,int setIfTrue=true,int clearIfFalse=true)
-            : r{r[0],r[1],r[2]}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(double r0, double r1,double r2,double dRadius,int setIfTrue=true,int clearIfFalse=true)
-            : r{r0,r1,r2}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
+        input(const double *r, double dRadius, int setIfTrue = true, int clearIfFalse = true)
+            : r{r[0], r[1], r[2]}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
+        input(double r0, double r1, double r2, double dRadius, int setIfTrue = true, int clearIfFalse = true)
+            : r{r0, r1, r2}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelSphere(PST pst)
-        : TraverseCount(pst,PST_SELSPHERE,sizeof(input),"SelSphere") {}
+        : TraverseCount(pst, PST_SELSPHERE, sizeof(input), "SelSphere") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };
 
 class ServiceSelCylinder : public TraverseCount<uint64_t> {
 public:
     struct input {
-        blitz::TinyVector<double,3> dP1, dP2;
+        blitz::TinyVector<double, 3> dP1, dP2;
         double dRadius;
         int setIfTrue;
         int clearIfFalse;
         input() = default;
-        input(blitz::TinyVector<double,3> dP1,blitz::TinyVector<double,3> dP2,double dRadius,int setIfTrue=true,int clearIfFalse=true)
+        input(blitz::TinyVector<double, 3> dP1, blitz::TinyVector<double, 3> dP2, double dRadius, int setIfTrue = true, int clearIfFalse = true)
             : dP1{dP1}, dP2{dP2}, dRadius(dRadius),
               setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(const double *dP1,const double *dP2,double dRadius,int setIfTrue=true,int clearIfFalse=true)
-            : dP1{dP1[0],dP1[1],dP1[2]}, dP2{dP2[0],dP2[1],dP2[2]}, dRadius(dRadius),
+        input(const double *dP1, const double *dP2, double dRadius, int setIfTrue = true, int clearIfFalse = true)
+            : dP1{dP1[0], dP1[1], dP1[2]}, dP2{dP2[0], dP2[1], dP2[2]}, dRadius(dRadius),
               setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
-        input(double ra0, double ra1,double ra2,double rb0,double rb1,double rb2,double dRadius,
-              int setIfTrue=true,int clearIfFalse=true)
-            : dP1{ra0,ra1,ra2}, dP2{rb0,rb1,rb2}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
+        input(double ra0, double ra1, double ra2, double rb0, double rb1, double rb2, double dRadius,
+              int setIfTrue = true, int clearIfFalse = true)
+            : dP1{ra0, ra1, ra2}, dP2{rb0, rb1, rb2}, dRadius(dRadius), setIfTrue(setIfTrue), clearIfFalse(clearIfFalse) {}
     };
     explicit ServiceSelCylinder(PST pst)
-        : TraverseCount(pst,PST_SELCYLINDER,sizeof(input),"SelCylinder") {}
+        : TraverseCount(pst, PST_SELCYLINDER, sizeof(input), "SelCylinder") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) override;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) override;
 };

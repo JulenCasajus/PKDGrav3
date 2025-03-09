@@ -78,7 +78,7 @@ public:
     class Field : public BasicField {
         int n;
     public:
-        Field(int n=1) : BasicField(sizeof(T)*n) {}
+        Field(int n = 1) : BasicField(sizeof(T)*n) {}
     };
 public:
     ServiceBuffer() = delete;
@@ -103,9 +103,9 @@ public:
         for (auto &i : t) offsets.push_back(offsets.back() + i.size());
         buffer = std::make_unique<char[]>(offsets.back());
     }
-    void *data(int i=0) {return static_cast<void *>(buffer.get() + offsets[i]);}
+    void *data(int i = 0) {return static_cast<void *>(buffer.get() + offsets[i]);}
     auto size() {return offsets.back();}
-    auto size(int i) {return offsets[i+1]-offsets[i];}
+    auto size(int i) {return offsets[i + 1]-offsets[i];}
 };
 
 class ServiceBufferOut : public ServiceBuffer {
@@ -122,11 +122,11 @@ private:
     std::string service_name;
 public:
     explicit BasicService(int service_id, int nInBytes, int nOutBytes, const char *service_name="")
-        : nInBytes(nInBytes), nOutBytes(nOutBytes), service_id(service_id),service_name(service_name) {}
+        : nInBytes(nInBytes), nOutBytes(nOutBytes), service_id(service_id), service_name(service_name) {}
     explicit BasicService(int service_id, int nInBytes, const char *service_name="")
-        : nInBytes(nInBytes), nOutBytes(0), service_id(service_id),service_name(service_name) {}
+        : nInBytes(nInBytes), nOutBytes(0), service_id(service_id), service_name(service_name) {}
     explicit BasicService(int service_id, const char *service_name="")
-        : nInBytes(0), nOutBytes(0), service_id(service_id),service_name(service_name) {}
+        : nInBytes(0), nOutBytes(0), service_id(service_id), service_name(service_name) {}
     virtual ~BasicService() = default;
     int getServiceID()  {return service_id;}
     int getMaxBytesIn() {return nInBytes;}
@@ -157,7 +157,7 @@ public:
     std::vector< std::unique_ptr<BasicService>> services;
 
     /* Maps a give process (Proc) to the first global thread ID */
-    std::vector<int> iProcToThread; /* [0,nProcs] (note inclusive extra element) */
+    std::vector<int> iProcToThread; /* [0, nProcs] (note inclusive extra element) */
 
     char nodeName[MAX_NODE_NAME_LENGTH];
 
@@ -189,7 +189,7 @@ public:
     void mdl_printf(const char *format, ...);
 
 public:
-    explicit mdlBASE(int argc,char **argv);
+    explicit mdlBASE(int argc, char **argv);
     virtual ~mdlBASE();
     int32_t Threads() const { return layout.nThreads; }
     int32_t Self()    const { return layout.idSelf; }
@@ -202,13 +202,13 @@ public:
     void yield();
     void AddService(int sid, void *p1, fcnService_t *fcnService, int nInBytes, int nOutBytes, const char *name="");
     void AddService(std::unique_ptr<BasicService> &&service);
-    int  RunService(int sid, int nIn, void *pIn, void *pOut=nullptr);
-    int  RunService(int sid, ServiceBuffer &b, void *pOut=nullptr) { return RunService(sid,b.size(),b.data(),pOut);}
-    int  RunService(int sid, int nIn, void *pIn, ServiceBufferOut &out) { return RunService(sid,nIn,pIn,out.data());}
-    int  RunService(int sid, ServiceBuffer &b, ServiceBufferOut &out) { return RunService(sid,b.size(),b.data(),out.data());}
-    int  RunService(int sid, ServiceBufferOut &out) { return RunService(sid,0,nullptr,out.data());}
-    int  RunService(int sid, void *pOut=nullptr) { return RunService(sid,0,nullptr,pOut); }
-    BasicService *GetService(unsigned sid) {return sid<services.size() ? services[sid].get() : nullptr; }
+    int  RunService(int sid, int nIn, void *pIn, void *pOut = nullptr);
+    int  RunService(int sid, ServiceBuffer &b, void *pOut = nullptr) { return RunService(sid, b.size(), b.data(), pOut);}
+    int  RunService(int sid, int nIn, void *pIn, ServiceBufferOut &out) { return RunService(sid, nIn, pIn, out.data());}
+    int  RunService(int sid, ServiceBuffer &b, ServiceBufferOut &out) { return RunService(sid, b.size(), b.data(), out.data());}
+    int  RunService(int sid, ServiceBufferOut &out) { return RunService(sid, 0, nullptr, out.data());}
+    int  RunService(int sid, void *pOut = nullptr) { return RunService(sid, 0, nullptr, pOut); }
+    BasicService *GetService(unsigned sid) {return sid < services.size() ? services[sid].get() : nullptr; }
 };
 int mdlBaseProcToThread(mdlBASE *base, int iProc);
 int mdlBaseThreadToProc(mdlBASE *base, int iThread);
@@ -233,17 +233,17 @@ char **mdlGetArgv(void *mdl);
 void mdlDiag(void *mdl, const char *psz);
 #ifdef MDLASSERT
 #ifndef __STRING
-#define __STRING( arg )   (("arg"))
+#define __STRING(arg)   (("arg"))
 #endif
-#define mdlassert(mdl,expr) \
+#define mdlassert(mdl, expr) \
     { \
     if (!(expr)) { \
     mdlprintf( mdl, "%s:%d Assertion `%s' failed.\n", __FILE__, __LINE__, __STRING(expr) ); \
-    assert( expr ); \
+    assert(expr); \
         } \
     }
 #else
-#define mdlassert(mdl,expr)  assert(expr)
+#define mdlassert(mdl, expr)  assert(expr)
 #endif
 
 double mdlCpuTimer(void *mdl);

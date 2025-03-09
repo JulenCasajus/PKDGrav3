@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -32,7 +32,7 @@
 #define BZ_DOMAIN_H
 
 #include <blitz/blitz.h>
-#include <blitz/et-forward.h>
+#include <blitz/et/-forward.h>
 #include <blitz/range.h>
 
 /*
@@ -45,14 +45,14 @@ BZ_NAMESPACE(blitz)
 template<int N_rank>
 class RectDomain {
 
-    typedef TinyVector<int,N_rank> Bounds;
+    typedef TinyVector<int, N_rank> Bounds;
 
 public:
 
     RectDomain() { }
-    RectDomain(const Bounds& lbound,const Bounds& ubound): lbound_(lbound),ubound_(ubound) { }
-    RectDomain(const TinyVector<Range,N_rank>& bndrange): lbound_(),ubound_() {
-        for (int i=0;i<N_rank;++i) {
+    RectDomain(const Bounds& lbound, const Bounds& ubound): lbound_(lbound), ubound_(ubound) { }
+    RectDomain(const TinyVector<Range, N_rank>& bndrange): lbound_(), ubound_() {
+        for (int i = 0;i < N_rank;++i) {
             lbound_(i) = bndrange(i).first();
             ubound_(i) = bndrange(i).last();
         }
@@ -79,7 +79,7 @@ public:
         ubound_ -= amount;
     }
 
-    void shrink(const int dim,const int amount) {
+    void shrink(const int dim, const int amount) {
         lbound_(dim) += amount;
         ubound_(dim) -= amount;
     }
@@ -89,7 +89,7 @@ public:
         ubound_ += amount;
     }
 
-    void expand(const int dim,const int amount) {
+    void expand(const int dim, const int amount) {
         lbound_(dim) -= amount;
         ubound_(dim) += amount;
     }
@@ -107,13 +107,13 @@ private:
 template<int N_rank>
 class StridedDomain {
 
-    typedef TinyVector<int,N_rank> Bounds;
-    typedef TinyVector<diffType,N_rank> Strides;
+    typedef TinyVector<int, N_rank> Bounds;
+    typedef TinyVector<diffType, N_rank> Strides;
 
 public:
 
-    StridedDomain(const Bounds& lbound,const Bounds& ubound,const Strides& stride):
-        lbound_(lbound),ubound_(ubound),stride_(stride) { }
+    StridedDomain(const Bounds& lbound, const Bounds& ubound, const Strides& stride):
+        lbound_(lbound), ubound_(ubound), stride_(stride) { }
 
     // NEEDS_WORK: better constructors
     // StridedDomain(Range, Range, ...)
@@ -127,26 +127,26 @@ public:
     int ubound(const int i) const { return ubound_(i); }
   diffType stride(const int i) const { return stride_(i); }
 
-    Range operator[](const int rank) const { return Range(lbound_(rank),ubound_(rank),stride_(rank)); }
+    Range operator[](const int rank) const { return Range(lbound_(rank), ubound_(rank), stride_(rank)); }
 
     void shrink(const int amount) {
-        lbound_ += amount*stride_;
-        ubound_ -= amount*stride_;
+        lbound_ += amount * stride_;
+        ubound_ -= amount * stride_;
     }
 
-    void shrink(const int dim,const int amount) {
-        lbound_(dim) += amount*stride_(dim);
-        ubound_(dim) -= amount*stride_(dim);
+    void shrink(const int dim, const int amount) {
+        lbound_(dim) += amount * stride_(dim);
+        ubound_(dim) -= amount * stride_(dim);
     }
 
     void expand(const int amount) {
-        lbound_ -= amount*stride_;
-        ubound_ += amount*stride_;
+        lbound_ -= amount * stride_;
+        ubound_ += amount * stride_;
     }
 
-    void expand(const int dim,const int amount) {
-        lbound_(dim) -= amount*stride_(dim);
-        ubound_(dim) += amount*stride_(dim);
+    void expand(const int dim, const int amount) {
+        lbound_(dim) -= amount * stride_(dim);
+        ubound_(dim) += amount * stride_(dim);
     }
 
 private:
@@ -159,11 +159,11 @@ private:
 
 template<int N_rank>
 inline RectDomain<N_rank>
-strip(const TinyVector<int,N_rank>& startPosition,const int stripDimension,const int ubound) {
+strip(const TinyVector<int, N_rank>& startPosition, const int stripDimension, const int ubound) {
     BZPRECONDITION((stripDimension >= 0) && (stripDimension < N_rank));
     BZPRECONDITION(ubound >= startPosition(stripDimension));
 
-    TinyVector<int,N_rank> endPosition = startPosition;
+    TinyVector<int, N_rank> endPosition = startPosition;
     endPosition(stripDimension) = ubound;
     return RectDomain<N_rank>(startPosition, endPosition);
 }

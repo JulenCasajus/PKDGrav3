@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -53,13 +53,13 @@ BZ_NAMESPACE(blitz)
 class Timer {
 
 public:
-    Timer() 
-    { 
+    Timer()
+    {
         state_ = uninitialized;
     }
 
     void start()
-    { 
+    {
         state_ = running;
         t1_ = systemTime();
     }
@@ -70,7 +70,7 @@ public:
         BZPRECONDITION(state_ == running);
         state_ = stopped;
     }
-    
+
 /* Compaq cxx compiler in ansi mode cannot print out long double type! */
 #if defined(__DECCXX)
     double elapsed() const
@@ -96,13 +96,13 @@ private:
     {
 #ifdef BZ_HAVE_RUSAGE
         getrusage(RUSAGE_SELF, &resourceUsage_);
-        long int sec = resourceUsage_.ru_utime.tv_sec 
+        long int sec = resourceUsage_.ru_utime.tv_sec
             + resourceUsage_.ru_stime.tv_sec;
-        long int usec  = resourceUsage_.ru_utime.tv_usec 
+        long int usec  = resourceUsage_.ru_utime.tv_usec
             + resourceUsage_.ru_stime.tv_usec;
-        return sec*1000000+usec;
+        return sec * 1000000 + usec;
 #else
-        return 1000000*clock() / (long int) CLOCKS_PER_SEC;
+        return 1000000 * clock() / (long int) CLOCKS_PER_SEC;
 #endif
     }
 
@@ -126,21 +126,21 @@ private:
 class Timer {
 
 public:
-    Timer() 
-    { 
+    Timer()
+    {
       // maybe overhead is less from just reading counters
-      if(PAPI_start_counters((int*)Events, nevents)!=PAPI_OK) {
+      if (PAPI_start_counters((int*)Events, nevents)!=PAPI_OK) {
 	cerr << "Error starting counters\n";
       }
       state_ = uninitialized;
     }
-  ~Timer() 
-    { 
+  ~Timer()
+    {
       PAPI_stop_counters(counters_.data(), nevents);
     }
 
     void start()
-    { 
+    {
         state_ = running;
 	// this resets the counters
         PAPI_read_counters(counters_.data(), nevents);
@@ -154,7 +154,7 @@ public:
     }
 
   /** since we don't know the clock frequency of the processor, we
-      instead output "flops/clock cycle" which seems like a better
+      instead output "flops/clock/cycle" which seems like a better
       measure of code performance and not machine performance. */
     long long elapsed() const
     {
@@ -173,7 +173,7 @@ private:
 
     enum { uninitialized, running, stopped } state_;
 
-  static const int nevents=3;
+  static const int nevents = 3;
   static const int Events[nevents];
   static const string ivar_;
 

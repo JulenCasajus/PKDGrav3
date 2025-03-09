@@ -45,8 +45,8 @@ class pyrameters {
     struct is_blitz_tinyvector<blitz::TinyVector<U, N>> : std::true_type {};
 
 protected:
-    PyObject *arguments_=nullptr, *specified_=nullptr;
-    PyObject *dynamic_=nullptr;
+    PyObject *arguments_ = nullptr, *specified_ = nullptr;
+    PyObject *dynamic_ = nullptr;
 
 public:
     auto arguments() {Py_INCREF(arguments_); return arguments_; }
@@ -78,14 +78,14 @@ protected:
                 }
                 return result;
             }
-            else return T(get<typename T::T_numtype>(name,v));
+            else return T(get<typename T::T_numtype>(name, v));
         }
         else if constexpr (std::is_same<T, std::string_view>::value) {
             if (PyUnicode_Check(v)) {
                 Py_ssize_t length;
-                auto c_string = PyUnicode_AsUTF8AndSize(v,&length);         // convert to a UTF8 string
+                auto c_string = PyUnicode_AsUTF8AndSize(v, &length);         // convert to a UTF8 string
                 if (c_string == nullptr) throw std::domain_error(name);     // must be a string
-                return std::string_view(c_string,length);                   // return as a string_view
+                return std::string_view(c_string, length);                   // return as a string_view
             }
             else if (v == Py_None) return std::string_view("");
             else throw std::domain_error(name);
@@ -153,16 +153,16 @@ protected:
         else if constexpr (is_blitz_tinyvector<T>::value) {
             auto py_object = PyList_New(value.length());
             for (int i = 0; i < value.length(); ++i) {
-                auto item = get_value(name,value[i]);
-                PyList_SetItem(py_object,i,item);
+                auto item = get_value(name, value[i]);
+                PyList_SetItem(py_object, i, item);
             }
             return py_object;
         }
         else if constexpr (is_std_vector<T>::value) {
             auto py_object = PyList_New(value.size());
             for (int i = 0; i < value.size(); ++i) {
-                auto item = get_value(name,value[i]);
-                PyList_SetItem(py_object,i,item);
+                auto item = get_value(name, value[i]);
+                PyList_SetItem(py_object, i, item);
             }
             return py_object;
         }
@@ -174,8 +174,8 @@ protected:
 public:
     template<typename T>
     void set(const char *name, const T &value) {
-        auto py_object = get_value(name,value);
-        PyObject_SetAttrString(arguments_,name,py_object);
+        auto py_object = get_value(name, value);
+        PyObject_SetAttrString(arguments_, name, py_object);
         Py_DECREF(py_object);
     }
 
@@ -257,7 +257,7 @@ public:
     /// @return true if there are no rogue variables, false otherwise
     bool verify(PyObject *kwobj);
 
-    bool update(PyObject *kwobj,bool bIgnoreUnknown=false);
+    bool update(PyObject *kwobj, bool bIgnoreUnknown = false);
 
 public:
     template<typename T> void set_dynamic(const char *name, T value);

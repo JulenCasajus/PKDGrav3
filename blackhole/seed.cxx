@@ -10,12 +10,12 @@ void MSR::PlaceBHSeed(double dTime, uint8_t uRungMax) {
     out.nBHs = 0;
     in.dTime = dTime;
     in.uRungMax = uRungMax;
-    in.dScaleFactor = csmTime2Exp(csm,dTime);
+    in.dScaleFactor = csmTime2Exp(csm, dTime);
     in.dBHMhaloMin = parameters.get_dBHMhaloMin();
     in.dTau = parameters.get_dTau();
     in.dBHSeedMass = parameters.get_dBHSeedMass();
 #ifdef STAR_FORMATION
-    in.dDenMin = calc.dSFThresholdDen*pow(in.dScaleFactor,3);
+    in.dDenMin = calc.dSFThresholdDen * pow(in.dScaleFactor, 3);
 #else
     in.dDenMin = 0.0;
 #endif
@@ -36,39 +36,39 @@ int pkdPlaceBHSeed(PKD pkd, double dTime, double dScaleFactor,
                    double dTau, double dBHSeedMass) {
     int newBHs = 0;
     SMX smx;
-    smInitialize(&smx,pkd,NULL,32,1,0,SMX_NULL);
+    smInitialize(&smx, pkd, NULL, 32, 1, 0, SMX_NULL);
     // Look for any FoF group that do not contain any BH particle in it
-    for (int gid=1; gid<=pkd->nLocalGroups; ++gid) {
+    for (int gid = 1; gid <= pkd->nLocalGroups; ++gid) {
 
         smx->nnListSize = 0;
-        if (pkd->veryTinyGroupTable[gid].nBH==0 &&
+        if (pkd->veryTinyGroupTable[gid].nBH == 0 &&
                 pkd->veryTinyGroupTable[gid].fMass > dBHMhaloMin) {
 
             // To adaptively search around rPot but avoiding very long interactions lists
             // the search radius is increased in steps until enough gas particles are found
-            float dTauSearch = dTau*0.02;
+            float dTauSearch = dTau * 0.02;
             while (!(smx->nnListSize > 100 || dTauSearch >= dTau)) {
                 smx->nnListSize = 0;
-                smGather(smx,dTauSearch*dTauSearch,pkd->veryTinyGroupTable[gid].rPot);
+                smGather(smx, dTauSearch * dTauSearch, pkd->veryTinyGroupTable[gid].rPot);
                 dTauSearch *= 2.0;
             }
 
             // Find the first local particle
-            auto ii = std::find_if(smx->nnList,smx->nnList+smx->nnListSize,
-            [pkd](const auto &nn) {return nn.iPid==pkd->Self();});
+            auto ii = std::find_if (smx->nnList, smx->nnList + smx->nnListSize,
+            [pkd](const auto &nn) {return nn.iPid == pkd->Self();});
             // IA: I do not like this *at all*
             //  But maybe we are reading completely remote fof group??? TODO Check
-            if (ii == smx->nnList+smx->nnListSize) continue;
+            if (ii == smx->nnList + smx->nnListSize) continue;
 
             // Now find the one with the minimum potential
-            ii = std::min_element(ii,smx->nnList+smx->nnListSize,
-            [pkd](const auto &a,const auto &b) {
+            ii = std::min_element(ii, smx->nnList + smx->nnListSize,
+            [pkd](const auto &a, const auto &b) {
                 if (a.iPid != pkd->Self()) return false; // keep smallest
                 auto p = pkd->particles[a.pPart];
                 auto q = pkd->particles[b.pPart];
                 return p.potential() < q.potential();
             });
-            assert(ii < smx->nnList+smx->nnListSize);
+            assert(ii < smx->nnList + smx->nnListSize);
             assert(ii->iPid == pkd->Self());
             auto pLowPot = pkd->particles[ii->pPart];
 
@@ -88,7 +88,7 @@ int pkdPlaceBHSeed(PKD pkd, double dTime, double dScaleFactor,
             // Now convert this particle into a BH
             // We just change the class of the particle
             double omega = pLowPot.sph().omega;
-            pLowPot.set_class(pLowPot.mass(),pLowPot.soft0(),0,FIO_SPECIES_BH);
+            pLowPot.set_class(pLowPot.mass(), pLowPot.soft0(), 0, FIO_SPECIES_BH);
 
             auto &bh = pLowPot.BH();
             // When changing the class, we have to take into account tht
@@ -120,7 +120,7 @@ int pkdPlaceBHSeed(PKD pkd, double dTime, double dScaleFactor,
 
             for (int i = 0; i < smx->nnListSize; ++i) {
                 if (smx->nnList[i].iPid != pkd->Self()) {
-                    mdlRelease(pkd->mdl,CID_PARTICLE,smx->nnList[i].pPart);
+                    mdlRelease(pkd->mdl, CID_PARTICLE, smx->nnList[i].pPart);
                 }
             }
             /* Old seeding process, which creates a BH rather than converting
@@ -142,7 +142,7 @@ int pkdPlaceBHSeed(PKD pkd, double dTime, double dScaleFactor,
 
             // This class should have been created while reading the IC (at pkdReadFIO),
             // this won't be problematic as long as we use oMass and dSoft is set in the parameters file
-            p.set_class(0,p.soft(),0,FIO_SPECIES_BH);
+            p.set_class(0, p.soft(), 0, FIO_SPECIES_BH);
 
             p.mass() = pkd->parameters.get_dBHSeedMass();
             p.set_ball(pkd->parameters.get_dSoft());
@@ -163,7 +163,7 @@ int pkdPlaceBHSeed(PKD pkd, double dTime, double dScaleFactor,
 
 
     }
-    smFinish(smx,NULL);
+    smFinish(smx, NULL);
 
     return newBHs;
 

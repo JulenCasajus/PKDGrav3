@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -34,17 +34,17 @@
 BZ_NAMESPACE(blitz)
 
 template<typename T_numtype>
-void dump(const char* name, Array<T_numtype,3>& A)
+void dump(const char* name, Array<T_numtype, 3>& A)
 {
     T_numtype normA = 0;
 
-    for (int i=A.lbound(0); i <= A.ubound(0); ++i)
+    for (int i = A.lbound(0); i <= A.ubound(0); ++i)
     {
-      for (int j=A.lbound(1); j <= A.ubound(1); ++j)
+      for (int j = A.lbound(1); j <= A.ubound(1); ++j)
       {
-        for (int k=A.lbound(2); k <= A.ubound(2); ++k)
+        for (int k = A.lbound(2); k <= A.ubound(2); ++k)
         {
-            T_numtype tmp = A(i,j,k);
+            T_numtype tmp = A(i, j, k);
             normA += BZ_MATHFN_SCOPE(fabs)(tmp);
         }
       }
@@ -56,8 +56,8 @@ void dump(const char* name, Array<T_numtype,3>& A)
 
 template<typename T_stencil, typename T_numtype, int N_rank, typename T_BCs>
 int conjugateGradientSolver(T_stencil stencil,
-    Array<T_numtype,N_rank>& x,
-    Array<T_numtype,N_rank>& rhs, double haltrho, 
+    Array<T_numtype, N_rank>& x,
+    Array<T_numtype, N_rank>& rhs, double haltrho,
     const T_BCs& boundaryConditions)
 {
     // NEEDS_WORK: only apply CG updates over interior; need to handle
@@ -74,7 +74,7 @@ cout << "Interior: " << interior.lbound() << ", " << interior.ubound()
      << endl;
 
     // Calculate initial residual
-    Array<T_numtype,N_rank> r = rhs.copy();
+    Array<T_numtype, N_rank> r = rhs.copy();
     r *= -1.0;
 
     boundaryConditions.applyBCs(x);
@@ -82,16 +82,16 @@ cout << "Interior: " << interior.lbound() << ", " << interior.ubound()
     applyStencil(stencil, r, x);
 
  dump("r after stencil", r);
- cout << "Slice through r: " << endl << r(23,17,Range::all()) << endl;
- cout << "Slice through x: " << endl << x(23,17,Range::all()) << endl;
- cout << "Slice through rhs: " << endl << rhs(23,17,Range::all()) << endl;
+ cout << "Slice through r: " << endl << r(23, 17, Range::all()) << endl;
+ cout << "Slice through x: " << endl << x(23, 17, Range::all()) << endl;
+ cout << "Slice through rhs: " << endl << rhs(23, 17, Range::all()) << endl;
 
     r *= -1.0;
 
  dump("r", r);
 
     // Allocate the descent direction arrays
-    Array<T_numtype,N_rank> p, q;
+    Array<T_numtype, N_rank> p, q;
     allocateArrays(x.shape(), p, q);
 
     int iteration = 0;
@@ -102,10 +102,10 @@ cout << "Interior: " << interior.lbound() << ", " << interior.ubound()
     const int maxIterations = 1000;
 
     // Get views of interior of arrays (without boundaries)
-    Array<T_numtype,N_rank> rint = r(interior);
-    Array<T_numtype,N_rank> pint = p(interior);
-    Array<T_numtype,N_rank> qint = q(interior);
-    Array<T_numtype,N_rank> xint = x(interior);
+    Array<T_numtype, N_rank> rint = r(interior);
+    Array<T_numtype, N_rank> pint = p(interior);
+    Array<T_numtype, N_rank> qint = q(interior);
+    Array<T_numtype, N_rank> xint = x(interior);
 
     while (iteration < maxIterations)
     {
@@ -134,7 +134,7 @@ cout << "Interior: " << interior.lbound() << ", " << interior.ubound()
 //        boundaryConditions.applyBCs(p);
         applyStencil(stencil, q, p);
 
-        T_numtype pq = sum(p*q);
+        T_numtype pq = sum(p * q);
 
         T_numtype alpha = rho / pq;
 

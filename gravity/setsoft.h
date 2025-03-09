@@ -25,7 +25,7 @@ public:
     };
     typedef void output;
     explicit ServiceSetSoft(PST pst)
-        : TraversePST(pst,PST_SETSOFT,sizeof(input),"SetSoft") {}
+        : TraversePST(pst, PST_SETSOFT, sizeof(input), "SetSoft") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

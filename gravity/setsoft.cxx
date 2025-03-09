@@ -21,10 +21,10 @@
 static_assert(std::is_void<ServiceSetSoft::input>()  || std::is_trivial<ServiceSetSoft::input>());
 static_assert(std::is_void<ServiceSetSoft::output>() || std::is_trivial<ServiceSetSoft::output>());
 
-int ServiceSetSoft::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSetSoft::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
     auto pkd = pst->plcl->pkd;
-    pkdSetSoft(pkd,in->dSoft);
+    pkdSetSoft(pkd, in->dSoft);
     return 0;
 }

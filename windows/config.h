@@ -400,9 +400,9 @@
    code using `volatile' can become incorrect without. Disable with care. */
 /* #undef volatile */
 //static inline float fmin(float a, float b) {
-//    return a<b ? a : b;
+//    return a < b ? a : b;
 //}
 //static inline float fmax(float a, float b) {
-//    return a>b ? a : b;
+//    return a > b ? a : b;
 //}
 #endif

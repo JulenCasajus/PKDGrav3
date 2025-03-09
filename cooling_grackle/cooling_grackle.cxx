@@ -5,10 +5,10 @@ void MSR::GrackleInit(int bComove, double dScaleFactor) {
     struct inGrackleInit in;
     in.bComove = bComove;
     in.dScaleFactor = dScaleFactor;
-    strcpy(in.achCoolingTable,parameters.get_achCoolingTables().data());
+    strcpy(in.achCoolingTable, parameters.get_achCoolingTables().data());
     in.units = units;
 
-    pstGrackleInit(pst,&in,sizeof(struct inGrackleInit),NULL,0);
+    pstGrackleInit(pst, &in, sizeof(struct inGrackleInit), NULL, 0);
 }
 
 #ifdef __cplusplus
@@ -78,10 +78,10 @@ void pkdGrackleInit(PKD pkd, int bComove, double dScaleFactor, char *achCoolingT
     //  which has a a^2.
     // In the current version, length_units is only used for this factor, so it
     //  is safe, *for now* (changeset 59db82b, 14 Jun 2021)
-    pkd->grackle_units->density_units = units.dGmPerCcUnit*pow(dScaleFactor,-3);
+    pkd->grackle_units->density_units = units.dGmPerCcUnit * pow(dScaleFactor, -3);
     pkd->grackle_units->length_units = units.dKpcUnit * KPCCM * dScaleFactor;
     pkd->grackle_units->time_units = units.dSecUnit;
-    pkd->grackle_units->velocity_units = units.dKmPerSecUnit*1e5;
+    pkd->grackle_units->velocity_units = units.dKmPerSecUnit * 1e5;
     pkd->grackle_units->a_units = 1.;
     pkd->grackle_units->a_value = dScaleFactor;
 
@@ -120,9 +120,9 @@ void pkdGrackleCooling(PKD pkd, particleStore::ParticleReference &p, double pDel
                        double dTuFac) {
     auto &sph = p.sph();
     gr_float fDensity = p.density();
-    gr_float fMetalDensity = sph.fMetalMass*sph.omega;
+    gr_float fMetalDensity = sph.fMetalMass * sph.omega;
     gr_float minUint = 100. * dTuFac;
-    gr_float fSpecificUint = sph.Uint/p.mass();
+    gr_float fSpecificUint = sph.Uint / p.mass();
 
 
     // Set field arrays.
@@ -150,7 +150,7 @@ void pkdGrackleCooling(PKD pkd, particleStore::ParticleReference &p, double pDel
         sph.Uint = pkd->grackle_field->internal_energy[0]*p.mass();
         sph.E += sph.Uint;
     }
-    double diff = (fSpecificUint-pkd->grackle_field->internal_energy[0])/fSpecificUint;
+    double diff = (fSpecificUint - pkd->grackle_field->internal_energy[0])/fSpecificUint;
 
 
 }

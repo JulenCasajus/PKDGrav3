@@ -102,7 +102,7 @@ static double A2p127[3][3] = {
 /*-------------------------------------------------------------------------*/
 
 static double MultModM (double a, double s, double c, double m)
-/* Compute (a*s + c) % m. m must be < 2^35.  Works also for s, c < 0 */
+/* Compute (a * s + c) % m. m must be < 2^35.  Works also for s, c < 0 */
 {
     double v;
     long a1;
@@ -126,7 +126,7 @@ static double MultModM (double a, double s, double c, double m)
 /*-------------------------------------------------------------------------*/
 
 static void MatVecModM (double A[3][3], double s[3], double v[3], double m)
-/* Returns v = A*s % m.  Assumes that -m < s[i] < m. */
+/* Returns v = A * s % m.  Assumes that -m < s[i] < m. */
 /* Works even if v = s. */
 {
     int i;
@@ -145,7 +145,7 @@ static void MatVecModM (double A[3][3], double s[3], double v[3], double m)
 
 static void MatMatModM (double A[3][3], double B[3][3], double C[3][3],
                         double m)
-/* Returns C = A*B % m. Work even if A = C or B = C or A = B = C. */
+/* Returns C = A * B % m. Work even if A = C or B = C or A = B = C. */
 {
     int i, j;
     double V[3], W[3][3];

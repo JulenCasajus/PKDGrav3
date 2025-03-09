@@ -40,7 +40,7 @@ struct UNITS {
     double dKmPerSecUnit;
     double dGasConst;
     UNITS() = default;
-    UNITS(pkd_parameters &parameters,double h);
+    UNITS(pkd_parameters &parameters, double h);
 };
 
 #endif

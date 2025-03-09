@@ -99,13 +99,13 @@ void pkdBHAccretion(PKD pkd, double dScaleFactor) {
                 bh->set_mass(bhMass + p.mass());
 
                 auto &bhv = bh->velocity();
-              
+
                 // To properly conserve momentum, we need to use the
                 // hydrodynamic variable, as the pkdVel may not be updated yet.
                 // We have to consider remote and local particles differently,
                 // as for the remotes the momentum is accumulated here but then
                 // added in the combine function
-              
+
                 if (iPid != pkd->Self()) {
                     bhv += dScaleFactor * sph.mom;
                 } else {

@@ -31,41 +31,41 @@ using blitz::dot;
 #ifdef M43D
 /* M43D Creates a 3D kernel by convolution of 3D tophats the way M4(1D) is made in 1D */
 #define BALL2(fBall) ((fBall)*(fBall))
-#define KERNEL(ak,ar2) { \
+#define KERNEL(ak, ar2) { \
         ak = sqrt(ar2); \
-        if (ar2 < 1.0) ak = 6.*0.25/350./3. *(1360+ar2*(-2880 \
-             +ar2*(3528+ak*(-1890+ak*(-240+ak*(270-6*ar2)))))); \
-        else if (ar2 < 4.0) ak = 6.*0.25/350./3. *(7040-1152/ak+ak*(-10080+ak*(2880+ak*(4200 \
-             +ak*(-3528+ak*(630+ak*(240+ak*(-90+2*ar2)))))))); \
+        if (ar2 < 1.0) ak = 6.*0.25 / 350./3. *(1360 + ar2*(-2880 \
+             +ar2*(3528 + ak*(-1890 + ak*(-240 + ak*(270 - 6 * ar2)))))); \
+        else if (ar2 < 4.0) ak = 6.*0.25 / 350./3. *(7040 - 1152 / ak + ak*(-10080 + ak*(2880 + ak*(4200 \
+             +ak*(-3528 + ak*(630 + ak*(240 + ak*(-90 + 2 * ar2)))))))); \
         else ak = 0.0;\
         }
-#define DKERNEL(adk,ar2) { \
+#define DKERNEL(adk, ar2) { \
         adk = sqrt(ar2); \
-        if (ar2 < 1.0) adk = 6.*0.25/350./3. * (-2880*2 \
-             +ar2*(3528*4+ adk*(-1890*5 + adk*(-240*6+ adk*(270*7-6*9*ar2))))); \
-        else if (ar2 < 4.0) adk = 6.*0.25/350./3. *((1152/ar2-10080)/adk+(2880*2+adk*(4200*3 \
-             +adk*(-3528*4+adk*(630*5+adk*(240*6 +adk*(-90*7+2*9*ar2))))))); \
+        if (ar2 < 1.0) adk = 6.*0.25 / 350./3. * (-2880 * 2 \
+             +ar2*(3528 * 4+ adk*(-1890 * 5 + adk*(-240 * 6+ adk*(270 * 7 - 6 * 9 * ar2))))); \
+        else if (ar2 < 4.0) adk = 6.*0.25 / 350./3. *((1152 / ar2 - 10080)/adk+(2880 * 2 + adk*(4200 * 3 \
+             +adk*(-3528 * 4 + adk*(630 * 5 + adk*(240 * 6 +adk*(-90 * 7 + 2 * 9 * ar2))))))); \
         else adk = 0.0;\
         }
 
 #else
 #ifdef HSHRINK
-/* HSHRINK M4 Kernel uses an effective h of (pi/6)^(1/3) times h for nSmooth neighbours */
+/* HSHRINK M4 Kernel uses an effective h of (pi / 6)^(1 / 3) times h for nSmooth neighbours */
 #define dSHRINKFACTOR        0.805995977
-#define BALL2(fBall) ((fBall)*(fBall)*(dSHRINKFACTOR*dSHRINKFACTOR))
-#define KERNEL(ak,ar2) { \
+#define BALL2(fBall) ((fBall)*(fBall)*(dSHRINKFACTOR * dSHRINKFACTOR))
+#define KERNEL(ak, ar2) { \
         ak = 2.0 - sqrt(ar2); \
-        if (ar2 < 1.0) ak = (1.0 - 0.75*ak*ar2); \
-        else if (ar2 < 4.0) ak = 0.25*ak*ak*ak; \
+        if (ar2 < 1.0) ak = (1.0 - 0.75 * ak * ar2); \
+        else if (ar2 < 4.0) ak = 0.25 * ak * ak * ak; \
         else ak = 0.0; \
         }
-#define DKERNEL(adk,ar2) { \
+#define DKERNEL(adk, ar2) { \
         adk = sqrt(ar2); \
         if (ar2 < 1.0) { \
-            adk = -3 + 2.25*adk; \
+            adk = -3 + 2.25 * adk; \
             } \
         else if (ar2 < 4.0) { \
-            adk = -0.75*(2.0-adk)*(2.0-adk)/adk; \
+            adk = -0.75*(2.0 - adk)*(2.0 - adk)/adk; \
             } \
         else adk = 0.0; \
         }
@@ -73,26 +73,26 @@ using blitz::dot;
 #else
 /* Standard M_4 Kernel */
 #define BALL2(fBall) ((fBall)*(fBall))
-#define KERNEL(ak,ar2) { \
+#define KERNEL(ak, ar2) { \
         ak = 2.0 - sqrt(ar2); \
-        if (ar2 < 1.0) ak = (1.0 - 0.75*ak*ar2); \
-        else if (ar2 < 4.0) ak = 0.25*ak*ak*ak; \
+        if (ar2 < 1.0) ak = (1.0 - 0.75 * ak * ar2); \
+        else if (ar2 < 4.0) ak = 0.25 * ak * ak * ak; \
         else ak = 0.0;\
         }
-#define DKERNEL(adk,ar2) { \
+#define DKERNEL(adk, ar2) { \
         adk = sqrt(ar2); \
         if (ar2 < 1.0) { \
-            adk = -3 + 2.25*adk; \
+            adk = -3 + 2.25 * adk; \
             } \
         else if (ar2 < 4.0) { \
-            adk = -0.75*(2.0-adk)*(2.0-adk)/adk; \
+            adk = -0.75*(2.0 - adk)*(2.0 - adk)/adk; \
             } \
         else adk = 0.0;\
         }
 #endif
 #endif
 
-void NullSmooth(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void NullSmooth(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
 }
 
 void initBall(void *vpkd, void *pIn) {
@@ -101,7 +101,7 @@ void initBall(void *vpkd, void *pIn) {
     p.set_ball(0.0);
 }
 
-void BallSmooth(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void BallSmooth(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     auto p = pkd->particles[pIn];
     p.set_ball(fBall);
@@ -109,72 +109,72 @@ void BallSmooth(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
 
 void initDensity(void *vpkd, void *p) {
     auto pkd = static_cast<PKD>(vpkd);
-    pkdSetDensity(pkd,(PARTICLE *)p,0.0);
+    pkdSetDensity(pkd, (PARTICLE *)p, 0.0);
 }
 
-void combDensity(void *vpkd, void *p1,const void *p2) {
+void combDensity(void *vpkd, void *p1, const void *p2) {
     auto pkd = static_cast<PKD>(vpkd);
-    pkdSetDensity(pkd,(PARTICLE *)p1,pkdDensity(pkd,(PARTICLE *)p1)+pkdDensity(pkd,(PARTICLE *)p2));
+    pkdSetDensity(pkd, (PARTICLE *)p1, pkdDensity(pkd, (PARTICLE *)p1)+pkdDensity(pkd, (PARTICLE *)p2));
 }
 
-void DensityF1(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void DensityF1(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
-    double ih2,r2,rs,fDensity,fMass;
+    double ih2, r2, rs, fDensity, fMass;
     int i;
 
-    ih2 = 1.0/BALL2(fBall);
+    ih2 = 1.0 / BALL2(fBall);
     fDensity = 0.0;
-    for (i=0; i<nSmooth; ++i) {
-        fMass = pkdMass(pkd,nnList[i].pPart);
-        r2 = nnList[i].fDist2*ih2;
+    for (i = 0; i < nSmooth; ++i) {
+        fMass = pkdMass(pkd, nnList[i].pPart);
+        r2 = nnList[i].fDist2 * ih2;
         rs = 1 - r2;
         if (rs < 0) rs = 0.0;
-        fDensity += rs*fMass;
+        fDensity += rs * fMass;
     }
-    fDensity *= 1.875f*M_1_PI*sqrtf(ih2)*ih2; /* F1 Kernel (15/8) */
+    fDensity *= 1.875f * M_1_PI * sqrtf(ih2)*ih2; /* F1 Kernel (15 / 8) */
     if (smf->pfDensity) *smf->pfDensity = fDensity;
-    else pkdSetDensity(pkd,p,fDensity);
+    else pkdSetDensity(pkd, p, fDensity);
 }
 
-void DensityM3(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void DensityM3(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
-    double ih2,r2,rs,fDensity,fMass;
+    double ih2, r2, rs, fDensity, fMass;
     int i;
-    ih2 = 1.0f/BALL2(fBall);
+    ih2 = 1.0f / BALL2(fBall);
     fDensity = 0.0;
-    for (i=0; i<nSmooth; ++i) {
-        fMass = pkdMass(pkd,nnList[i].pPart);
-        r2 = nnList[i].fDist2*ih2;
+    for (i = 0; i < nSmooth; ++i) {
+        fMass = pkdMass(pkd, nnList[i].pPart);
+        r2 = nnList[i].fDist2 * ih2;
         if (r2 < 1.0) {
             double r = sqrt(r2);
             rs = 1.0f - r;
-            rs *= rs*rs; /* rs^3 */
+            rs *= rs * rs; /* rs^3 */
             if (r < 0.5f) {
                 double rs2 = 0.5f - r;
-                rs2 *= rs2*rs2; /* rs2^3 */
-                rs -= 4.0f*rs2;
+                rs2 *= rs2 * rs2; /* rs2^3 */
+                rs -= 4.0f * rs2;
             }
         }
         else rs = 0.0;
-        fDensity += rs*fMass;
+        fDensity += rs * fMass;
     }
-    pkdSetDensity(pkd,p,16.0f*M_1_PI*sqrtf(ih2)*ih2*fDensity);
+    pkdSetDensity(pkd, p, 16.0f * M_1_PI * sqrtf(ih2)*ih2 * fDensity);
 }
 
-void LinkGradientM3(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void LinkGradientM3(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
-    double ih2,r2,rs,fMass,fNorm, idrho, r2min;
+    double ih2, r2, rs, fMass, fNorm, idrho, r2min;
     int i, j;
-    ih2 = 1.0/BALL2(fBall);
-    fNorm = 16.0f*M_1_PI*ih2*ih2*sqrtf(ih2);
-    TinyVector<double,3> frho(0.0);
-    for (i=0; i<nSmooth; ++i) {
-        fMass = pkdMass(pkd,nnList[i].pPart);
-        r2 = nnList[i].fDist2*ih2;
+    ih2 = 1.0 / BALL2(fBall);
+    fNorm = 16.0f * M_1_PI * ih2 * ih2 * sqrtf(ih2);
+    TinyVector<double, 3> frho(0.0);
+    for (i = 0; i < nSmooth; ++i) {
+        fMass = pkdMass(pkd, nnList[i].pPart);
+        r2 = nnList[i].fDist2 * ih2;
         if (r2 < 1.0) {
             double r = sqrt(r2);
             if (r < 0.5f) {
-                rs = -6.0f + 9.0f*r;
+                rs = -6.0f + 9.0f * r;
             }
             else {
                 rs = 1.0f - r;
@@ -184,17 +184,17 @@ void LinkGradientM3(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
             }
         }
         else rs = 0.0;
-        rs *= fNorm*fMass;
-        rs *= (pkdDensity(pkd,nnList[i].pPart) - pkdDensity(pkd,p))/pkdDensity(pkd,nnList[i].pPart);
-        frho -= nnList[i].dr*rs;
+        rs *= fNorm * fMass;
+        rs *= (pkdDensity(pkd, nnList[i].pPart) - pkdDensity(pkd, p))/pkdDensity(pkd, nnList[i].pPart);
+        frho -= nnList[i].dr * rs;
     }
-    idrho = 1.0/sqrt(dot(frho,frho));
-    for (j=0; j<3; ++j) frho[j] *= 0.5*idrho*fBall;
+    idrho = 1.0 / sqrt(dot(frho, frho));
+    for (j = 0; j < 3; ++j) frho[j] *= 0.5 * idrho * fBall;
     r2min = HUGE_VALF;
-    if (nSmooth==0) pkdSetGroup(pkd, p, -1);
-    for (i=0; i<nSmooth; ++i) {
-        TinyVector<double,3> dr = nnList[i].dr - frho;
-        r2 = dot(dr,dr);
+    if (nSmooth == 0) pkdSetGroup(pkd, p, -1);
+    for (i = 0; i < nSmooth; ++i) {
+        TinyVector<double, 3> dr = nnList[i].dr - frho;
+        r2 = dot(dr, dr);
         if (r2 < r2min) {
             r2min = r2;
             smf->hopParticleLink.iPid = nnList[i].iPid;
@@ -203,19 +203,19 @@ void LinkGradientM3(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
     }
 }
 
-void LinkHopChains(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void LinkHopChains(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     MDL mdl = pkd->mdl;
     int i, gid1, gid2;
     GHtmpGroupTable *g1, *g2, g;
-    gid1 = pkdGetGroup(pkd,p);
+    gid1 = pkdGetGroup(pkd, p);
     g1 = &pkd->tmpHopGroups[gid1];
-    for (i=0; i<nSmooth; ++i) {
-        gid2 = pkdGetGroup(pkd,nnList[i].pPart);
-        if (nnList[i].iPid==pkd->Self() && gid1==gid2) continue;
+    for (i = 0; i < nSmooth; ++i) {
+        gid2 = pkdGetGroup(pkd, nnList[i].pPart);
+        if (nnList[i].iPid == pkd->Self() && gid1 == gid2) continue;
         g.iPid = nnList[i].iPid;
         g.iIndex = gid2;
-        g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl,CID_GROUP,g.iIndex,g.iPid));
+        g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl, CID_GROUP, g.iIndex, g.iPid));
 
         /* Remote is authoratative. Update myself, but also what I currently link to. */
         if (g1->iPid > g2->iPid || (g1->iPid == g2->iPid && g1->iIndex > g2->iIndex)) {
@@ -223,8 +223,8 @@ void LinkHopChains(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
             g = *g1;
             g1->iPid = g2->iPid;
             g1->iIndex = g2->iIndex;
-            mdlRelease(mdl,CID_GROUP,g2);
-            g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl,CID_GROUP,g.iIndex,g.iPid));
+            mdlRelease(mdl, CID_GROUP, g2);
+            g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl, CID_GROUP, g.iIndex, g.iPid));
         }
 
         /* Update remote (or what we were pointing to) and what it points to if necessary. */
@@ -233,58 +233,58 @@ void LinkHopChains(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
             g = *g2;
             g2->iPid = g1->iPid;
             g2->iIndex = g1->iIndex;
-            mdlRelease(mdl,CID_GROUP,g2);
-            g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl,CID_GROUP,g.iIndex,g.iPid));
+            mdlRelease(mdl, CID_GROUP, g2);
+            g2 = static_cast<GHtmpGroupTable *>(mdlAcquire(mdl, CID_GROUP, g.iIndex, g.iPid));
         }
-        mdlRelease(mdl,CID_GROUP,g2);
+        mdlRelease(mdl, CID_GROUP, g2);
     }
 }
 
-void Density(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void Density(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
-    double ih2,r2,rs,fDensity,fMass;
+    double ih2, r2, rs, fDensity, fMass;
     int i;
 
-    ih2 = 4.0/BALL2(fBall);
+    ih2 = 4.0 / BALL2(fBall);
     fDensity = 0.0;
-    for (i=0; i<nSmooth; ++i) {
-        fMass = pkdMass(pkd,nnList[i].pPart);
-        r2 = nnList[i].fDist2*ih2;
-        KERNEL(rs,r2);
-        fDensity += rs*fMass;
+    for (i = 0; i < nSmooth; ++i) {
+        fMass = pkdMass(pkd, nnList[i].pPart);
+        r2 = nnList[i].fDist2 * ih2;
+        KERNEL(rs, r2);
+        fDensity += rs * fMass;
     }
-    pkdSetDensity(pkd,p,M_1_PI*sqrt(ih2)*ih2*fDensity);
+    pkdSetDensity(pkd, p, M_1_PI * sqrt(ih2)*ih2 * fDensity);
 }
 
-void DensitySym(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void DensitySym(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     PARTICLE *q;
-    double fNorm,ih2,r2,rs,fMassQ,fMassP;
+    double fNorm, ih2, r2, rs, fMassQ, fMassP;
     int i;
-    fMassP = pkdMass(pkd,p);
+    fMassP = pkdMass(pkd, p);
     ih2 = 4.0/(BALL2(fBall));
-    fNorm = 0.5*M_1_PI*sqrt(ih2)*ih2;
-    for (i=0; i<nSmooth; ++i) {
-        r2 = nnList[i].fDist2*ih2;
-        KERNEL(rs,r2);
+    fNorm = 0.5 * M_1_PI * sqrt(ih2)*ih2;
+    for (i = 0; i < nSmooth; ++i) {
+        r2 = nnList[i].fDist2 * ih2;
+        KERNEL(rs, r2);
         rs *= fNorm;
         q = nnList[i].pPart;
-        fMassQ = pkdMass(pkd,q);
-        pkdSetDensity(pkd,p,pkdDensity(pkd,p) + rs*fMassQ);
-        pkdSetDensity(pkd,q,pkdDensity(pkd,q) + rs*fMassP);
+        fMassQ = pkdMass(pkd, q);
+        pkdSetDensity(pkd, p, pkdDensity(pkd, p) + rs * fMassQ);
+        pkdSetDensity(pkd, q, pkdDensity(pkd, q) + rs * fMassP);
     }
 }
 
-void PrintNN(PARTICLE *p,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void PrintNN(PARTICLE *p, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     int i;
 
-    printf("%" PRIu64 ":",(uint64_t)p->iOrder);
-    for (i=0; i<nSmooth; ++i) {
-        if (pkdIsActive(pkd,nnList[i].pPart))
-            printf("%" PRIu64 " ",(uint64_t)nnList[i].pPart->iOrder);
+    printf("%" PRIu64 ":", (uint64_t)p->iOrder);
+    for (i = 0; i < nSmooth; ++i) {
+        if (pkdIsActive(pkd, nnList[i].pPart))
+            printf("%" PRIu64 " ", (uint64_t)nnList[i].pPart->iOrder);
         else
-            printf("\033[7m%" PRIu64 "\033[0m ",(uint64_t)nnList[i].pPart->iOrder);
+            printf("\033[7m%" PRIu64 "\033[0m ", (uint64_t)nnList[i].pPart->iOrder);
     }
     printf("\n");
 }

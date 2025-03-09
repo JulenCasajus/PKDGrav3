@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -65,14 +65,14 @@ BZ_NAMESPACE(blitz)
  *
  * Type promotion is performed inside the function object.  The expression
  * templates code always looks inside the function object to determine
- * the type promotion, e.g. Add<int,float>::T_numtype
+ * the type promotion, e.g. Add<int, float>::T_numtype
  *
  * Users are free to specialize these function objects for their own types.
  */
-    
+
 /* Unary operators that return same type as argument */
-    
-#define BZ_DEFINE_UNARY_OP(name,op)                            \
+
+#define BZ_DEFINE_UNARY_OP(name, op)                            \
 template<typename T_numtype1>                                  \
 struct name {                                                  \
     typedef T_numtype1 T_numtype;                              \
@@ -90,14 +90,14 @@ struct name {                                                  \
     }                                                          \
 };
 
-BZ_DEFINE_UNARY_OP(BitwiseNot,~)
-BZ_DEFINE_UNARY_OP(UnaryPlus,+)
-BZ_DEFINE_UNARY_OP(UnaryMinus,-)  
+BZ_DEFINE_UNARY_OP(BitwiseNot, ~)
+BZ_DEFINE_UNARY_OP(UnaryPlus, +)
+BZ_DEFINE_UNARY_OP(UnaryMinus, -)
 
-    
+
 /* Unary operators that return a specified type */
-    
-#define BZ_DEFINE_UNARY_OP_RET(name,op,ret)                    \
+
+#define BZ_DEFINE_UNARY_OP_RET(name, op, ret)                    \
 template<typename T_numtype1>                                  \
 struct name {                                                  \
     typedef ret T_numtype;                                     \
@@ -114,12 +114,12 @@ struct name {                                                  \
     }                                                          \
 };
 
-BZ_DEFINE_UNARY_OP_RET(LogicalNot,!,bool)
-    
-    
+BZ_DEFINE_UNARY_OP_RET(LogicalNot, !, bool)
+
+
 /* Binary operators that return type based on type promotion */
-    
-#define BZ_DEFINE_BINARY_OP(name,op)                              \
+
+#define BZ_DEFINE_BINARY_OP(name, op)                              \
 template<typename T_numtype1, typename T_numtype2>                \
 struct name {                                                     \
     typedef BZ_PROMOTE(T_numtype1, T_numtype2) T_numtype;         \
@@ -141,21 +141,21 @@ struct name {                                                     \
     }                                                             \
 };
 
-BZ_DEFINE_BINARY_OP(Add,+)
-BZ_DEFINE_BINARY_OP(Subtract,-)
-BZ_DEFINE_BINARY_OP(Multiply,*)
-BZ_DEFINE_BINARY_OP(Divide,/)
-BZ_DEFINE_BINARY_OP(Modulo,%)
-BZ_DEFINE_BINARY_OP(BitwiseXor,^)
-BZ_DEFINE_BINARY_OP(BitwiseAnd,&)
-BZ_DEFINE_BINARY_OP(BitwiseOr,|)
-BZ_DEFINE_BINARY_OP(ShiftRight,>>)
-BZ_DEFINE_BINARY_OP(ShiftLeft,<<)
-    
-    
+BZ_DEFINE_BINARY_OP(Add, +)
+BZ_DEFINE_BINARY_OP(Subtract, -)
+BZ_DEFINE_BINARY_OP(Multiply, *)
+BZ_DEFINE_BINARY_OP(Divide, /)
+BZ_DEFINE_BINARY_OP(Modulo, %)
+BZ_DEFINE_BINARY_OP(BitwiseXor, ^)
+BZ_DEFINE_BINARY_OP(BitwiseAnd, &)
+BZ_DEFINE_BINARY_OP(BitwiseOr, |)
+BZ_DEFINE_BINARY_OP(ShiftRight, >>)
+BZ_DEFINE_BINARY_OP(ShiftLeft, <<)
+
+
 /* Binary operators that return a specified type */
-    
-#define BZ_DEFINE_BINARY_OP_RET(name,op,ret)                      \
+
+#define BZ_DEFINE_BINARY_OP_RET(name, op, ret)                      \
 template<typename T_numtype1, typename T_numtype2>                \
 struct name {                                                     \
     typedef ret T_numtype;                                        \
@@ -176,15 +176,15 @@ struct name {                                                     \
     }                                                             \
 };
 
-BZ_DEFINE_BINARY_OP_RET(Greater,>,bool)
-BZ_DEFINE_BINARY_OP_RET(Less,<,bool)
-BZ_DEFINE_BINARY_OP_RET(GreaterOrEqual,>=,bool)
-BZ_DEFINE_BINARY_OP_RET(LessOrEqual,<=,bool)
-BZ_DEFINE_BINARY_OP_RET(Equal,==,bool)
-BZ_DEFINE_BINARY_OP_RET(NotEqual,!=,bool)
-BZ_DEFINE_BINARY_OP_RET(LogicalAnd,&&,bool)
-BZ_DEFINE_BINARY_OP_RET(LogicalOr,||,bool)
-    
+BZ_DEFINE_BINARY_OP_RET(Greater, >, bool)
+BZ_DEFINE_BINARY_OP_RET(Less, <, bool)
+BZ_DEFINE_BINARY_OP_RET(GreaterOrEqual, >=, bool)
+BZ_DEFINE_BINARY_OP_RET(LessOrEqual, <=, bool)
+BZ_DEFINE_BINARY_OP_RET(Equal, ==, bool)
+BZ_DEFINE_BINARY_OP_RET(NotEqual, !=, bool)
+BZ_DEFINE_BINARY_OP_RET(LogicalAnd, &&, bool)
+BZ_DEFINE_BINARY_OP_RET(LogicalOr, ||, bool)
+
 /* already defined in funcs
 // We define these explicitly since they don't fit a pattern
 template<typename P_numtype1, typename P_numtype2>

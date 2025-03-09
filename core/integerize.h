@@ -23,12 +23,12 @@
 class Integerize {
     static constexpr std::uint32_t factor = 0x80000000u;
 public:
-    double  convert(std::int32_t i) const {return i * 1.0/factor; }
+    double  convert(std::int32_t i) const {return i * 1.0 / factor; }
     template<int n>
-    blitz::TinyVector<double,n>  convert(blitz::TinyVector<std::int32_t,n> i) const {return i * 1.0/factor; }
+    blitz::TinyVector<double, n>  convert(blitz::TinyVector<std::int32_t, n> i) const {return i * 1.0 / factor; }
     std::int32_t convert(double d) const {return d * factor; }
     template<int n>
-    blitz::TinyVector<std::int32_t,n> convert(blitz::TinyVector<double,n> d) const {return d * factor; }
+    blitz::TinyVector<std::int32_t, n> convert(blitz::TinyVector<double, n> d) const {return d * factor; }
 };
 
 #endif

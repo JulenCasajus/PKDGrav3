@@ -32,7 +32,7 @@ struct inOutputSend {
 };
 
 void pkdOutputSend(PKD pkd, outType eOutputType, int iPartner);
-void pkdOutput(PKD pkd, outType eOutputType, int iProcessor,int nProcessor,
-               int iPartner,int nPartner, const char *fname );
+void pkdOutput(PKD pkd, outType eOutputType, int iProcessor, int nProcessor,
+               int iPartner, int nPartner, const char *fname );
 
 #endif

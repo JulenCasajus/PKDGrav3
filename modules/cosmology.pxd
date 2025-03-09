@@ -60,17 +60,17 @@ cdef class ClassCosmology(Cosmology):
         cdef:
             int i
             const char **c_species = <const char**> malloc(sizeof(char*) * n)
-    
+
         if c_species is NULL:
             raise MemoryError()
-            
+
         for i in range(n):
             c_species[i] = PyUnicode_AsUTF8(species[i])
-        
+
         return c_species
 
     cdef inline initialize_class(self,file,L,As,ns,linear_species,power_species):
-        
+
         cdef:
             int n_linear = len(linear_species)
             int n_power = len(power_species)
@@ -79,7 +79,7 @@ cdef class ClassCosmology(Cosmology):
             const char **c_power_species
 
         c_file = PyUnicode_AsUTF8(file)
-        
+
         try:
             c_linear_species = self.parse_species(linear_species, n_linear)
             c_power_species = self.parse_species(power_species, n_power)

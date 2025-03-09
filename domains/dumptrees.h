@@ -22,11 +22,11 @@ public:
         uint8_t uRungDD; /* Domain DD was done on this rung */
         bool bOnlyVA;
         input() = default;
-        input(uint8_t uRungDD,bool bOnlyVA=false) : uRungDD(uRungDD), bOnlyVA(bOnlyVA) {}
+        input(uint8_t uRungDD, bool bOnlyVA = false) : uRungDD(uRungDD), bOnlyVA(bOnlyVA) {}
     };
     typedef void output;
     explicit ServiceDumpTrees(PST pst)
-        : TraversePST(pst,PST_DUMPTREES,sizeof(input),"DumpTrees") {}
+        : TraversePST(pst, PST_DUMPTREES, sizeof(input), "DumpTrees") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

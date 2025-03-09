@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -34,8 +34,8 @@
 BZ_NAMESPACE(blitz)
 
 /*
- * CartesianProduct<T_tuple,T_container> is an adaptor which represents
- * the cartesian product of several containers.  
+ * CartesianProduct<T_tuple, T_container> is an adaptor which represents
+ * the cartesian product of several containers.
  */
 
 // forward declaration of iterator
@@ -50,7 +50,7 @@ public:
     typedef T_tuple value_type;
     typedef T_tuple& reference;
     typedef const T_tuple& const_reference;
-    typedef CartesianProductIterator<T_tuple,T_container,N_containers> iterator;
+    typedef CartesianProductIterator<T_tuple, T_container, N_containers> iterator;
 
     iterator begin()
     { return iterator(*this); }
@@ -58,29 +58,29 @@ public:
     iterator end()
     { return iterator(_cp_end_tag()); }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1)
-    { 
+    {
         BZPRECONDITION(N_containers == 2);
         containers_[0] = &container0;
         containers_[1] = &container1;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2)
-    { 
+    {
         BZPRECONDITION(N_containers == 3);
         containers_[0] = &container0;
         containers_[1] = &container1;
         containers_[2] = &container2;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3)
-    { 
+    {
         BZPRECONDITION(N_containers == 4);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -88,12 +88,12 @@ public:
         containers_[3] = &container3;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
         const T_container& container4)
-    { 
+    {
         BZPRECONDITION(N_containers == 5);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -102,13 +102,13 @@ public:
         containers_[4] = &container4;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
         const T_container& container4,
         const T_container& container5)
-    { 
+    {
         BZPRECONDITION(N_containers == 6);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -118,14 +118,14 @@ public:
         containers_[5] = &container5;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
         const T_container& container4,
         const T_container& container5,
         const T_container& container6)
-    { 
+    {
         BZPRECONDITION(N_containers == 7);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -136,7 +136,7 @@ public:
         containers_[6] = &container6;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
@@ -144,7 +144,7 @@ public:
         const T_container& container5,
         const T_container& container6,
         const T_container& container7)
-    { 
+    {
         BZPRECONDITION(N_containers == 8);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -156,7 +156,7 @@ public:
         containers_[7] = &container7;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
@@ -165,7 +165,7 @@ public:
         const T_container& container6,
         const T_container& container7,
         const T_container& container8)
-    { 
+    {
         BZPRECONDITION(N_containers == 9);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -178,7 +178,7 @@ public:
         containers_[8] = &container8;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
@@ -188,7 +188,7 @@ public:
         const T_container& container7,
         const T_container& container8,
         const T_container& container9)
-    { 
+    {
         BZPRECONDITION(N_containers == 10);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -202,7 +202,7 @@ public:
         containers_[9] = &container9;
     }
 
-    CartesianProduct(const T_container& container0, 
+    CartesianProduct(const T_container& container0,
         const T_container& container1,
         const T_container& container2,
         const T_container& container3,
@@ -213,7 +213,7 @@ public:
         const T_container& container8,
         const T_container& container9,
         const T_container& container10)
-    { 
+    {
         BZPRECONDITION(N_containers == 11);
         containers_[0] = &container0;
         containers_[1] = &container1;
@@ -234,20 +234,20 @@ public:
     void debugDump();
 
 protected:
-    const T_container* containers_[N_containers]; 
+    const T_container* containers_[N_containers];
 };
 
 template<typename T_tuple, typename T_container, int N_containers>
-void CartesianProduct<T_tuple,T_container,N_containers>::debugDump()
+void CartesianProduct<T_tuple, T_container, N_containers>::debugDump()
 {
-    cout << "Dump of CartesianProduct<..,..," << N_containers << ">" << endl;
-    for (int i=0; i < N_containers; ++i)
+    cout << "Dump of CartesianProduct<.., .., " << N_containers << ">" << endl;
+    for (int i = 0; i < N_containers; ++i)
     {
-        cout << "Container " << (i+1) << ": ";
+        cout << "Container " << (i + 1) << ": ";
         _bz_typename T_container::const_iterator iter = containers_[i]->begin(),
             end = containers_[i]->end();
         for (; iter != end; ++iter)
-            cout << (*iter) << '\t'; 
+            cout << (*iter) << '\t';
     }
 }
 
@@ -255,12 +255,12 @@ template<typename T_tuple, typename T_container, int N_containers>
 class CartesianProductIterator {
 public:
     typedef _bz_typename T_container::const_iterator citerator;
-    typedef CartesianProductIterator<T_tuple,T_container,N_containers> iterator;
-    typedef CartesianProduct<T_tuple,T_container,N_containers> T_cp;
+    typedef CartesianProductIterator<T_tuple, T_container, N_containers> iterator;
+    typedef CartesianProduct<T_tuple, T_container, N_containers> T_cp;
 
     CartesianProductIterator(T_cp& container)
     {
-        for (int i=0; i < N_containers; ++i)
+        for (int i = 0; i < N_containers; ++i)
         {
             firstiters_[i] = container[i].begin();
             iters_[i] = firstiters_[i];
@@ -284,7 +284,7 @@ public:
     }
 
     bool operator!=(const iterator& x) const
-    {   
+    {
         return endflag_ != x.endflag_;
     }
 
@@ -300,7 +300,7 @@ protected:
 };
 
 template<typename T_tuple, typename T_container, int N_containers>
-void CartesianProductIterator<T_tuple, T_container, 
+void CartesianProductIterator<T_tuple, T_container,
     N_containers>::operator++()
 {
     // Usual stack-style increment
@@ -308,10 +308,10 @@ void CartesianProductIterator<T_tuple, T_container,
 
     int i = Nminus1;
 
-    // Short-circuit for most common case
+    // Short - circuit for most common case
     // (just increment the last iterator)
 
-    if((++iters_[i]) != enditers_[i])
+    if ((++iters_[i]) != enditers_[i])
     {
         tuple_[i] = *iters_[i];
         return;
@@ -334,7 +334,7 @@ void CartesianProductIterator<T_tuple, T_container,
 
     tuple_[i] = *iters_[i];
 
-    for (++i; i < N_containers; ++i)  
+    for (++i; i < N_containers; ++i)
     {
         iters_[i] = firstiters_[i];
         tuple_[i] = *iters_[i];

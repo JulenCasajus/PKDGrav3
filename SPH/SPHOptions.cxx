@@ -27,7 +27,7 @@
 #include "basetype.h"
 
 SPHOptions initializeSPHOptions(pkd_parameters &parameters, CSM csm, double dTime) {
-    UNITS units(parameters,csm->val.h);
+    UNITS units(parameters, csm->val.h);
     SPHOptions SPHoptions;
     SPHoptions.fKernelTarget = parameters.get_fKernelTarget();
     SPHoptions.epsilon = 0.01f;
@@ -55,8 +55,8 @@ SPHOptions initializeSPHOptions(pkd_parameters &parameters, CSM csm, double dTim
     SPHoptions.nPredictRung = 0;
     SPHoptions.nRungCorrection = 2;
     if (csm->val.bComove) {
-        SPHoptions.a = csmTime2Exp(csm,dTime);
-        SPHoptions.H = csmTime2Hub(csm,dTime);
+        SPHoptions.a = csmTime2Exp(csm, dTime);
+        SPHoptions.H = csmTime2Hub(csm, dTime);
     }
     else {
         SPHoptions.a = 1.0f;
@@ -144,7 +144,7 @@ void copySPHOptionsGPU(SPHOptions *source, SPHOptionsGPU *target) {
     target->H = source->H;
 }
 
-float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType) {
+float calculateInterfaceCorrectionPrefactor(float nSmooth, int kernelType) {
     float alpha = 0.0f;
     switch (kernelType) {
     case 0: {

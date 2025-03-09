@@ -49,8 +49,8 @@ protected:
     fcnService_t *fcnService;
     void *p1;
 public:
-    explicit LegacyService(fcnService_t *fcnService,void *p1=nullptr, int service_id=0,
-                           int nInBytes=0, int nOutBytes=0, const char *service_name="")
+    explicit LegacyService(fcnService_t *fcnService, void *p1 = nullptr, int service_id = 0,
+                           int nInBytes = 0, int nOutBytes = 0, const char *service_name="")
         : BasicService(service_id, nInBytes, nOutBytes, service_name),
           fcnService(fcnService), p1(p1) {}
     virtual ~LegacyService() = default;
@@ -76,7 +76,7 @@ static int _srvNull(void *p1, void *vin, int nIn, void *vout, int nOut) {
     return 0;
 }
 
-mdlBASE::mdlBASE(int argc,char **argv) {
+mdlBASE::mdlBASE(int argc, char **argv) {
 #ifdef _MSC_VER
     WSADATA wsaData;
     WSAStartup(0x202, &wsaData);
@@ -135,15 +135,15 @@ int32_t mdlBASE::ProcToThread(int32_t iProc) const {
 
 /* O(l2(nProc)): Given a global thread id, return the process to which it belongs */
 int32_t mdlBASE::ThreadToProc(int32_t iThread) const {
-    int l=0, u=layout.nProcs;
+    int l = 0, u = layout.nProcs;
     assert(iThread >= 0 && iThread <= layout.nThreads);
     assert(layout.nThreads == iProcToThread[layout.nProcs]);
     while (l <= u) {
         int m = (u + l) / 2;
         if (iThread < iProcToThread[m]) u = m - 1;
-        else l = m+1;
+        else l = m + 1;
     }
-    return l-1;
+    return l - 1;
 }
 
 void mdlBASE::AddService(int sid, void *p1,
@@ -151,24 +151,24 @@ void mdlBASE::AddService(int sid, void *p1,
                          int nInBytes, int nOutBytes, const char *name) {
     if (nInBytes  > nMaxInBytes)  nMaxInBytes  = nInBytes;
     if (nOutBytes > nMaxOutBytes) nMaxOutBytes = nOutBytes;
-    if (sid >= services.size()) services.resize(sid+9);
+    if (sid >= services.size()) services.resize(sid + 9);
     assert(services[sid]==nullptr);
-    services[sid] = std::make_unique<LegacyService>(fcnService,p1,sid,nInBytes,nOutBytes,name);
+    services[sid] = std::make_unique<LegacyService>(fcnService, p1, sid, nInBytes, nOutBytes, name);
 }
 
 void mdlBASE::AddService(std::unique_ptr<BasicService> &&service) {
     auto sid = service->getServiceID();
     if (service->getMaxBytesIn()  > nMaxInBytes)  nMaxInBytes  = service->getMaxBytesIn();
     if (service->getMaxBytesOut() > nMaxOutBytes) nMaxOutBytes = service->getMaxBytesOut();
-    if (sid >= services.size()) services.resize(sid+9);
+    if (sid >= services.size()) services.resize(sid + 9);
     assert(services[sid]==nullptr);
     services[sid] = std::move(service);
 }
 
-int mdlBASE::RunService(int sid,int nIn, void *pIn, void *pOut) {
+int mdlBASE::RunService(int sid, int nIn, void *pIn, void *pOut) {
     assert(sid < services.size());
     assert(services[sid] != nullptr);
-    return (*services[sid])(nIn,pIn,pOut);
+    return (*services[sid])(nIn, pIn, pOut);
 }
 
 void mdlBASE::yield() {
@@ -229,7 +229,7 @@ void mdlBASE::mdl_vprintf(const char *format, va_list ap) {
 void mdlBASE::mdl_printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
-    mdl_vprintf(format,args);
+    mdl_vprintf(format, args);
     va_end(args);
 }
 
@@ -245,7 +245,7 @@ void mdlZeroTimer(void *mdl, mdlTimer *t) {
     clock = ft.dwHighDateTime;
     clock <<= 32;
     clock |= ft.dwLowDateTime;
-    /* clock is in 100 nano-second units */
+    /* clock is in 100 nano - second units */
     t->wallclock = 1.0 * (clock / 10000000UL);
 #else
     struct timezone tz;
@@ -269,7 +269,7 @@ void mdlGetTimer(void *mdl, mdlTimer *t0, mdlTimer *t) {
     clock = ft.dwHighDateTime;
     clock <<= 32;
     clock |= ft.dwLowDateTime;
-    /* clock is in 100 nano-second units */
+    /* clock is in 100 nano - second units */
     t->wallclock = clock / 10000000UL - t0->wallclock;
 #else
     struct timezone tz;
@@ -300,7 +300,7 @@ void mdlPrintTimer(void *mdl, const char *message, mdlTimer *t0) {
 
 
 void mdlBASE::TimeReset() {
-    std::fill(dTimer,dTimer+TIME_COUNT,0.0);
+    std::fill(dTimer, dTimer + TIME_COUNT, 0.0);
     //dWaiting = dComputing = dSynchronizing = 0.0;
 #if defined(INSTRUMENT) && defined(HAVE_TICK_COUNTER)
     nTicks = getticks();
@@ -332,7 +332,7 @@ void mdlBASE::TimeAddWaiting() {
 }
 
 double mdlBASE::TimeFraction() const {
-    double dTotal = std::accumulate(dTimer,dTimer+TIME_COUNT,0.0);
+    double dTotal = std::accumulate(dTimer, dTimer + TIME_COUNT, 0.0);
     if (dTotal <= 0.0) return 0.0;
     return 100.0 / dTotal;
 }

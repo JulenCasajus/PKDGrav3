@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -37,61 +37,61 @@
 BZ_NAMESPACE(blitz)
 
 template<typename P_numtype, int N_rank> template<typename T_expr>
-Array<P_numtype,N_rank>::Array(_bz_ArrayExpr<T_expr> expr)
+Array<P_numtype, N_rank>::Array(_bz_ArrayExpr<T_expr> expr)
 {
     // Determine extent of the array expression
 
-    TinyVector<int,N_rank> lbound, extent, ordering;
-    TinyVector<bool,N_rank> ascendingFlag;
-    TinyVector<bool,N_rank> in_ordering;
+    TinyVector<int, N_rank> lbound, extent, ordering;
+    TinyVector<bool, N_rank> ascendingFlag;
+    TinyVector<bool, N_rank> in_ordering;
     in_ordering = false;
 
     int j = 0;
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
     {
         lbound(i) = expr.lbound(i);
         int ubound = expr.ubound(i);
         extent(i) = ubound - lbound(i) + 1;
         int orderingj = expr.ordering(i);
         if (orderingj != INT_MIN && orderingj < N_rank &&
-            !in_ordering( orderingj )) { // unique value in ordering array
-            in_ordering( orderingj ) = true;
+            !in_ordering(orderingj)) { // unique value in ordering array
+            in_ordering(orderingj) = true;
             ordering(j++) = orderingj;
         }
         int ascending = expr.ascending(i);
         ascendingFlag(i) = (ascending == 1);
 
 #ifdef BZ_DEBUG
-        if ((lbound(i) == INT_MIN) || (ubound == INT_MAX) 
+        if ((lbound(i) == INT_MIN) || (ubound == INT_MAX)
           || (ordering(i) == INT_MIN) || (ascending == INT_MIN))
         {
           BZPRECHECK(0,
            "Attempted to construct an array from an expression " << endl
            << "which does not have a shape.  To use this constructor, "
-           << endl 
+           << endl
            << "the expression must contain at least one array operand.");
           return;
         }
 #endif
     }
 
-    // It is possible that ordering is not a permutation of 0,...,N_rank-1.
+    // It is possible that ordering is not a permutation of 0, ..., N_rank - 1.
     // In that case j will be less than N_rank. We fill in ordering with the
     // usused values in decreasing order.
-    for (int i = N_rank-1; j < N_rank; ++j) {
+    for (int i = N_rank - 1; j < N_rank; ++j) {
         while (in_ordering(i))
           --i;
         ordering(j) = i--;
     }
 
-    Array<T_numtype,N_rank> A(lbound,extent,
-        GeneralArrayStorage<N_rank>(ordering,ascendingFlag));
+    Array<T_numtype, N_rank> A(lbound, extent,
+        GeneralArrayStorage<N_rank>(ordering, ascendingFlag));
     A = expr;
     reference(A);
 }
 
 template<typename P_numtype, int N_rank>
-Array<P_numtype,N_rank>::Array(const TinyVector<int, N_rank>& lbounds,
+Array<P_numtype, N_rank>::Array(const TinyVector<int, N_rank>& lbounds,
     const TinyVector<int, N_rank>& extent,
     const GeneralArrayStorage<N_rank>& storage)
     : storage_(storage)
@@ -120,7 +120,7 @@ _bz_inline2 void Array<P_numtype, N_rank>::computeStrides()
 
       // BZ_OLD_FOR_SCOPING
       int n;
-      for (n=0; n < N_rank; ++n)
+      for (n = 0; n < N_rank; ++n)
       {
           int strideSign = +1;
 
@@ -136,7 +136,7 @@ _bz_inline2 void Array<P_numtype, N_rank>::computeStrides()
           // the ranks minor to it.
           stride_[ordering(n)] = stride * strideSign;
 
-	  if((storage_.padding()==paddedData)&&(n==0)) {
+	  if ((storage_.padding()==paddedData)&&(n == 0)) {
 	    // The lowest rank dimension is padded to vecWidth, so this
 	    // needs to be accounted for in the stride
 	    stride *= simdTypes<T_numtype>::paddedLength(length_[ordering(0)]);
@@ -162,12 +162,12 @@ _bz_inline2 void Array<P_numtype, N_rank>::computeStrides()
 template<typename P_numtype, int N_rank>
 void Array<P_numtype, N_rank>::calculateZeroOffset()
 {
-    // Calculate the offset of (0,0,...,0)
+    // Calculate the offset of (0, 0, ..., 0)
     zeroOffset_ = 0;
 
     // zeroOffset_ = - sum(where(ascendingFlag_, stride_ * base_,
     //     (length_ - 1 + base_) * stride_))
-    for (int n=0; n < N_rank; ++n)
+    for (int n = 0; n < N_rank; ++n)
     {
         if (!isRankStoredAscending(n))
             zeroOffset_ -= (length_[n] - 1 + base(n)) * stride_[n];
@@ -180,7 +180,7 @@ template<typename P_numtype, int N_rank>
 bool Array<P_numtype, N_rank>::isStorageContiguous() const
 {
     // The storage is contiguous if for the set
-    // { | stride[i] * extent[i] | }, i = 0..N_rank-1,
+    // { | stride[i] * extent[i] | }, i = 0..N_rank - 1,
     // there is only one value which is not in the set
     // of strides; and if there is one stride which is 1.
 
@@ -190,7 +190,7 @@ bool Array<P_numtype, N_rank>::isStorageContiguous() const
     int numStridesMissing = 0;
     bool haveUnitStride = false;
 
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
     {
       diffType stride = BZ_MATHFN_SCOPE(abs)(stride_[i]);
         if (stride == 1)
@@ -199,7 +199,7 @@ bool Array<P_numtype, N_rank>::isStorageContiguous() const
         diffType vi = stride * length_[i];
 
         int j = 0;
-        for (j=0; j < N_rank; ++j)
+        for (j = 0; j < N_rank; ++j)
             if (BZ_MATHFN_SCOPE(abs)(stride_[j]) == vi)
                 break;
 
@@ -217,7 +217,7 @@ bool Array<P_numtype, N_rank>::isStorageContiguous() const
 template<typename P_numtype, int N_rank>
 void Array<P_numtype, N_rank>::dumpStructureInformation(ostream& os) const
 {
-    os << "Dump of Array<" << BZ_DEBUG_TEMPLATE_AS_STRING_LITERAL(P_numtype) 
+    os << "Dump of Array<" << BZ_DEBUG_TEMPLATE_AS_STRING_LITERAL(P_numtype)
        << ", " << N_rank << ">:" << endl
        << "ordering_      = " << storage_.ordering() << endl
        << "ascendingFlag_ = " << storage_.ascendingFlag() << endl
@@ -248,9 +248,9 @@ void Array<P_numtype, N_rank>::reference(const Array<P_numtype, N_rank>& array)
     "weak" reference that is not counted. If you can guarantee that
     the array memory block containing the data is persistent, this
     will allow reference counting to be bypassed for this array, which
-    if mutex-locking is involved is a significant overhead. */
+    if mutex - locking is involved is a significant overhead. */
 template<typename P_numtype, int N_rank>
-void 
+void
 Array<P_numtype, N_rank>::weakReference(const Array<P_numtype, N_rank>& array)
 {
     storage_ = array.storage_;
@@ -271,7 +271,7 @@ void Array<P_numtype, N_rank>::setStorage(GeneralArrayStorage<N_rank> x)
 {
 #ifdef BZ_DEBUG
     if (size() != 0) {
-        BZPRECHECK(0,"Cannot modify storage format of an Array that has already been allocated!" << endl);
+        BZPRECHECK(0, "Cannot modify storage format of an Array that has already been allocated!" << endl);
         return;
     }
 #endif
@@ -286,17 +286,17 @@ void Array<P_numtype, N_rank>::setStorage(GeneralArrayStorage<N_rank> x)
 template<typename P_numtype, int N_rank>
 _bz_inline2 void Array<P_numtype, N_rank>::setupStorage(int lastRankInitialized)
 {
-    TAU_TYPE_STRING(p1, "Array<T,N>::setupStorage() [T="
-        + CT(P_numtype) + ",N=" + CT(N_rank) + "]");
+    TAU_TYPE_STRING(p1, "Array<T, N>::setupStorage() [T="
+        + CT(P_numtype) + ", N=" + CT(N_rank) + "]");
     TAU_PROFILE(" ", p1, TAU_BLITZ);
 
     /*
      * If the length of some of the ranks was unspecified, fill these
      * in using the last specified value.
      *
-     * e.g. Array<int,3> A(40) results in a 40x40x40 array.
+     * e.g. Array<int, 3> A(40) results in a 40x40x40 array.
      */
-    for (int i=lastRankInitialized + 1; i < N_rank; ++i)
+    for (int i = lastRankInitialized + 1; i < N_rank; ++i)
     {
         storage_.setBase(i, storage_.base(lastRankInitialized));
         length_[i] = length_[lastRankInitialized];
@@ -307,19 +307,19 @@ _bz_inline2 void Array<P_numtype, N_rank>::setupStorage(int lastRankInitialized)
 
     // Allocate a block of memory.
     TinyVector<int, N_rank> alloc_length = length();
-    if(storage_.padding()==paddedData) {
+    if (storage_.padding()==paddedData) {
       // The size of the block is NOT equal to numelements, because the
       // lowest rank dimension is padded to vecWidth
-      alloc_length[ordering(0)] = 
+      alloc_length[ordering(0)] =
 	simdTypes<T_numtype>::paddedLength(alloc_length[ordering(0)]);
     }
     sizeType numElem = _bz_returntype<sizeType>::product(alloc_length);
-    if (numElem==0)
+    if (numElem == 0)
         T_base::changeToNullBlock();
     else
         T_base::newBlock(numElem);
 
-    // Adjust the base of the array to account for non-zero base
+    // Adjust the base of the array to account for non-zero  base
     // indices and reversals
     data_ += zeroOffset_;
 }
@@ -354,11 +354,11 @@ void Array<P_numtype, N_rank>::makeUnique()
 }
 
 template<typename P_numtype, int N_rank>
-Array<P_numtype, N_rank> Array<P_numtype, N_rank>::transpose(int r0, int r1, 
+Array<P_numtype, N_rank> Array<P_numtype, N_rank>::transpose(int r0, int r1,
     int r2, int r3, int r4, int r5, int r6, int r7, int r8, int r9, int r10) const
 {
     T_array B(*this);
-    B.transposeSelf(r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10);
+    B.transposeSelf(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
     return B;
 }
 
@@ -366,9 +366,9 @@ template<typename P_numtype, int N_rank>
 void Array<P_numtype, N_rank>::transposeSelf(int r0, int r1, int r2, int r3,
     int r4, int r5, int r6, int r7, int r8, int r9, int r10)
 {
-    BZPRECHECK(r0+r1+r2+r3+r4+r5+r6+r7+r8+r9+r10 == N_rank * (N_rank-1) / 2,
+    BZPRECHECK(r0 + r1 + r2 + r3 + r4 + r5 + r6 + r7 + r8 + r9 + r10 == N_rank * (N_rank - 1) / 2,
         "Invalid array transpose() arguments." << endl
-        << "Arguments must be a permutation of the numerals (0,...,"
+        << "Arguments must be a permutation of the numerals (0, ..., "
         << (N_rank - 1) << ")");
 
     // Create a temporary reference copy of this array
@@ -399,7 +399,7 @@ void Array<P_numtype, N_rank>::doTranspose(int destRank, int sourceRank,
 
     length_[destRank] = array.length_[sourceRank];
     stride_[destRank] = array.stride_[sourceRank];
-    storage_.setAscendingFlag(destRank, 
+    storage_.setAscendingFlag(destRank,
         array.isRankStoredAscending(sourceRank));
     storage_.setBase(destRank, array.base(sourceRank));
 
@@ -408,7 +408,7 @@ void Array<P_numtype, N_rank>::doTranspose(int destRank, int sourceRank,
     // the appropriate permutation.
 
     // Find sourceRank in array.storage_.ordering_
-    int i=0;
+    int i = 0;
     for (; i < N_rank; ++i)
         if (array.storage_.ordering(i) == sourceRank)
             break;
@@ -430,7 +430,7 @@ void Array<P_numtype, N_rank>::reverseSelf(int rank)
 }
 
 template<typename P_numtype, int N_rank>
-Array<P_numtype, N_rank> Array<P_numtype,N_rank>::reverse(int rank)
+Array<P_numtype, N_rank> Array<P_numtype, N_rank>::reverse(int rank)
 {
     T_array B(*this);
     B.reverseSelf(rank);
@@ -438,10 +438,10 @@ Array<P_numtype, N_rank> Array<P_numtype,N_rank>::reverse(int rank)
 }
 
 template<typename P_numtype, int N_rank> template<typename P_numtype2>
-Array<P_numtype2,N_rank> Array<P_numtype,N_rank>::extractComponent(P_numtype2, 
+Array<P_numtype2, N_rank> Array<P_numtype, N_rank>::extractComponent(P_numtype2,
     int componentNumber, int numComponents) const
 {
-    BZPRECONDITION((componentNumber >= 0) 
+    BZPRECONDITION((componentNumber >= 0)
         && (componentNumber < numComponents));
 
     // If P_numtype is a multicomponent type, it may have an alignment
@@ -451,26 +451,26 @@ Array<P_numtype2,N_rank> Array<P_numtype,N_rank>::extractComponent(P_numtype2,
     BZASSERT(sizeof(P_numtype)%sizeof(P_numtype2)==0);
 
     TinyVector<diffType, N_rank> stride2;
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
       stride2(i) = stride_(i) * sizeof(P_numtype)/sizeof(P_numtype2);
-    const P_numtype2* dataFirst2 = 
+    const P_numtype2* dataFirst2 =
         ((const P_numtype2*)dataFirst()) + componentNumber;
-    return Array<P_numtype2,N_rank>(const_cast<P_numtype2*>(dataFirst2), 
+    return Array<P_numtype2, N_rank>(const_cast<P_numtype2*>(dataFirst2),
         length_, stride2, storage_);
 }
 
-/* 
+/*
  * These routines reindex the current array to use a new base vector.
  * The first reindexes the array, the second just returns a reindex view
  * of the current array, leaving the current array unmodified.
  * (Contributed by Derrick Bass)
  */
 template<typename P_numtype, int N_rank>
-_bz_inline2 void Array<P_numtype, N_rank>::reindexSelf(const 
-    TinyVector<int, N_rank>& newBase) 
+_bz_inline2 void Array<P_numtype, N_rank>::reindexSelf(const
+    TinyVector<int, N_rank>& newBase)
 {
   diffType delta = 0;
-    for (int i=0; i < N_rank; ++i)
+    for (int i = 0; i < N_rank; ++i)
       delta += (base(i) - newBase(i)) * stride_(i);
 
     data_ += delta;
@@ -482,8 +482,8 @@ _bz_inline2 void Array<P_numtype, N_rank>::reindexSelf(const
 }
 
 template<typename P_numtype, int N_rank>
-_bz_inline2 Array<P_numtype, N_rank> 
-Array<P_numtype, N_rank>::reindex(const TinyVector<int, N_rank>& newBase) 
+_bz_inline2 Array<P_numtype, N_rank>
+Array<P_numtype, N_rank>::reindex(const TinyVector<int, N_rank>& newBase)
 {
     T_array B(*this);
     B.reindexSelf(newBase);

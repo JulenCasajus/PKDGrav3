@@ -3,26 +3,26 @@
 #define TOL_ITER 1.e-6
 #define NMAX_ITER 100
 
-template <typename dtype=double>
+template<typename dtype = double>
 static inline void dump(dtype a) {
     printf("%e\n", a);
 }
-template <>
+template<>
 inline void dump(dvec a) {
-    for (auto i=0; i<dvec::width(); i++)
+    for (auto i = 0; i < dvec::width(); i++)
         printf(" %e ", a[i]);
     printf("\n");
 }
 
 /* NOTE: If you wish to use this functions, make sure that the code is compiled
- * with "-fno-finite-math-only" or similar flags, otherwise this comparisons will
+ * with "-fno - finite - math - only" or similar flags, otherwise this comparisons will
  * always be false.
  */
-template <typename dtype>
+template<typename dtype>
 static inline int nan_guard(dtype &var, dtype def) {
     int nan = 0;
     var = mask_mov(var, var!=var, def);
-    for (auto j=0; j<dtype::width(); j++) {
+    for (auto j = 0; j < dtype::width(); j++) {
         if (isnan(var[j])) {
             nan = 1;
         }
@@ -30,10 +30,10 @@ static inline int nan_guard(dtype &var, dtype def) {
     return nan;
 }
 
-template <>
+template<>
 inline int nan_guard(double &var, double def) {
     if (isnan(var)) {
-        var=def;
+        var = def;
         return 1;
     }
     else {
@@ -41,20 +41,20 @@ inline int nan_guard(double &var, double def) {
     }
 }
 
-template <typename dtype=dvec, typename mtype=dmask>
+template<typename dtype = dvec, typename mtype = dmask>
 class RiemannSolverExact {
 public:
 
     RiemannSolverExact(dtype gamma, mtype mask) : gamma(gamma), mask(mask) {
-        G1 = (gamma-1.0)/(2.0*gamma);
-        G2 = (gamma+1.0)/(2.0*gamma);
-        G3 = (2.0*gamma/(gamma-1.0));
-        G4 = 2.0/(gamma-1.0);
-        G5 = 2.0/(gamma+1.0);
-        G6 = (gamma-1.0)/(gamma+1.0);
-        G7 = 0.5*(gamma-1.0);
-        G8 = 1.0/gamma;
-        G9 = gamma-1.0;
+        G1 = (gamma - 1.0)/(2.0 * gamma);
+        G2 = (gamma + 1.0)/(2.0 * gamma);
+        G3 = (2.0 * gamma/(gamma - 1.0));
+        G4 = 2.0/(gamma - 1.0);
+        G5 = 2.0/(gamma + 1.0);
+        G6 = (gamma - 1.0)/(gamma + 1.0);
+        G7 = 0.5*(gamma - 1.0);
+        G8 = 1.0 / gamma;
+        G9 = gamma - 1.0;
     };
 
 private:
@@ -91,22 +91,22 @@ private:
     };
 
     inline void limit_decrease(dtype &Pg, dtype Pg_prev) {
-        dtype limit = 0.1*Pg_prev;
-        Pg = mask_mov(Pg, Pg<limit, limit);
+        dtype limit = 0.1 * Pg_prev;
+        Pg = mask_mov(Pg, Pg < limit, limit);
     }
 
     inline dtype guess_two_rarefaction(
-        dtype R_rho,dtype R_p,dtype L_rho,dtype L_p,
+        dtype R_rho, dtype R_p, dtype L_rho, dtype L_p,
         dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
-        dtype pnu = (cs_L+cs_R) - G7 * (v_line_R - v_line_L);
+        dtype pnu = (cs_L + cs_R) - G7 * (v_line_R - v_line_L);
         dtype pde = cs_L * pow(L_p, -G1) + cs_R * pow(R_p, -G1);
         return pow(pnu / pde, G3);
     }
 
     inline dtype guess_two_shock( dtype pv,
-                                  dtype R_rho,dtype R_p,dtype L_rho,dtype L_p,
+                                  dtype R_rho, dtype R_p, dtype L_rho, dtype L_p,
                                   dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
-        // two-shock approximation
+        // two - shock approximation
         dtype gel = sqrt((G5 / L_rho) / (G6 * L_p + pv));
         dtype ger = sqrt((G5 / R_rho) / (G6 * R_p + pv));
         dtype x = (gel * L_p + ger * R_p - (v_line_R - v_line_L)) / (gel + ger);
@@ -114,36 +114,36 @@ private:
     }
 
     inline dtype guess_for_pressure(
-        dtype R_rho,dtype R_p,dtype L_rho,dtype L_p,
+        dtype R_rho, dtype R_p, dtype L_rho, dtype L_p,
         dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
         dtype pmin, pmax;
-        // start with the usual lowest-order guess for the contact wave pressure
-        dtype pv = 0.5*(L_p+R_p) - 0.125*(v_line_R-v_line_L)*(L_rho+R_rho)*(cs_L+cs_R);
+        // start with the usual lowest - order guess for the contact wave pressure
+        dtype pv = 0.5*(L_p + R_p) - 0.125*(v_line_R - v_line_L)*(L_rho + R_rho)*(cs_L + cs_R);
 
-        pmin = min(L_p,R_p);
-        pmax = max(L_p,R_p);
+        pmin = min(L_p, R_p);
+        pmax = max(L_p, R_p);
 
         // if one side is vacuum, guess half the mean
         dtype zero = 0.0;
         mtype vac = pmin<=zero;
         mtype nvac = ~vac;
-        pv = mask_mov(pv, vac, 0.5*(pmin+pmax));
+        pv = mask_mov(pv, vac, 0.5*(pmin + pmax));
         //dump(pv);
 
         // if the two are sufficiently close, and pv is between both values, return it
         dtype qrat = pmax / pmin;
         dtype two  = 2.0;
-        // All this casting can be made static or defining custom and/or/not functions for vector
+        // All this casting can be made static or defining custom and/or / not functions for vector
         // Or overloading when one of the arguments is an int
         mtype done = nvac & (mtype)((mtype)(qrat <= two) & (mtype)((mtype)(pv >= pmin) & (mtype)(pv <= pmax)));
         mtype ndone = ~done & nvac;
         if (movemask(ndone)) {
 
-            mtype cond = pv<pmin;
+            mtype cond = pv < pmin;
             mtype ncond = ~cond;
             if (movemask(cond)) {
                 //printf("Rarefaction\n");
-                pv = mask_mov(pv, cond&ndone,
+                pv = mask_mov(pv, cond & ndone,
                               guess_two_rarefaction( R_rho, R_p, L_rho, L_p,
                                                      v_line_L, v_line_R, cs_L, cs_R) );
                 //dump(pv);
@@ -151,14 +151,14 @@ private:
 
             if (movemask(ncond)) {
                 //printf("Two shock\n");
-                // two-shock approximation
+                // two - shock approximation
                 dtype pshock = guess_two_shock( pv, R_rho, R_p, L_rho, L_p,
                                                 v_line_L, v_line_R, cs_L, cs_R);
-                mtype cond2 = (mtype)(pshock<pmin) | (mtype)(pshock>pmax);
-                pshock = mask_mov( pshock, ncond&cond2&ndone, pmin);
+                mtype cond2 = (mtype)(pshock < pmin) | (mtype)(pshock > pmax);
+                pshock = mask_mov( pshock, ncond & cond2 & ndone, pmin);
                 //pshock = mask_mov( pshock, cond2, pmin); // This solve the problem but I do not get why...
                 //dump(pshock);
-                pv = mask_mov( pv, ndone&ncond, pshock);
+                pv = mask_mov( pv, ndone & ncond, pshock);
                 //dump(pv);
             }
         }
@@ -173,7 +173,7 @@ private:
 #ifndef USE_MFM
 
     inline void sample_reimann_standard( dtype S,
-                                         dtype R_rho,dtype R_p, dtype R_v[3],dtype L_rho,dtype L_p, dtype L_v[3],
+                                         dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
                                          dtype P_M, dtype S_M, dtype *rho_f_out, dtype *p_f_out, dtype *v_f_out,
                                          dtype n_unit[3], dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
         // This is a very inefficient simd implementation until someone bothers to
@@ -181,15 +181,15 @@ private:
         typename dtype::scalar_t rho_f[dtype::width()];
         typename dtype::scalar_t p_f[dtype::width()];
         typename dtype::scalar_t v_f[3][dtype::width()];
-        for (auto v=0; v < dtype::width(); v++) {
-            typename dtype::scalar_t C_eff,S_eff;
+        for (auto v = 0; v < dtype::width(); v++) {
+            typename dtype::scalar_t C_eff, S_eff;
             if (S[v] <= S_M[v]) { /* sample point is left of contact discontinuity */
                 if (P_M[v] <= L_p[v]) { /* left fan (rarefaction) */
                     typename dtype::scalar_t S_check_L = v_line_L[v] - cs_L[v];
                     if (S[v] <= S_check_L) { /* left data state */
                         p_f[v] = L_p[v];
                         rho_f[v] = L_rho[v];
-                        for (auto k=0; k<3; k++)
+                        for (auto k = 0; k < 3; k++)
                             v_f[k][v] = L_v[k][v];
                         continue;
                     }
@@ -200,7 +200,7 @@ private:
                         if (S[v] > S_tmp_L) { /* middle left state */
                             rho_f[v] = L_rho[v] * pow(P_M[v] / L_p[v], G8[v]);
                             p_f[v] = P_M[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = L_v[k][v] + (S_M[v]-v_line_L[v])*n_unit[k][v];
                             continue;
                         }
@@ -209,8 +209,8 @@ private:
                             C_eff = G5[v] * (cs_L[v] + G7[v] * (v_line_L[v] - S[v]));
                             rho_f[v] = L_rho[v] * pow(C_eff / cs_L[v], G4[v]);
                             p_f[v] = L_p[v] * pow(C_eff / cs_L[v], G3[v]);
-                            for (auto k=0; k<3; k++)
-                                v_f[k][v] = L_v[k][v] + (S_eff-v_line_L[v])*n_unit[k][v];
+                            for (auto k = 0; k < 3; k++)
+                                v_f[k][v] = L_v[k][v] + (S_eff - v_line_L[v])*n_unit[k][v];
                             continue;
                         }
                     }
@@ -223,14 +223,14 @@ private:
                         if (S[v] <= S_L) { /* left data state */
                             p_f[v] = L_p[v];
                             rho_f[v] = L_rho[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = L_v[k][v];
                             continue;
                         }
                         else {      /* middle left state behind shock */
                             rho_f[v] = L_rho[v] * (pml + G6[v]) / (pml * G6[v] + 1.0);
                             p_f[v] = P_M[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = L_v[k][v] + (S_M[v]-v_line_L[v])*n_unit[k][v];
                             continue;
                         }
@@ -238,7 +238,7 @@ private:
                     else {
                         rho_f[v] = L_rho[v] / G6[v];
                         p_f[v] = P_M[v];
-                        for (auto k=0; k<3; k++)
+                        for (auto k = 0; k < 3; k++)
                             v_f[k][v] = L_v[k][v] + (S_M[v]-v_line_L[v])*n_unit[k][v];
                         continue;
                     }
@@ -253,14 +253,14 @@ private:
                         if (S[v] >= S_R) { /* right data state */
                             p_f[v] = R_p[v];
                             rho_f[v] = R_rho[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = R_v[k][v];
                             continue;
                         }
                         else {      /* middle right state behind shock */
                             rho_f[v] = R_rho[v] * (pmr + G6[v]) / (pmr * G6[v] + 1.0);
                             p_f[v] = P_M[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = R_v[k][v] + (S_M[v]-v_line_R[v])*n_unit[k][v];
                             continue;
                         }
@@ -268,7 +268,7 @@ private:
                     else {
                         rho_f[v] = R_rho[v] / G6[v];
                         p_f[v] = P_M[v];
-                        for (auto k=0; k<3; k++)
+                        for (auto k = 0; k < 3; k++)
                             v_f[k][v] = R_v[k][v] + (S_M[v]-v_line_R[v])*n_unit[k][v];
                         continue;
                     }
@@ -278,7 +278,7 @@ private:
                     if (S[v] >= S_check_R) {   /* right data state */
                         p_f[v] = R_p[v];
                         rho_f[v] = R_rho[v];
-                        for (auto k=0; k<3; k++)
+                        for (auto k = 0; k < 3; k++)
                             v_f[k][v] = R_v[k][v];
                         continue;
                     }
@@ -289,7 +289,7 @@ private:
                         if (S[v] <= S_tmp_R) { /* middle right state */
                             rho_f[v] = R_rho[v] * pow(P_M[v] / R_p[v], G8[v]);
                             p_f[v] = P_M[v];
-                            for (auto k=0; k<3; k++)
+                            for (auto k = 0; k < 3; k++)
                                 v_f[k][v] = R_v[k][v] + (S_M[v]-v_line_R[v])*n_unit[k][v];
                             continue;
                         }
@@ -298,8 +298,8 @@ private:
                             C_eff = G5[v] * (cs_R[v] - G7[v] * (v_line_R [v]- S[v]));
                             rho_f[v] = R_rho[v] * pow(C_eff / cs_R[v], G4[v]);
                             p_f[v] = R_p[v] * pow(C_eff / cs_R[v], G3[v]);
-                            for (auto k=0; k<3; k++)
-                                v_f[k][v] = R_v[k][v] + (S_eff-v_line_R[v])*n_unit[k][v];
+                            for (auto k = 0; k < 3; k++)
+                                v_f[k][v] = R_v[k][v] + (S_eff - v_line_R[v])*n_unit[k][v];
                             continue;
                         }
                     }
@@ -308,7 +308,7 @@ private:
         }
         rho_f_out->load(rho_f);
         p_f_out->load(p_f);
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             v_f_out[k].load(v_f[k]);
 
     }
@@ -316,7 +316,7 @@ private:
 #else
 
     inline void sample_reimann_standard( dtype S,
-                                         dtype R_rho,dtype R_p, dtype R_v[3],dtype L_rho,dtype L_p, dtype L_v[3],
+                                         dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
                                          dtype P_M, dtype S_M, dtype *rho_f, dtype *p_f, dtype *v_f,
                                          dtype n_unit[3], dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {}
 #endif //!USE_MFM
@@ -328,7 +328,7 @@ private:
     /* --------------------------------------------------------------------------------- */
 
     inline void sample_reimann_vaccum_right( dtype S,
-            dtype R_rho,dtype R_p, dtype R_v[3],dtype L_rho,dtype L_p, dtype L_v[3],
+            dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
             dtype &P_M, dtype &S_M, dtype *rho_f, dtype *p_f, dtype *v_f,
             dtype n_unit[3], dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
         //dtype S_L = v_line_L - G4 * cs_L;
@@ -366,7 +366,7 @@ private:
             }
         }
         *p_f = P_M;
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             v_f[k] = L_v[k] + (S_M - v_line_L) * n_unit[k];
         return;
     }
@@ -377,7 +377,7 @@ private:
     /*  (written by V. Springel for AREPO) */
     /* --------------------------------------------------------------------------------- */
     inline void sample_reimann_vaccum_left( dtype S,
-                                            dtype R_rho,dtype R_p, dtype R_v[3],dtype L_rho,dtype L_p, dtype L_v[3],
+                                            dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
                                             dtype &P_M, dtype &S_M, dtype *rho_f, dtype *p_f, dtype *v_f,
                                             dtype n_unit[3], dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
         //printf("Vaccuum left\n");
@@ -414,7 +414,7 @@ private:
             }
         }
         *p_f = P_M;
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             v_f[k] = R_v[k] + (S_M - v_line_R) * n_unit[k];
         return;
     }
@@ -424,10 +424,10 @@ private:
         dtype a0, a1, a2;
         a0 = G5 / r;
         a1 = G6 * p;
-        a2 = sqrt(a0 / (pg+a1));
+        a2 = sqrt(a0 / (pg + a1));
 
-        f = (pg-p) * a2;
-        fp = a2 * (1.0 - 0.5*(pg-p)/(a1+pg));
+        f = (pg - p) * a2;
+        fp = a2 * (1.0 - 0.5*(pg - p)/(a1 + pg));
     }
 
     inline void get_rarefaction_f_fp( dtype &f, dtype &fp,
@@ -436,13 +436,13 @@ private:
         pratio = pg / p;
         a0 = pow(pratio, G1);
 
-        f = G4 * cs * (a0-1.);
-        fp = a0 / (r*cs*pratio);
+        f = G4 * cs * (a0 - 1.);
+        fp = a0 / (r * cs * pratio);
     }
 
     inline void get_f_fp( dtype &f, dtype &fp,
                           dtype pg, dtype p, dtype r, dtype cs) {
-        mtype cond = pg>p;
+        mtype cond = pg > p;
         mtype ncond = pg<=p; //~cond;
         dtype f1, fp1;
 
@@ -467,9 +467,9 @@ private:
         niter_v = 1.;
         dtype tol = 100.;
         dtype Pg_prev, Z_L, Z_R;
-        mtype not_converged = static_cast<mtype>(niter_v==1.) & mask;
-        while ( itt<NMAX_ITER && movemask(not_converged) ) {
-            Pg_prev=Pg;
+        mtype not_converged = static_cast<mtype>(niter_v == 1.) & mask;
+        while ( itt < NMAX_ITER && movemask(not_converged) ) {
+            Pg_prev = Pg;
             get_f_fp( W_L, Z_L, Pg, L_p, L_rho, cs_L);
             get_f_fp( W_R, Z_R, Pg, R_p, R_rho, cs_R);
 
@@ -480,9 +480,9 @@ private:
 
             limit_decrease(Pg, Pg_prev);
 
-            tol = 2.0 * abs((Pg-Pg_prev)/(Pg+Pg_prev));
+            tol = 2.0 * abs((Pg - Pg_prev)/(Pg + Pg_prev));
             not_converged = static_cast<mtype>(tol > TOL_ITER)&mask;
-            niter_v = mask_mov(niter_v, not_converged, niter_v+1.0);
+            niter_v = mask_mov(niter_v, not_converged, niter_v + 1.0);
             itt += 1;
         }
         return itt;
@@ -490,7 +490,7 @@ private:
 
     inline int iterative_Riemann_solver(
         dtype &niter_v,
-        dtype R_rho,dtype R_p,dtype L_rho,dtype L_p,
+        dtype R_rho, dtype R_p, dtype L_rho, dtype L_p,
         dtype &P_M, dtype &S_M,
         dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
         /* before going on, let's compare this to an exact Riemann solution calculated iteratively */
@@ -504,10 +504,10 @@ private:
 
         niter_Riemann = newrap_solver( niter_v, Pg, W_L, W_R, dvel,
                                        L_p, L_rho, cs_L, R_p, R_rho, cs_R);
-        //if (niter_Riemann<NMAX_ITER)
+        //if (niter_Riemann < NMAX_ITER)
         {
             P_M = Pg;
-            S_M = 0.5*(v_line_L+v_line_R) + 0.5*(W_R-W_L);
+            S_M = 0.5*(v_line_L + v_line_R) + 0.5*(W_R - W_L);
 
             return niter_Riemann;
         }
@@ -517,7 +517,7 @@ private:
     }
 
     inline void sample_reimann_vaccum_internal( dtype niter_v, dtype S,
-            dtype R_rho,dtype R_p, dtype R_v[3],dtype L_rho,dtype L_p, dtype L_v[3],
+            dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
             dtype &P_M, dtype &S_M, dtype *rho_f, dtype *p_f, dtype *v_f,
             dtype n_unit[3], dtype v_line_L, dtype v_line_R, dtype cs_L, dtype cs_R) {
 #ifndef USE_MFM
@@ -546,9 +546,9 @@ private:
             dtype v_f_internal;
             dtype v_f_right;
             dtype v_f_left;
-            for (auto k=0; k<3; k++) {
-                v_f_internal = (L_v[k] + (R_v[k]-L_v[k]) * (S-S_L)/(S_R-S_L)) *
-                               (1-n_unit[k]) + S * n_unit[k];
+            for (auto k = 0; k < 3; k++) {
+                v_f_internal = (L_v[k] + (R_v[k]-L_v[k]) * (S - S_L)/(S_R - S_L)) *
+                               (1 - n_unit[k]) + S * n_unit[k];
                 v_f_left  = R_v[k] + (S_M - v_line_R) * n_unit[k];
                 v_f_right = L_v[k] + (S_M - v_line_L) * n_unit[k];
 
@@ -569,21 +569,21 @@ private:
     void convert_face_to_flux(
         dtype *rho_f, dtype *p_f, dtype *v_f,
         dtype n_unit[3]) {
-        dtype rho, P, v[3], v_line=0, v_frame=0, h=0;
+        dtype rho, P, v[3], v_line = 0, v_frame = 0, h = 0;
         rho = *rho_f;
         P = *p_f;
-        for (auto k=0; k<3; k++) {
+        for (auto k = 0; k < 3; k++) {
             v[k] = v_f[k];
             v_line += v[k] * n_unit[k];
             h += v[k] * v[k];
         }
         v_line -= v_frame;
         h *= 0.5 * rho; /* h is the kinetic energy density */
-        h += (gamma/G9) * P; /* now h is the enthalpy */
+        h += (gamma / G9) * P; /* now h is the enthalpy */
         /* now we just compute the standard fluxes for a given face state */
         *p_f = h * v_line;
         *rho_f = rho * v_line;
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             v_f[k] = (*rho_f) * v[k] + P * n_unit[k];
         return;
     }
@@ -594,14 +594,14 @@ private:
                                    dtype *p_f, dtype *v_f) {
         dtype zeros = 0.0;
         mtype vac = (mtype)((mtype)(L_p <= zeros) & (mtype)(R_p <= zeros)) | (mtype)((mtype)(L_rho<=zeros) & (mtype)(R_rho<=zeros));
-        vac = vac&mask;
+        vac = vac & mask;
         P_M = mask_mov(P_M, vac, zeros);
         S_M = mask_mov(S_M, vac, zeros);
 
 #ifndef USE_MFM
         *rho_f = mask_mov(*rho_f, vac, 0.0);
         *p_f = mask_mov(*p_f, vac, 0.0);
-        for (auto k=0; k<3; k++) {
+        for (auto k = 0; k < 3; k++) {
             v_f[k] = mask_mov(v_f[k], vac, 0.);
         }
 #endif
@@ -624,7 +624,7 @@ private:
 public:
 
     int solve(
-        dtype R_rho,dtype R_p, dtype R_v[3], dtype L_rho,dtype L_p, dtype L_v[3],
+        dtype R_rho, dtype R_p, dtype R_v[3], dtype L_rho, dtype L_p, dtype L_v[3],
         dtype &P_M, dtype &S_M, dtype *rho_f, dtype *p_f, dtype *v_f,
         dtype n_unit[3]) {
         int niter;
@@ -640,7 +640,7 @@ public:
                          R_v[1]*n_unit[1] +
                          R_v[2]*n_unit[2];
         mtype vac = mask & ( (R_rho < 0.) | (L_rho < 0.) );
-        niter=iterative_Riemann_solver( niter_v, R_rho, R_p, L_rho, L_p, P_M, S_M, v_line_L, v_line_R, cs_L, cs_R);
+        niter = iterative_Riemann_solver( niter_v, R_rho, R_p, L_rho, L_p, P_M, S_M, v_line_L, v_line_R, cs_L, cs_R);
 #ifndef USE_MFM
         dtype S = 0;
         sample_reimann_standard( S,
@@ -648,10 +648,10 @@ public:
                                  L_rho, L_p, L_v,
                                  P_M, S_M,
                                  rho_f, p_f, v_f,
-                                 n_unit,v_line_L,v_line_R,cs_L,cs_R);
+                                 n_unit, v_line_L, v_line_R, cs_L, cs_R);
 #endif
         dtype zero = 0.;
-        sample_reimann_vaccum_internal( niter_v, zero, R_rho, R_p, R_v, L_rho, L_p, L_v, P_M, S_M, rho_f, p_f, v_f, n_unit,v_line_L,v_line_R,cs_L,cs_R);
+        sample_reimann_vaccum_internal( niter_v, zero, R_rho, R_p, R_v, L_rho, L_p, L_v, P_M, S_M, rho_f, p_f, v_f, n_unit, v_line_L, v_line_R, cs_L, cs_R);
         handle_input_vacuum(R_rho, R_p, L_rho, L_p, P_M, S_M, rho_f, p_f, v_f);
 #ifndef USE_MFM
         convert_face_to_flux( rho_f, p_f, v_f, n_unit);

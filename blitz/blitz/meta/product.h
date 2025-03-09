@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/meta/product.h  TinyVector product metaprogram
+ * blitz/meta / product.h  TinyVector product metaprogram
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -45,19 +45,19 @@ BZ_NAMESPACE(blitz)
 template<int N, int I>
 class _bz_meta_vectorProduct {
 public:
-    static const int loopFlag = (I < N-1) ? 1 : 0;
+    static const int loopFlag = (I < N - 1) ? 1 : 0;
 
     template<typename T_expr1>
     static inline BZ_SUMTYPE(_bz_typename T_expr1::T_numtype)
     f(const T_expr1& a)
     {
-        return a[I] * _bz_meta_vectorProduct<loopFlag * N, 
-            loopFlag * (I+1)>::f(a);
+        return a[I] * _bz_meta_vectorProduct<loopFlag * N,
+            loopFlag * (I + 1)>::f(a);
     }
 };
 
 template<>
-class _bz_meta_vectorProduct<0,0> {
+class _bz_meta_vectorProduct<0, 0> {
 public:
     template<typename T_expr1>
     static inline _bz_meta_nullOperand f(const T_expr1&)
@@ -67,19 +67,19 @@ public:
 template<int N, int I, typename T_ret>
 class _bz_meta_vectorProductRet {
 public:
-    static const int loopFlag = (I < N-1) ? 1 : 0;
+    static const int loopFlag = (I < N - 1) ? 1 : 0;
 
     template<typename T_expr1>
     static inline T_ret
     f(const T_expr1& a)
     {
-      return static_cast<T_ret>(a[I]) * _bz_meta_vectorProductRet<loopFlag * N, 
-	loopFlag * (I+1), T_ret>::f(a);
+      return static_cast<T_ret>(a[I]) * _bz_meta_vectorProductRet<loopFlag * N,
+	loopFlag * (I + 1), T_ret>::f(a);
     }
 };
 
 template<typename T_ret>
-class _bz_meta_vectorProductRet<0,0, T_ret> {
+class _bz_meta_vectorProductRet<0, 0, T_ret> {
 public:
     template<typename T_expr1>
     static inline _bz_meta_nullOperand f(const T_expr1&)

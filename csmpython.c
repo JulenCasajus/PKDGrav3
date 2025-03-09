@@ -35,7 +35,7 @@
 
 static int double_or_none(PyObject *o, void *d) {
     double value = *(double *)d;
-    if (o==Py_None) {
+    if (o == Py_None) {
         *(double *)d = NAN;
         return 1;
     }
@@ -56,7 +56,7 @@ static int double_or_none(PyObject *o, void *d) {
 
 static PyObject *
 ppy_csmClassRead(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"classfile","Lbox","LinSpecies","kpivot","alphas","As","ns",NULL};
+    static char *kwlist[]= {"classfile", "Lbox", "LinSpecies", "kpivot", "alphas", "As", "ns", NULL};
     double Lbox;
     double kpivot = 0.05;
     double alphas = 0.0;
@@ -65,29 +65,29 @@ ppy_csmClassRead(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
     const char *fname;
     PyObject *species = Py_None;
     if ( !PyArg_ParseTupleAndKeywords(
-                args, kwobj, "sd|Odddd:ClassRead", kwlist,
+                args, kwobj, "sd | Odddd:ClassRead", kwlist,
                 &fname, &Lbox, &species, &kpivot, &alphas,
                 &self->csm->val.dNormalization,
                 &self->csm->val.dSpectral ) )
         return NULL;
-    if (species!=Py_None) {
-        if (!PyList_Check(species)) return PyErr_Format(PyExc_TypeError,"ClassRead() argument LinSpecies must be list or None");
+    if (species != Py_None) {
+        if (!PyList_Check(species)) return PyErr_Format(PyExc_TypeError, "ClassRead() argument LinSpecies must be list or None");
         nSpecies = PyList_Size(species);
-        aSpecies = malloc(nSpecies * sizeof(*aSpecies));        assert(aSpecies!=NULL);
-        for ( i=0; i<nSpecies; ++i) {
-            PyObject *o = PyList_GetItem(species,i);
+        aSpecies = malloc(nSpecies * sizeof(*aSpecies));        assert(aSpecies != NULL);
+        for ( i = 0; i < nSpecies; ++i) {
+            PyObject *o = PyList_GetItem(species, i);
 #if PY_MAJOR_VERSION >= 3
             if (PyUnicode_Check(o)) aSpecies[i] = PyUnicode_AsUTF8(o);
 #else
             if (PyString_Check(o)) aSpecies[i] = PyString_AsString(o);
 #endif
-            else return PyErr_Format(PyExc_TypeError,"ClassRead() argument LinSpecies list must contain string elements");
+            else return PyErr_Format(PyExc_TypeError, "ClassRead() argument LinSpecies list must contain string elements");
         }
     }
     self->csm->val.classData.bClass = 1;
     self->csm->val.dPivot = kpivot;
     self->csm->val.dRunning = alphas;
-    csmClassRead(self->csm,fname,Lbox,0.0,nSpecies,aSpecies,0,NULL);
+    csmClassRead(self->csm, fname, Lbox, 0.0, nSpecies, aSpecies, 0, NULL);
     if (aSpecies) free(aSpecies);
     Py_INCREF(Py_None);
     return Py_None;
@@ -102,7 +102,7 @@ ppy_csmSetCosmology(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
     self->csm->val.dHubble0 = sqrt(8.0 * M_PI / 3.0);
     self->csm->val.classData.bClass = 0; // Not using CLASS
     if ( !PyArg_ParseTupleAndKeywords(
-                args, kwobj, "|O&O&O&O&O&O&O&O&O&O&O&O&O&p:SetCosmology", kwlist,
+                args, kwobj, "|O & O & O & O & O & O & O & O & O & O & O & O & O & p:SetCosmology", kwlist,
                 double_or_none, &self->csm->val.dHubble0,
                 double_or_none, &self->csm->val.dOmega0,
                 double_or_none, &self->csm->val.dLambda,
@@ -128,131 +128,131 @@ ppy_csmSetCosmology(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
 
 static PyObject *
 ppy_csmRhoBar_m(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a",NULL};
+    static char *kwlist[]= {"a", NULL};
     double a;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:RhoBar_m", kwlist, &a) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmRhoBar_m(self->csm,a) );
+    return Py_BuildValue("d", csmRhoBar_m(self->csm, a) );
 }
 
 static PyObject *
 ppy_csmRhoBar_lin(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a",NULL};
+    static char *kwlist[]= {"a", NULL};
     double a;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:RhoBar_lin", kwlist, &a) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmRhoBar_lin(self->csm,a) );
+    return Py_BuildValue("d", csmRhoBar_lin(self->csm, a) );
 }
 
 static PyObject *
 ppy_csmDelta_m(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a","k",NULL};
-    double a,k;
+    static char *kwlist[]= {"a", "k", NULL};
+    double a, k;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "dd:Delta_m", kwlist, &a, &k) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmDelta_m(self->csm,a,k));
+    return Py_BuildValue("d", csmDelta_m(self->csm, a, k));
 }
 
 static PyObject *
 ppy_csmTheta_m(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a","k",NULL};
-    double a,k;
+    static char *kwlist[]= {"a", "k", NULL};
+    double a, k;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "dd:Theta_m", kwlist, &a, &k) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmTheta_m(self->csm,a,k) );
+    return Py_BuildValue("d", csmTheta_m(self->csm, a, k) );
 }
 
 static PyObject *
 ppy_csmDelta_lin(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a","k",NULL};
-    double a,k;
+    static char *kwlist[]= {"a", "k", NULL};
+    double a, k;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "dd:Delta_lin", kwlist, &a, &k) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmDelta_lin(self->csm,a,k) );
+    return Py_BuildValue("d", csmDelta_lin(self->csm, a, k) );
 }
 
 static PyObject *
 ppy_csmDeltaRho_lin(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a0","a1","k",NULL};
-    double a0,a1,k;
+    static char *kwlist[]= {"a0", "a1", "k", NULL};
+    double a0, a1, k;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "ddd:DeltaRho_lin", kwlist, &a0, &a1, &k) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmDeltaRho_lin(self->csm,a0,a1,k) );
+    return Py_BuildValue("d", csmDeltaRho_lin(self->csm, a0, a1, k) );
 }
 
 static PyObject *
 ppy_csmZeta(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"k",NULL};
+    static char *kwlist[]= {"k", NULL};
     double k;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:Zeta", kwlist, &k) ) return NULL;
-    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError,"Class data not initialized (use ClassRead)");
+    if (!self->csm->val.classData.bClass) return PyErr_Format(PyExc_AssertionError, "Class data not initialized (use ClassRead)");
     csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmZeta(self->csm,k) );
+    return Py_BuildValue("d", csmZeta(self->csm, k) );
 }
 
 static PyObject *
 ppy_csmExp2Time(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a",NULL};
+    static char *kwlist[]= {"a", NULL};
     double a;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:Exp2Time", kwlist, &a) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmExp2Time(self->csm,a) );
+    return Py_BuildValue("d", csmExp2Time(self->csm, a) );
 }
 
 static PyObject *
 ppy_csmTime2Exp(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"t",NULL};
+    static char *kwlist[]= {"t", NULL};
     double t;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:Time2Exp", kwlist, &t) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmTime2Exp(self->csm,t) );
+    return Py_BuildValue("d", csmTime2Exp(self->csm, t) );
 }
 
 static PyObject *
 ppy_csmTime2Hub(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"t",NULL};
+    static char *kwlist[]= {"t", NULL};
     double t;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:Time2Hub", kwlist, &t) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmTime2Hub(self->csm,t) );
+    return Py_BuildValue("d", csmTime2Hub(self->csm, t) );
 }
 
 static PyObject *
 ppy_csmExp2Hub(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a",NULL};
+    static char *kwlist[]= {"a", NULL};
     double a;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:Exp2Hub", kwlist, &a) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmExp2Hub(self->csm,a) );
+    return Py_BuildValue("d", csmExp2Hub(self->csm, a) );
 }
 
 static PyObject *
 ppy_csmComoveDriftFac(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"time","delta",NULL};
-    double time,delta;
+    static char *kwlist[]= {"time", "delta", NULL};
+    double time, delta;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "dd:ComoveDriftFac", kwlist, &time, &delta) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmComoveDriftFac(self->csm,time,delta) );
+    return Py_BuildValue("d", csmComoveDriftFac(self->csm, time, delta) );
 }
 
 static PyObject *
 ppy_csmComoveKickFac(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"time","delta",NULL};
-    double time,delta;
+    static char *kwlist[]= {"time", "delta", NULL};
+    double time, delta;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "dd:ComoveKickFac", kwlist, &time, &delta) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
-    return Py_BuildValue("d", csmComoveKickFac(self->csm,time,delta) );
+    return Py_BuildValue("d", csmComoveKickFac(self->csm, time, delta) );
 }
 
 static PyObject *
 ppy_csmComoveGrowth(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
-    static char *kwlist[]= {"a",NULL};
+    static char *kwlist[]= {"a", NULL};
     double a, D1LPT, D2LPT, f1LPT, f2LPT;
     if ( !PyArg_ParseTupleAndKeywords(args, kwobj, "d:ComoveGrowth", kwlist, &a) ) return NULL;
     if (self->csm->val.classData.bClass) csmClassGslInitialize(self->csm);
@@ -266,67 +266,67 @@ ppy_csmComoveGrowth(CSMINSTANCE *self, PyObject *args, PyObject *kwobj) {
 
 static PyMethodDef csm_methods[] = {
     {
-        "ClassRead", (PyCFunction)ppy_csmClassRead, METH_VARARGS|METH_KEYWORDS,
+        "ClassRead", (PyCFunction)ppy_csmClassRead, METH_VARARGS | METH_KEYWORDS,
         "Read Cosmology from Class HDF5 file"
     },
     {
-        "SetCosmology", (PyCFunction)ppy_csmSetCosmology, METH_VARARGS|METH_KEYWORDS,
+        "SetCosmology", (PyCFunction)ppy_csmSetCosmology, METH_VARARGS | METH_KEYWORDS,
         "Set Cosmology directly with parameters"
     },
     {
-        "RhoBar_m", (PyCFunction)ppy_csmRhoBar_m, METH_VARARGS|METH_KEYWORDS,
+        "RhoBar_m", (PyCFunction)ppy_csmRhoBar_m, METH_VARARGS | METH_KEYWORDS,
         "Return RhoBar_m"
     },
     {
-        "RhoBar_lin", (PyCFunction)ppy_csmRhoBar_lin, METH_VARARGS|METH_KEYWORDS,
+        "RhoBar_lin", (PyCFunction)ppy_csmRhoBar_lin, METH_VARARGS | METH_KEYWORDS,
         "Return RhoBar_lin"
     },
     {
-        "Delta_m", (PyCFunction)ppy_csmDelta_m, METH_VARARGS|METH_KEYWORDS,
+        "Delta_m", (PyCFunction)ppy_csmDelta_m, METH_VARARGS | METH_KEYWORDS,
         "Return Delta_m"
     },
     {
-        "Theta_m", (PyCFunction)ppy_csmTheta_m, METH_VARARGS|METH_KEYWORDS,
+        "Theta_m", (PyCFunction)ppy_csmTheta_m, METH_VARARGS | METH_KEYWORDS,
         "Return Theta_m"
     },
     {
-        "Delta_lin", (PyCFunction)ppy_csmDelta_lin, METH_VARARGS|METH_KEYWORDS,
+        "Delta_lin", (PyCFunction)ppy_csmDelta_lin, METH_VARARGS | METH_KEYWORDS,
         "Return Delta_lin"
     },
     {
-        "DeltaRho_lin", (PyCFunction)ppy_csmDeltaRho_lin, METH_VARARGS|METH_KEYWORDS,
+        "DeltaRho_lin", (PyCFunction)ppy_csmDeltaRho_lin, METH_VARARGS | METH_KEYWORDS,
         "Return DeltaRho_lin"
     },
     {
-        "Zeta", (PyCFunction)ppy_csmZeta, METH_VARARGS|METH_KEYWORDS,
+        "Zeta", (PyCFunction)ppy_csmZeta, METH_VARARGS | METH_KEYWORDS,
         "Return Zeta"
     },
     {
-        "Exp2Time", (PyCFunction)ppy_csmExp2Time, METH_VARARGS|METH_KEYWORDS,
+        "Exp2Time", (PyCFunction)ppy_csmExp2Time, METH_VARARGS | METH_KEYWORDS,
         "Return simulation time given expansion factor"
     },
     {
-        "Time2Exp", (PyCFunction)ppy_csmTime2Exp, METH_VARARGS|METH_KEYWORDS,
+        "Time2Exp", (PyCFunction)ppy_csmTime2Exp, METH_VARARGS | METH_KEYWORDS,
         "Return expansion factor given simulation time"
     },
     {
-        "Exp2Hub", (PyCFunction)ppy_csmExp2Hub, METH_VARARGS|METH_KEYWORDS,
+        "Exp2Hub", (PyCFunction)ppy_csmExp2Hub, METH_VARARGS | METH_KEYWORDS,
         "Return Hubble parameter given expansion factor"
     },
     {
-        "Time2Hub", (PyCFunction)ppy_csmTime2Hub, METH_VARARGS|METH_KEYWORDS,
+        "Time2Hub", (PyCFunction)ppy_csmTime2Hub, METH_VARARGS | METH_KEYWORDS,
         "Return Hubble parameter given simulation time"
     },
     {
-        "ComoveDriftFac", (PyCFunction)ppy_csmComoveDriftFac, METH_VARARGS|METH_KEYWORDS,
+        "ComoveDriftFac", (PyCFunction)ppy_csmComoveDriftFac, METH_VARARGS | METH_KEYWORDS,
         "Returns the drift factor"
     },
     {
-        "ComoveKickFac", (PyCFunction)ppy_csmComoveKickFac, METH_VARARGS|METH_KEYWORDS,
+        "ComoveKickFac", (PyCFunction)ppy_csmComoveKickFac, METH_VARARGS | METH_KEYWORDS,
         "Returns the kick factor"
     },
     {
-        "ComoveGrowth", (PyCFunction)ppy_csmComoveGrowth, METH_VARARGS|METH_KEYWORDS,
+        "ComoveGrowth", (PyCFunction)ppy_csmComoveGrowth, METH_VARARGS | METH_KEYWORDS,
         "Returns the growth factors"
     },
     {NULL, NULL, 0, NULL}
@@ -341,7 +341,7 @@ static PyObject *csm_new(PyTypeObject *type, PyObject *args, PyObject *kwobj) {
     CSMINSTANCE *self = (CSMINSTANCE *)type->tp_alloc(type, 0);
     if (self == NULL) { return NULL; }
     csmInitialize(&self->csm);
-    PyObject *none = ppy_csmSetCosmology(self,args,kwobj);
+    PyObject *none = ppy_csmSetCosmology(self, args, kwobj);
     if (none) {
         Py_XDECREF(none);
         return (PyObject *)self;
@@ -381,8 +381,8 @@ static PyObject *csm_getdouble(CSMINSTANCE *self, void *offset) {
     return Py_BuildValue("d", *pv);
 }
 
-#define MAKE_BOOLEAN(a) {#a, (getter)csm_getboolean, (setter)csm_setboolean, #a, (void *)(offsetof(struct csmVariables,a))}
-#define MAKE_DOUBLE(a) {#a, (getter)csm_getdouble, (setter)csm_setdouble, #a, (void *)(offsetof(struct csmVariables,a))}
+#define MAKE_BOOLEAN(a) {#a, (getter)csm_getboolean, (setter)csm_setboolean, #a, (void *)(offsetof(struct csmVariables, a))}
+#define MAKE_DOUBLE(a) {#a, (getter)csm_getdouble, (setter)csm_setdouble, #a, (void *)(offsetof(struct csmVariables, a))}
 
 static PyGetSetDef csm_getseters[] = {
     MAKE_BOOLEAN(bComove),
@@ -403,7 +403,7 @@ static PyGetSetDef csm_getseters[] = {
 };
 
 PyTypeObject csmType = {
-    PyVarObject_HEAD_INIT(NULL,0)
+    PyVarObject_HEAD_INIT(NULL, 0)
     "CSM", /*tp_name*/
     sizeof(CSMINSTANCE), /*tp_basicsize */
     0, /*tp_itemsize*/

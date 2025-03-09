@@ -21,10 +21,10 @@
 static_assert(std::is_void<ServiceInitLightcone::input>()  || std::is_standard_layout<ServiceInitLightcone::input>());
 static_assert(std::is_void<ServiceInitLightcone::output>() || std::is_standard_layout<ServiceInitLightcone::output>());
 
-int ServiceInitLightcone::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceInitLightcone::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
-    assert(nIn==sizeof(input));
-    pkdInitLightcone(pst->plcl->pkd,in->bBowtie,in->bLightConeParticles,in->dBoxSize,in->dRedshiftLCP,in->alphaLCP,in->hLCP);
+    assert(nIn == sizeof(input));
+    pkdInitLightcone(pst->plcl->pkd, in->bBowtie, in->bLightConeParticles, in->dBoxSize, in->dRedshiftLCP, in->alphaLCP, in->hLCP);
     return 0;
 }

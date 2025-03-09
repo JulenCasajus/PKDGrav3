@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -77,15 +77,15 @@ public:
 	static const int isPick = 0;
 };
 
-template<typename T_numtype, typename T1, typename T2 = nilArraySection, 
-    class T3 = nilArraySection, typename T4 = nilArraySection, 
-    class T5 = nilArraySection, typename T6 = nilArraySection, 
-    class T7 = nilArraySection, typename T8 = nilArraySection, 
-    class T9 = nilArraySection, typename T10 = nilArraySection, 
+template<typename T_numtype, typename T1, typename T2 = nilArraySection,
+    class T3 = nilArraySection, typename T4 = nilArraySection,
+    class T5 = nilArraySection, typename T6 = nilArraySection,
+    class T7 = nilArraySection, typename T8 = nilArraySection,
+    class T9 = nilArraySection, typename T10 = nilArraySection,
     class T11 = nilArraySection>
 class SliceInfo {
 public:
-    static const int 
+    static const int
         numValidTypes = ArraySectionInfo<T1>::isValidType
                       + ArraySectionInfo<T2>::isValidType
                       + ArraySectionInfo<T3>::isValidType
@@ -98,7 +98,7 @@ public:
                       + ArraySectionInfo<T10>::isValidType
                       + ArraySectionInfo<T11>::isValidType;
 
-	static const int 
+	static const int
         rank          = ArraySectionInfo<T1>::rank
                       + ArraySectionInfo<T2>::rank
                       + ArraySectionInfo<T3>::rank
@@ -111,7 +111,7 @@ public:
                       + ArraySectionInfo<T10>::rank
                       + ArraySectionInfo<T11>::rank;
 
-	static const int 
+	static const int
         isPick        = ArraySectionInfo<T1>::isPick
                       + ArraySectionInfo<T2>::isPick
                       + ArraySectionInfo<T3>::isPick
@@ -124,8 +124,8 @@ public:
                       + ArraySectionInfo<T10>::isPick
                       + ArraySectionInfo<T11>::isPick;
 
-    typedef Array<T_numtype,numValidTypes> T_array;
-    typedef Array<T_numtype,rank> T_slice;
+    typedef Array<T_numtype, numValidTypes> T_array;
+    typedef Array<T_numtype, rank> T_slice;
 };
 
 

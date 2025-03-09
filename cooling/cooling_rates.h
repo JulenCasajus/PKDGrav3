@@ -141,14 +141,14 @@ eagle_helium_reionization_extraheat(
  * Note that the redshift is implicitly passed in via the currently loaded
  * tables in the #cooling_function_data.
  *
- * For the low-z case, we interpolate the flattened 4D table 'u_to_temp' that
+ * For the low - z case, we interpolate the flattened 4D table 'u_to_temp' that
  * is arranged in the following way:
  * - 1st dim: redshift, length = eagle_cooling_N_loaded_redshifts
  * - 2nd dim: Hydrogen density, length = eagle_cooling_N_density
  * - 3rd dim: Helium fraction, length = eagle_cooling_N_He_frac
  * - 4th dim: Internal energy, length = eagle_cooling_N_temperature
  *
- * For the high-z case, we interpolate the flattened 3D table 'u_to_temp' that
+ * For the high - z case, we interpolate the flattened 3D table 'u_to_temp' that
  * is arranged in the following way:
  * - 1st dim: Hydrogen density, length = eagle_cooling_N_density
  * - 2nd dim: Helium fraction, length = eagle_cooling_N_He_frac
@@ -245,7 +245,7 @@ INLINE double eagle_Compton_cooling_rate(
  * hydrogen number density, Helium fraction, redshift and metallicity from
  * all the possible channels.
  *
- * 1) Metal-free cooling:
+ * 1) Metal - free cooling:
  * We interpolate the flattened 4D table 'H_and_He_net_heating' that is
  * arranged in the following way:
  * - 1st dim: redshift, length = eagle_cooling_N_loaded_redshifts
@@ -321,7 +321,7 @@ static inline double eagle_metal_cooling_rate(
                  &d_T);
 
     /**********************/
-    /* Metal-free cooling */
+    /* Metal - free cooling */
     /**********************/
 
     double Lambda_free;
@@ -457,7 +457,7 @@ static inline double eagle_metal_cooling_rate(
 
             if (solar_ratio[elem] > 0.) {
 
-                /* Note that we do not interpolate along the x-axis
+                /* Note that we do not interpolate along the x - axis
                  * (element dimension) */
                 lambda_metal[elem] =
                     interpolation_3d_no_x(cooling->table.metal_heating,   /* */
@@ -480,7 +480,7 @@ static inline double eagle_metal_cooling_rate(
 
             if (solar_ratio[elem] > 0.) {
 
-                /* Note that we do not interpolate along the x-axis
+                /* Note that we do not interpolate along the x - axis
                  * (element dimension) */
                 lambda_metal[elem] = interpolation_4d_no_x(
                                          cooling->table.metal_heating,                /* */

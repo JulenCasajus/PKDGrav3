@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -116,9 +116,9 @@ BZ_DECLARE_ARRAY_ET_UNARY(nearest, Fn_nearest)
 BZ_DECLARE_ARRAY_ET_UNARY(rsqrt,   Fn_rsqrt)
 BZ_DECLARE_ARRAY_ET_UNARY(uitrunc, Fn_uitrunc)
 #endif
-    
+
 // cast() function
-    
+
 template<typename T_cast, typename T1>
 _bz_inline_et
 _bz_ArrayExpr<_bz_ArrayExprUnaryOp<_bz_typename asExpr<T1>::T_expr,
@@ -127,7 +127,7 @@ cast(const ETBase<T1>& expr)
 {
     return _bz_ArrayExpr<_bz_ArrayExprUnaryOp<
         _bz_typename asExpr<T1>::T_expr,
-        Cast<_bz_typename asExpr<T1>::T_expr::T_numtype,T_cast> > >
+        Cast<_bz_typename asExpr<T1>::T_expr::T_numtype, T_cast> > >
         (expr.unwrap());
 }
 
@@ -140,7 +140,7 @@ BZ_DECLARE_ARRAY_ET_BINARY(pow,       Fn_pow)
 #ifdef BZ_HAVE_COMPLEX_FCNS
 BZ_DECLARE_ARRAY_ET_BINARY(polar,     Fn_polar)
 #endif
-    
+
 #ifdef BZ_HAVE_SYSTEM_V_MATH
 BZ_DECLARE_ARRAY_ET_BINARY(copysign,  Fn_copysign)
 BZ_DECLARE_ARRAY_ET_BINARY(drem,      Fn_drem)
@@ -170,7 +170,7 @@ BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(scalb,     Fn_scalb, sca)     \
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(unordered, Fn_unordered, sca) \
 
 #else
-    
+
 #define BZ_DECLARE_ARRAY_ET_SCALAR_FUNCS(sca)                   \
                                                                 \
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(atan2,     Fn_atan2, sca)     \
@@ -178,29 +178,29 @@ BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(fmod,      Fn_fmod, sca)      \
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(pow,       Fn_pow, sca)       \
 
 #endif
-    
+
 BZ_DECLARE_ARRAY_ET_SCALAR_FUNCS(int)
 BZ_DECLARE_ARRAY_ET_SCALAR_FUNCS(float)
 BZ_DECLARE_ARRAY_ET_SCALAR_FUNCS(double)
 BZ_DECLARE_ARRAY_ET_SCALAR_FUNCS(long double)
-    
+
 #ifdef BZ_HAVE_COMPLEX_FCNS
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(polar,     Fn_polar, int)
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(polar,     Fn_polar, float)
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(polar,     Fn_polar, double)
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(polar,     Fn_polar, long double)
-    
+
 template<typename T1, typename T2>
 inline _bz_ArrayExprBinaryOp<
     typename asExpr<complex<T1> >::T_expr,
-    typename asExpr<T2>::T_expr, 
-    Fn_pow<complex<T1>,typename asExpr<T2>::T_expr::T_numtype> >
+    typename asExpr<T2>::T_expr,
+    Fn_pow<complex<T1>, typename asExpr<T2>::T_expr::T_numtype> >
 pow(const complex<T1> d1, const ETBase<T2>& d2)
 {
     return _bz_ArrayExprBinaryOp<
         typename asExpr<complex<T1> >::T_expr,
         typename asExpr<T2>::T_expr,
-        Fn_pow<complex<T1>,typename asExpr<T2>::T_expr::T_numtype> >
+        Fn_pow<complex<T1>, typename asExpr<T2>::T_expr::T_numtype> >
         (asExpr<complex<T1> >::getExpr(d1),
          asExpr<T2>::getExpr(d2.unwrap()));
 }
@@ -208,10 +208,10 @@ pow(const complex<T1> d1, const ETBase<T2>& d2)
 
 // global functions that don't fit anywhere else
 
-// we define a generalized dot product for all classes as sum(a*b)
+// we define a generalized dot product for all classes as sum(a * b)
 template<typename T1, typename T2>
 inline
-_bz_typename ReduceSum<_bz_typename BZ_BLITZ_SCOPE(BzBinaryExprResult)<Multiply,T1,T2>::T_result::T_numtype
+_bz_typename ReduceSum<_bz_typename BZ_BLITZ_SCOPE(BzBinaryExprResult)<Multiply, T1, T2>::T_result::T_numtype
 >::T_resulttype
 dot(const ETBase<T1>& d1, const ETBase<T2>& d2)
 {
@@ -219,7 +219,7 @@ dot(const ETBase<T1>& d1, const ETBase<T2>& d2)
 }
 
 // we define a generalized cross product for all classes using the
-// Levi-Civita symbol. Return type is nice (ever heard of "write-once
+// Levi - Civita symbol. Return type is nice (ever heard of "write - once
 // code")... it took 10 times longer to figure out how to write the
 // return type than to do everything else...
 
@@ -247,13 +247,13 @@ _bz_ArrayExpr<
 	  >::T_result,
 	2,
 	ReduceSum<
-	  _bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype,
-	  BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
-	> 
+	  _bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype,
+	  BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
+	>
       >,
-    1, 
-    ReduceSum<BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
-    > 
+    1,
+    ReduceSum<BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
+    >
   >
 
 //int
@@ -280,13 +280,13 @@ _bz_ArrayExpr<
 	  >::T_result,
 	2,
 	ReduceSum<
-	  _bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype,
-	  BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
-	> 
+	  _bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype,
+	  BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
+	>
       >,
-    1, 
-    ReduceSum<BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply,_bz_typename BzBinaryExprResult<Multiply,_bz_ArrayExpr<LeviCivita>,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result,_bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
-    > 
+    1,
+    ReduceSum<BZ_SUMTYPE(bzCC(_bz_typename BzBinaryExprResult<Multiply, _bz_typename BzBinaryExprResult<Multiply, _bz_ArrayExpr<LeviCivita>, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T1>::T_expr, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > >::T_result, _bz_ArrayExpr<ArrayIndexMapping<_bz_typename asExpr<T2>::T_expr, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0> > > ::T_result::T_numtype))>
+    >
   >* x;
 //int a=*x;
   return sum(sum(LeviCivita()*d1.unwrap()(tensor::j)*d2.unwrap()(tensor::k),
@@ -299,7 +299,7 @@ _bz_ArrayExpr<
 // is used to prevent parsing of multicomponent expressions as bitwise
 // expressions between dissimilar containers.
 
-template <typename T>
+template<typename T>
 inline
 _bz_ArrayExpr<_bz_ArrayExprConstant<T> >
 scalar(const T& x) {
@@ -307,7 +307,7 @@ scalar(const T& x) {
 }
 
 #endif
-    
+
 BZ_NAMESPACE_END
 
 #endif // BZ_ARRAY_FUNCS_H

@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -46,10 +46,10 @@
 
 BZ_NAMESPACE(blitz)
 
-enum preexistingMemoryPolicy { 
-  duplicateData, 
-  deleteDataWhenDone, 
-  neverDeleteData 
+enum preexistingMemoryPolicy {
+  duplicateData,
+  deleteDataWhenDone,
+  neverDeleteData
 };
 
 // This function makes it possible for users to make sure threadsafety
@@ -66,7 +66,7 @@ inline bool isThreadsafe() {
 // Forward declaration of MemoryBlockReference
 template<typename T_type> class MemoryBlockReference;
 
-// Class MemoryBlock provides a reference-counted block of memory.  This block
+// Class MemoryBlock provides a reference - counted block of memory.  This block
 // may be referred to by multiple vector, matrix and array objects.  The memory
 // is automatically deallocated when the last referring object is destructed.
 // MemoryBlock may be subclassed to provide special allocators.
@@ -83,11 +83,11 @@ protected:
     {
       // pad the length to vecWidth, if not already done
     const int w = simdTypes<T_type>::vecWidth;
-    const int mod = items%w;
-    if (mod>0)
-      items += simdTypes<T_type>::vecWidth-mod;
-    BZASSERT(items%w==0);
-      
+    const int mod = items % w;
+    if (mod > 0)
+      items += simdTypes<T_type>::vecWidth - mod;
+    BZASSERT(items % w == 0);
+
         length_ = items;
         allocate(length_);
 
@@ -111,7 +111,7 @@ protected:
 
     virtual ~MemoryBlock()
     {
-        if (dataBlockAddress_) 
+        if (dataBlockAddress_)
         {
 #ifdef BZ_DEBUG_LOG_ALLOCATIONS
     cout << "MemoryBlock:     freed " << setw(8) << length_
@@ -125,20 +125,20 @@ protected:
     }
 
     // set mutex locking policy and return true if successful
-    bool doLock(bool lockingPolicy) 
-    { 
+    bool doLock(bool lockingPolicy)
+    {
 #if defined(BZ_THREADSAFE) && !defined(BZ_THREADSAFE_USE_ATOMIC)
         if (mutexLocking_ == lockingPolicy) { // already set
             return true;
         }
         else if (references_ <= 1) { // no multiple references, safe to change
-            mutexLocking_ = lockingPolicy; 
+            mutexLocking_ = lockingPolicy;
             return true;
         }
         return false; // unsafe to change
 #elif defined(BZ_THREADSAFE_USE_ATOMIC)
 	// with locking we consider the request successful
-	return true; 
+	return true;
 #else
 	// without threadsafety we return false if user wants to enable locking
 	return !lockingPolicy;
@@ -150,14 +150,14 @@ protected:
        upon creating it. (The creator obviously does have to call
        removeReference, though.) This avoids the initial mutex lock. */
     void          addReference()
-    {       
+    {
 #ifdef BZ_DEBUG_LOG_REFERENCES
         BZ_MUTEX_LOCK(mutex)
         const int refcount = ++references_;
         BZ_MUTEX_UNLOCK(mutex)
 
-        cout << "MemoryBlock:    reffed " << setw(8) << length_ 
-	       << " at " << ((void *)dataBlockAddress_) << " (r=" 
+        cout << "MemoryBlock:    reffed " << setw(8) << length_
+	       << " at " << ((void *)dataBlockAddress_) << " (r="
 	       << refcount << ")" << endl;
 #else
         BZ_MUTEX_LOCK(mutex)
@@ -166,24 +166,24 @@ protected:
 #endif
     }
 
-    T_type* restrict      data() 
-    { 
-        return data_; 
+    T_type* restrict      data()
+    {
+        return data_;
     }
 
     const T_type* restrict data()      const
-    { 
-        return data_; 
+    {
+        return data_;
     }
 
-    T_type*&      dataBlockAddress() 
-    { 
-        return dataBlockAddress_; 
+    T_type*&      dataBlockAddress()
+    {
+        return dataBlockAddress_;
     }
 
     sizeType        length()    const
-    { 
-        return length_; 
+    {
+        return length_;
     }
 
     int           removeReference()
@@ -202,7 +202,7 @@ protected:
     }
 
     int references() const
-  { 
+  {
         BZ_MUTEX_LOCK(mutex)
         const int refcount = references_;
 	BZ_MUTEX_UNLOCK(mutex)
@@ -239,7 +239,7 @@ private:   // Disabled member functions
       cout << "MemoryBlock: serializing " << length_ << " data for MemoryBlock at "
 	   << ((void*)this) << endl;
 #endif
-      if(length_>0)
+      if (length_ > 0)
 	ar << boost::serialization::make_array(data_, length_);
     };
 
@@ -250,7 +250,7 @@ private:   // Disabled member functions
 #endif
       boost::serialization::collection_size_type count(length_);
       ar >> BOOST_SERIALIZATION_NVP(count);
-      length_=count;
+      length_ = count;
       allocate(length_);
 
 #ifdef BZ_DEBUG_LOG_ALLOCATIONS
@@ -258,7 +258,7 @@ private:   // Disabled member functions
 	   << ((void*)this) << endl;
 #endif
 
-      if(length_>0)
+      if (length_ > 0)
 	ar >> boost::serialization::make_array(data_, length_);
 
       // initialize the members that are not restored. Note that we
@@ -274,7 +274,7 @@ private:   // Disabled member functions
 #endif
 
 
-private:   // Data members 
+private:   // Data members
 #if defined(BZ_THREADSAFE) && !defined(BZ_THREADSAFE_USE_ATOMIC)
     // with atomic reference counts, there is no locking
     bool    mutexLocking_;
@@ -332,12 +332,12 @@ private:
 	     << ((void*)block_) <<endl;
 #endif
       ar << block_;
-      ptrdiff_t ptroffset=0;
-      if(block_)
+      ptrdiff_t ptroffset = 0;
+      if (block_)
 	ptroffset = data_ - block_->data();
       boost::serialization::collection_size_type
 	offset(*reinterpret_cast<size_t*>(&ptroffset));
-      ar << BOOST_SERIALIZATION_NVP(offset); 
+      ar << BOOST_SERIALIZATION_NVP(offset);
     };
 
   /** Unserialization operator. See comment for the save method for
@@ -353,7 +353,7 @@ private:
       boost::serialization::collection_size_type offset;
       ar >> BOOST_SERIALIZATION_NVP(offset);
       ptrdiff_t ptroffset = *reinterpret_cast<ptrdiff_t*>(&offset);
-      if(block_)
+      if (block_)
 	data_ = block_->data() + ptroffset;
       else
 	data_ = 0;
@@ -371,26 +371,26 @@ public:
         data_ = 0;
     }
 
-    MemoryBlockReference(MemoryBlockReference<T_type>& ref, sizeType offset=0)
+    MemoryBlockReference(MemoryBlockReference<T_type>& ref, sizeType offset = 0)
     {
         block_ = ref.block_;
         addReference();
         data_ = ref.data_ + offset;
     }
 
-    MemoryBlockReference(sizeType length, T_type* data, 
+    MemoryBlockReference(sizeType length, T_type* data,
         preexistingMemoryPolicy deletionPolicy)
     {
-        // Create a memory block using already allocated memory. 
+        // Create a memory block using already allocated memory.
 
         // Note: if the deletionPolicy is duplicateData, this must
         // be handled by the leaf class.  In MemoryBlockReference,
         // this is treated as neverDeleteData; the leaf class (e.g. Array)
         // must duplicate the data.
 
-        if ((deletionPolicy == neverDeleteData) 
+        if ((deletionPolicy == neverDeleteData)
             || (deletionPolicy == duplicateData)) {
-	    // in this case, we do not need a MemoryBlock to ref-count the data
+	    // in this case, we do not need a MemoryBlock to ref - count the data
             block_ = 0;
         }
         else if (deletionPolicy == deleteDataWhenDone) {
@@ -433,19 +433,19 @@ public:
 
   /** Returns the allocated length of the memory block. */
   sizeType blockLength() const { return block_->length(); };
-  
+
 protected:
 #ifdef BZ_TESTSUITE
 public:
 #endif
     int numReferences() const
     {
-        if (block_) 
+        if (block_)
             return block_->references();
 #ifdef BZ_DEBUG_LOG_REFERENCES
         cout << "Invalid reference count for data at "<< data_ << endl;
 #endif
-        return -1;      
+        return -1;
     }
 
     bool lockReferenceCount(bool lockingPolicy) const
@@ -456,7 +456,7 @@ public:
 #ifdef BZ_DEBUG_LOG_REFERENCES
         cout << "No reference count locking for data at "<< data_ << endl;
 #endif
-        return true;    
+        return true;
     }
 
     void changeToNullBlock()
@@ -467,7 +467,7 @@ public:
         data_ = 0;
     }
 
-    void changeBlock(MemoryBlockReference<T_type>& ref, sizeType offset=0)
+    void changeBlock(MemoryBlockReference<T_type>& ref, sizeType offset = 0)
     {
         blockRemoveReference();
         block_ = ref.block_;
@@ -503,11 +503,11 @@ private:
         }
     }
 
-    void addReference() const 
+    void addReference() const
     {
         if (block_) {
 #ifdef BZ_DEBUG_LOG_REFERENCES
-	  cout << "MemoryBlockReference: reffing block at " << ((void*)block_) 
+	  cout << "MemoryBlockReference: reffing block at " << ((void*)block_)
 	       << endl;
 #endif
             block_->addReference();
@@ -519,11 +519,11 @@ private:
         }
     };
 
-    int removeReference() const 
+    int removeReference() const
     {
       if (block_) {
 #ifdef BZ_DEBUG_LOG_REFERENCES
-	  cout << "MemoryBlockReference: dereffing block at " << ((void*)block_) 
+	  cout << "MemoryBlockReference: dereffing block at " << ((void*)block_)
 	       << endl;
 #endif
             return block_->removeReference();
@@ -531,9 +531,9 @@ private:
 #ifdef BZ_DEBUG_LOG_REFERENCES
         cout << "Skipping reference count for data at "<< data_ << endl;
 #endif
-        return -1;      
+        return -1;
     };
-  
+
     void operator=(const MemoryBlockReference<T_type>&)
     { }
 };

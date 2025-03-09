@@ -35,15 +35,15 @@ protected:
     const std::size_t resultsBufferSize;
     void *pHostBufIn, *pHostBufOut;
 public:
-    explicit hostData(size_t requestBufferSize = 2*1024*1024,size_t resultsBufferSize = 2*1024*1024)
+    explicit hostData(size_t requestBufferSize = 2 * 1024 * 1024, size_t resultsBufferSize = 2 * 1024 * 1024)
         : requestBufferSize(requestBufferSize), resultsBufferSize(resultsBufferSize) {
 #ifdef __linux__
         std::uint64_t nPageSize = sysconf(_SC_PAGESIZE);
 #else
         std::uint64_t nPageSize = 4096;
 #endif
-        pHostBufIn  = std::aligned_alloc(nPageSize,requestBufferSize);
-        pHostBufOut = std::aligned_alloc(nPageSize,resultsBufferSize);
+        pHostBufIn  = std::aligned_alloc(nPageSize, requestBufferSize);
+        pHostBufOut = std::aligned_alloc(nPageSize, resultsBufferSize);
     }
     virtual ~hostData() {
         std::free(pHostBufIn);

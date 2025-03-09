@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -62,9 +62,9 @@ template<typename P_numtype, int N_length>
 class FastTV2CopyIterator;
 
 
-/** The TinyVector class is a one-dimensional, fixed length vector
+/** The TinyVector class is a one - dimensional, fixed length vector
     that implements the blitz expression template
-    machinery. TinyVector-only expressions are very fast because they
+    machinery. TinyVector - only expressions are very fast because they
     usually get reduced to just the unrolled (and vectorized, if
     enabled) assembly instructions. TinyVectors can also be used in
     mixed expressions with other ET classes. */
@@ -78,48 +78,48 @@ public:
     //////////////////////////////////////////////
 
     typedef P_numtype                                    T_numtype;
-    typedef TinyVector<T_numtype,N_length>               T_vector;
-    typedef FastTV2Iterator<T_numtype,N_length>         T_iterator;
+    typedef TinyVector<T_numtype, N_length>               T_vector;
+    typedef FastTV2Iterator<T_numtype, N_length>         T_iterator;
     typedef T_numtype*                                   iterator;
     typedef const T_numtype*                             const_iterator;
   typedef FastTV2CopyIterator<P_numtype, N_length> T_range_result;
 
-    static const int 
-    //numArrayOperands = 1, 
+    static const int
+    //numArrayOperands = 1,
     //numIndexPlaceholders = 0,
         rank_ = 1;
 
     TinyVector()  { }
     ~TinyVector() { }
 
-  TinyVector(const TinyVector<T_numtype,N_length>& x);
+  TinyVector(const TinyVector<T_numtype, N_length>& x);
 
-    template <typename T_numtype2>
-    TinyVector(const TinyVector<T_numtype2,N_length>& x);
+    template<typename T_numtype2>
+    TinyVector(const TinyVector<T_numtype2, N_length>& x);
 
   /** This constructor creates a TinyVector from another ETBase
       object. It needs to be explicit to avoid all kinds of
       ambiguities. */
-    template <typename T_expr>
+    template<typename T_expr>
     inline explicit TinyVector(const ETBase<T_expr>& expr) {
       *this = expr; }
 
   /** This constructor creates a TinyVector specifically from an
       expression. This one we do NOT want to be explicit because that
       breaks simple construction assignments like "TinyVector<double,
-      1> v = a+b;", forcing the user to explicitly write it like a
+      1> v = a + b;", forcing the user to explicitly write it like a
       construction. */
-    template <typename T_expr>
+    template<typename T_expr>
     inline TinyVector(const _bz_ArrayExpr<T_expr>& expr) {
       *this = expr; }
 
     inline TinyVector(const T_numtype initValue);
 
     inline TinyVector(const T_numtype x[]) {
-        memcpy(data_,x,N_length*sizeof(T_numtype));
+        memcpy(data_, x, N_length * sizeof(T_numtype));
     }
 
-  
+
     TinyVector(T_numtype x0, T_numtype x1)
     {
         data_[0] = x0;
@@ -237,11 +237,11 @@ public:
         data_[10] = x10;
     }
 
-  static int base() 
+  static int base()
   { return 0; }
 
-  static int                               base(int rank) 
-  { BZPRECONDITION(rank==0); return 0; }
+  static int                               base(int rank)
+  { BZPRECONDITION(rank == 0); return 0; }
 
 
     T_iterator      beginFast() const       { return T_iterator(*this);      }
@@ -270,41 +270,41 @@ public:
     const TinyVector<int, rank_>    shape() const
     { return N_length; }
 
-  static int                               lbound(int rank) 
-  { BZPRECONDITION(rank==0); return 0; }
-  static int            lbound() 
+  static int                               lbound(int rank)
+  { BZPRECONDITION(rank == 0); return 0; }
+  static int            lbound()
   { return 0; }
 
-  static int                               length(int rank) 
-  { BZPRECONDITION(rank==0); return N_length; }
-  static int    length() 
+  static int                               length(int rank)
+  { BZPRECONDITION(rank == 0); return N_length; }
+  static int    length()
   { return N_length; }
 
   static int                               extent(int rank)
-  { BZPRECONDITION(rank==0); return N_length; }
+  { BZPRECONDITION(rank == 0); return N_length; }
 
-  static int                               ordering(int storageRankIndex) 
+  static int                               ordering(int storageRankIndex)
   { return 0; }
 
-  static int    ordering() 
+  static int    ordering()
   { return 0; }
 
   static  int                               rank()
     { return rank_; }
 
-    static sizeType                               numElements() 
+    static sizeType                               numElements()
   { return length(); }
 
-    static diffType    stride() 
+    static diffType    stride()
     { return 1; }
 
-  static diffType                               stride(int rank) 
-    { BZPRECONDITION(rank==0); return 1; }
+  static diffType                               stride(int rank)
+    { BZPRECONDITION(rank == 0); return 1; }
 
-  static int                               ubound(int rank) 
-  { BZPRECONDITION(rank==0); return length()-1; }
+  static int                               ubound(int rank)
+  { BZPRECONDITION(rank == 0); return length()-1; }
 
-  static int           ubound() 
+  static int           ubound()
   { return length()-1; }
 
      template<typename P_expr, typename P_updater>
@@ -320,11 +320,11 @@ public:
     T_vector& noConst() const
     { return const_cast<T_vector&>(*this); }
 
-  static bool lengthCheck(unsigned i) 
+  static bool lengthCheck(unsigned i)
     {
-        BZPRECHECK(i < N_length, 
-            "TinyVector<" << BZ_DEBUG_TEMPLATE_AS_STRING_LITERAL(T_numtype) 
-            << "," << N_length << "> index out of bounds: " << i);
+        BZPRECHECK(i < N_length,
+            "TinyVector<" << BZ_DEBUG_TEMPLATE_AS_STRING_LITERAL(T_numtype)
+            << ", " << N_length << "> index out of bounds: " << i);
         return true;
     }
 
@@ -335,12 +335,12 @@ public:
     }
 
     T_numtype& restrict operator()(unsigned i)
-    { 
+    {
         BZPRECONDITION(lengthCheck(i));
         return data_[i];
     }
 
-  T_numtype operator()(TinyVector<int,1> i) const
+  T_numtype operator()(TinyVector<int, 1> i) const
     {
         BZPRECONDITION(lengthCheck(i[0]));
         return data_[i[0]];
@@ -369,13 +369,13 @@ public:
 
   /** Since data_ is simd aligned by construction, we just have
       to check the offest. */
-  bool isVectorAligned(diffType offset) const 
+  bool isVectorAligned(diffType offset) const
   { return (offset%simdTypes<T_numtype>::vecWidth)==0; }
 
   bool canCollapse(int outerLoopRank, int innerLoopRank) const
   {
-    BZPRECONDITION(outerLoopRank==0);
-    BZPRECONDITION(innerLoopRank==0);
+    BZPRECONDITION(outerLoopRank == 0);
+    BZPRECONDITION(innerLoopRank == 0);
     return true;
   }
 
@@ -384,9 +384,9 @@ public:
     //////////////////////////////////////////////
 
     // Scalar operand
-    ListInitializationSwitch<T_vector,T_numtype*> operator=(T_numtype x)
+    ListInitializationSwitch < T_vector, T_numtype*> operator=(T_numtype x)
     {
-        return ListInitializationSwitch<T_vector,T_numtype*>(*this, x);
+        return ListInitializationSwitch < T_vector, T_numtype*>(*this, x);
     }
 
   T_vector& initialize(T_numtype);
@@ -409,14 +409,14 @@ public:
     { return dataFirst(); }
 
   // // vectors can't be sliced
-  // template<typename T1, typename T2 = nilArraySection, 
-  // 	   class T3 = nilArraySection, typename T4 = nilArraySection, 
-  // 	   class T5 = nilArraySection, typename T6 = nilArraySection, 
-  // 	   class T7 = nilArraySection, typename T8 = nilArraySection, 
-  // 	   class T9 = nilArraySection, typename T10 = nilArraySection, 
+  // template<typename T1, typename T2 = nilArraySection,
+  // 	   class T3 = nilArraySection, typename T4 = nilArraySection,
+  // 	   class T5 = nilArraySection, typename T6 = nilArraySection,
+  // 	   class T7 = nilArraySection, typename T8 = nilArraySection,
+  // 	   class T9 = nilArraySection, typename T10 = nilArraySection,
   // 	   class T11 = nilArraySection>
   // class SliceInfo {
-  // public:    
+  // public:
   //   typedef void T_slice;
   // };
 
@@ -426,7 +426,7 @@ private:
 
 #ifdef BZ_HAVE_BOOST_SERIALIZATION
   friend class boost::serialization::access;
-  
+
   template<class T_arch>
   void serialize(T_arch& ar, const unsigned int version) {
     ar & data_;
@@ -441,7 +441,7 @@ private:
 // peculiar errors, perhaps this will fix.
 
 template<typename T>
-class TinyVector<T,0> {
+class TinyVector<T, 0> {
 };
 
 BZ_NAMESPACE_END
@@ -450,8 +450,8 @@ BZ_NAMESPACE_END
 namespace boost {
   namespace mpi {
     template<typename T> struct is_mpi_datatype;
-    template <typename T, int N>
-    struct is_mpi_datatype<blitz::TinyVector<T, N> > 
+    template<typename T, int N>
+    struct is_mpi_datatype<blitz::TinyVector<T, N> >
       : public is_mpi_datatype<T> { };
   } };
 #endif

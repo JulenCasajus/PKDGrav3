@@ -14,9 +14,9 @@ inline Range::T_numtype Range::operator[](int i) const
 }
 
 inline RectDomain<Range::rank_> Range::domain() const
-{ 
-  return RectDomain<rank_>(TinyVector<int,1>(0),
-			   TinyVector<int,1>(ubound(0)));
+{
+  return RectDomain<rank_>(TinyVector<int, 1>(0),
+			   TinyVector<int, 1>(ubound(0)));
 }
 
 inline bool Range::assertInRange(const T_index& BZ_DEBUG_PARAM(index)) const

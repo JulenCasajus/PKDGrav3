@@ -24,11 +24,11 @@ using namespace gridinfo;
 using namespace blitz;
 
 // A blitz++ friendly wrap function. returns "ik" given array index
-// Range: (-iNyquist,iNyquist] where iNyquist = m/2
-static float fwrap(float v,float m) {
-    return v - (v > m*0.5 ? m : 0);
+// Range: (-iNyquist, iNyquist] where iNyquist = m / 2
+static float fwrap(float v, float m) {
+    return v - (v > m * 0.5 ? m : 0);
 }
-BZ_DEFINE_BINARY_FUNC(Fn_fwrap,fwrap)
+BZ_DEFINE_BINARY_FUNC(Fn_fwrap, fwrap)
 BZ_DECLARE_ARRAY_ET_BINARY(fwrap,     Fn_fwrap)
 BZ_DECLARE_ARRAY_ET_BINARY_SCALAR(fwrap,     Fn_fwrap, float)
 
@@ -79,20 +79,20 @@ void pkdGenerateLinGrid(PKD pkd, MDLFFT fft, double a, double a_next, double Lbo
     gsl_spline_init(spline, logk, field, size);
     /* Generate grid */
     double ix, iy, iz, i2;
-    double iLbox = 2*M_PI/Lbox;
+    double iLbox = 2 * M_PI / Lbox;
 
-    GridInfo G(pkd->mdl,fft);
+    GridInfo G(pkd->mdl, fft);
     complex_array_t K;
-    G.setupArray((FFTW3(real) *)mdlSetArray(pkd->mdl,0,0,pkd->pLite),K);
-    NoiseGenerator ng(iSeed,bFixed,fPhase);
-    ng.FillNoise(K,fft->rgrid->n3);
-    for ( auto index=K.begin(); index!=K.end(); ++index ) {
+    G.setupArray((FFTW3(real) *)mdlSetArray(pkd->mdl, 0, 0, pkd->pLite), K);
+    NoiseGenerator ng(iSeed, bFixed, fPhase);
+    ng.FillNoise(K, fft->rgrid->n3);
+    for ( auto index = K.begin(); index != K.end(); ++index ) {
         auto pos = index.position();
-        iz = fwrap(pos[2],fft->rgrid->n3); // Range: (-iNyquist,iNyquist]
-        iy = fwrap(pos[1],fft->rgrid->n2);
-        ix = fwrap(pos[0],fft->rgrid->n1);
-        i2 = ix*ix + iy*iy + iz*iz;
-        if (i2>0) {
+        iz = fwrap(pos[2], fft->rgrid->n3); // Range: (-iNyquist, iNyquist]
+        iy = fwrap(pos[1], fft->rgrid->n2);
+        ix = fwrap(pos[0], fft->rgrid->n1);
+        i2 = ix * ix + iy * iy + iz * iz;
+        if (i2 > 0) {
             k = sqrt((double)i2)*iLbox;
             *index *= csmZeta(pkd->csm, k)*gsl_spline_eval(spline, log(k), acc);
         }
@@ -106,32 +106,32 @@ void pkdGenerateLinGrid(PKD pkd, MDLFFT fft, double a, double a_next, double Lbo
     free(field);
 }
 
-static double deconvolveLinWindow(int i,int nGrid) {
+static double deconvolveLinWindow(int i, int nGrid) {
     double win = M_PI * i / nGrid;
-    if (win>0.1) win = win / sin(win);
-    else win=1.0 / (1.0-win*win/6.0*(1.0-win*win/20.0*(1.0-win*win/76.0)));
+    if (win > 0.1) win = win / sin(win);
+    else win = 1.0 / (1.0 - win * win / 6.0*(1.0 - win * win / 20.0*(1.0 - win * win / 76.0)));
 #if defined(USE_NGP_LIN)
     return win;
 #elif defined(USE_CIC_LIN)
-    return win*win;
+    return win * win;
 #elif defined(USE_TSC_LIN)
-    return win*win*win;
+    return win * win * win;
 #else
-    return win*win*win*win;
+    return win * win * win * win;
 #endif
 }
 
 /*
  * Green Function for the Laplacian operator in Fourier space */
 static double green(int i, int jj, int kk, int nGrid) {
-    double g = pow2(sin(M_PI*i/(1.0*nGrid)));
-    g += pow2(sin(M_PI*jj/(1.0*nGrid)));
-    g += pow2(sin(M_PI*kk/(1.0*nGrid)));
-    g *= 4*nGrid*nGrid;
+    double g = pow2(sin(M_PI * i/(1.0 * nGrid)));
+    g += pow2(sin(M_PI * jj/(1.0 * nGrid)));
+    g += pow2(sin(M_PI * kk/(1.0 * nGrid)));
+    g *= 4 * nGrid * nGrid;
     if (g ==0.0)
         return 0.0;
     else
-        return -1.0/g;
+        return -1.0 / g;
 }
 
 void pkdSetLinGrid(PKD pkd, double a0, double a, double a1, double dBSize, int nGrid, int iSeed,
@@ -149,19 +149,19 @@ void pkdSetLinGrid(PKD pkd, double a0, double a, double a1, double dBSize, int n
     FFTW3(complex) *cDelta_lin_field, *cForceY, *cForceZ;
 
     /* Scale factors and normalization */
-    const double dNormalization = a*a*a * dBSize;
+    const double dNormalization = a * a * a * dBSize;
 
-    mdlGridCoordFirstLast(pkd->mdl,fft->rgrid,&rfirst,&rlast,1);
-    mdlGridCoordFirstLast(pkd->mdl,fft->kgrid,&kfirst,&klast,0);
+    mdlGridCoordFirstLast(pkd->mdl, fft->rgrid, &rfirst, &rlast, 1);
+    mdlGridCoordFirstLast(pkd->mdl, fft->kgrid, &kfirst, &klast, 0);
 
     /* Imprint the density grid of the linear species */
     int bRho = 1;  /* Generate the \delta\rho field */
     pkdGenerateLinGrid(pkd, fft, a0, a1, dBSize, iSeed, bFixed, fPhase, bRho);
     cDelta_lin_field = (FFTW3(complex) *)mdlSetArray(pkd->mdl, klast.i, sizeof(FFTW3(complex)), pkd->pLite);
 
-    /* Remember, the grid is now transposed to x,z,y (from x,y,z) */
-    cForceY = (FFTW3(complex) *)mdlSetArray(pkd->mdl,klast.i,sizeof(FFTW3(complex)),cDelta_lin_field + fft->kgrid->nLocal);
-    cForceZ = (FFTW3(complex) *)mdlSetArray(pkd->mdl,klast.i, sizeof(FFTW3(complex)),cForceY + fft->kgrid->nLocal);
+    /* Remember, the grid is now transposed to x, z, y (from x, y, z) */
+    cForceY = (FFTW3(complex) *)mdlSetArray(pkd->mdl, klast.i, sizeof(FFTW3(complex)), cDelta_lin_field + fft->kgrid->nLocal);
+    cForceZ = (FFTW3(complex) *)mdlSetArray(pkd->mdl, klast.i, sizeof(FFTW3(complex)), cForceY + fft->kgrid->nLocal);
 
     int idx, i, j, jj, k, kk;
     const int iNyquist = nGrid / 2 ;
@@ -170,62 +170,62 @@ void pkdSetLinGrid(PKD pkd, double a0, double a, double a1, double dBSize, int n
     double win_j, win_k;
     /* Here starts the Poisson solver */
     i = j = k = -1;
-    for ( kindex=kfirst; !mdlGridCoordCompare(&kindex,&klast); mdlGridCoordIncrement(&kindex) ) {
+    for ( kindex = kfirst; !mdlGridCoordCompare(&kindex, &klast); mdlGridCoordIncrement(&kindex) ) {
         idx = kindex.i;
-        if ( j != kindex.z ) {
+        if (j != kindex.z) {
             j = kindex.z;
-            jj = j>iNyquist ? j - nGrid : j;
-            win_j = deconvolveLinWindow(jj,nGrid);
+            jj = j > iNyquist ? j - nGrid : j;
+            win_j = deconvolveLinWindow(jj, nGrid);
         }
-        if ( k != kindex.y ) {
+        if (k != kindex.y) {
             k = kindex.y;
-            kk = k>iNyquist ? k - nGrid : k;
-            win_k = deconvolveLinWindow(kk,nGrid);
+            kk = k > iNyquist ? k - nGrid : k;
+            win_k = deconvolveLinWindow(kk, nGrid);
         }
         i = kindex.x;
-        double win = deconvolveLinWindow(i,nGrid)*win_j*win_k;
+        double win = deconvolveLinWindow(i, nGrid)*win_j * win_k;
         /* Green Function for a discrete Laplacian operator */
-        dPoissonSolve=4*M_PI*green(i,jj,kk,nGrid)*dNormalization*win;
+        dPoissonSolve = 4 * M_PI * green(i, jj, kk, nGrid)*dNormalization * win;
         /* Solve Poisson equation */
 
         rePotential = cDelta_lin_field[idx][0] * dPoissonSolve;
         imPotential = cDelta_lin_field[idx][1] * dPoissonSolve;
         /* Differentiaite in Y direction */
-        dDifferentiate = nGrid*sin(2*M_PI*jj/(1.0*nGrid));
+        dDifferentiate = nGrid * sin(2 * M_PI * jj/(1.0 * nGrid));
         cForceY[idx][0] =  dDifferentiate * imPotential;
         cForceY[idx][1] = -dDifferentiate * rePotential;
 
         /* Differentiate in Z direction */
-        dDifferentiate = nGrid*sin(2*M_PI*kk/(1.0*nGrid));
+        dDifferentiate = nGrid * sin(2 * M_PI * kk/(1.0 * nGrid));
         cForceZ[idx][0] =  dDifferentiate * imPotential;
         cForceZ[idx][1] = -dDifferentiate * rePotential;
 
         /*
-         * Differentiate in X direction (over-write the
+         * Differentiate in X direction (over - write the
          * delta_lin field)
          */
-        dDifferentiate = nGrid*sin(2*M_PI*i/(1.0*nGrid));
+        dDifferentiate = nGrid * sin(2 * M_PI * i/(1.0 * nGrid));
         cDelta_lin_field[idx][0] =  dDifferentiate * imPotential;
         cDelta_lin_field[idx][1] = -dDifferentiate * rePotential;
     }
     mdlIFFT(pkd->mdl, fft, cForceY);
-    //auto rForceY = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl,rlast.i,sizeof(FFTW3(real)),cForceY));
+    //auto rForceY = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl, rlast.i, sizeof(FFTW3(real)), cForceY));
 
     mdlIFFT(pkd->mdl, fft, cForceZ);
-    //auto rForceZ = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl,rlast.i,sizeof(FFTW3(real)),cForceZ));
+    //auto rForceZ = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl, rlast.i, sizeof(FFTW3(real)), cForceZ));
 
     mdlIFFT(pkd->mdl, fft, cDelta_lin_field);
-    //auto rForceX = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl,rlast.i,sizeof(FFTW3(real)), cDelta_lin_field));
+    //auto rForceX = static_cast<FFTW3(real)*>(mdlSetArray(pkd->mdl, rlast.i, sizeof(FFTW3(real)), cDelta_lin_field));
 }
 
-int pstSetLinGrid(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int pstSetLinGrid(PST pst, void *vin, int nIn, void *vout, int nOut) {
     LCL *plcl = pst->plcl;
     struct inSetLinGrid *in = reinterpret_cast<struct inSetLinGrid *>(vin);
-    assert (nIn==sizeof(struct inSetLinGrid) );
+    assert (nIn == sizeof(struct inSetLinGrid) );
     if (pstNotCore(pst)) {
         int rID = mdlReqService(pst->mdl, pst->idUpper, PST_SETLINGRID, vin, nIn);
         pstSetLinGrid(pst->pstLower, vin, nIn, NULL, 0);
-        mdlGetReply(pst->mdl,rID,NULL,NULL);
+        mdlGetReply(pst->mdl, rID, NULL, NULL);
     }
     else {
         pkdSetLinGrid(plcl->pkd, in->a0, in->a, in->a1,
@@ -235,24 +235,24 @@ int pstSetLinGrid(PST pst,void *vin,int nIn,void *vout,int nOut) {
     return 0;
 }
 
-typedef blitz::Array<float,3> force_array_t;
-typedef blitz::TinyVector<int,3> shape_t;
-typedef blitz::TinyVector<double,3> position_t;
-typedef blitz::TinyVector<float,3> float3_t;
+typedef blitz::Array<float, 3> force_array_t;
+typedef blitz::TinyVector<int, 3> shape_t;
+typedef blitz::TinyVector<double, 3> position_t;
+typedef blitz::TinyVector<float, 3> float3_t;
 
 struct tree_node : public KDN {
-    bool is_cell()   { return iLower!=0; }
-    bool is_bucket() { return iLower==0; }
+    bool is_cell()   { return iLower != 0; }
+    bool is_bucket() { return iLower == 0; }
 };
 
-template<int Order,typename F>
+template<int Order, typename F>
 static float interpolate(force_array_t &forces, const F r[3]) {
-    AssignmentWeights<Order,F> Hx(r[0]),Hy(r[1]),Hz(r[2]);
+    AssignmentWeights < Order, F> Hx(r[0]), Hy(r[1]), Hz(r[2]);
     float force = 0;
-    for (int i=0; i<Order; ++i) {
-        for (int j=0; j<Order; ++j) {
-            for (int k=0; k<Order; ++k) {
-                force += forces(Hx.i+i,Hy.i+j,Hz.i+k) * Hx.H[i]*Hy.H[j]*Hz.H[k];
+    for (int i = 0; i < Order; ++i) {
+        for (int j = 0; j < Order; ++j) {
+            for (int k = 0; k < Order; ++k) {
+                force += forces(Hx.i + i, Hy.i + j, Hz.i + k) * Hx.H[i]*Hy.H[j]*Hz.H[k];
             }
         }
     }
@@ -260,32 +260,32 @@ static float interpolate(force_array_t &forces, const F r[3]) {
 }
 
 template<typename F>
-static float force_interpolate(force_array_t &forces, const F r[3],int iAssignment=4) {
+static float force_interpolate(force_array_t &forces, const F r[3], int iAssignment = 4) {
     float f;
     switch (iAssignment) {
-    case 1: f=interpolate<1,F>(forces,r); break;
-    case 2: f=interpolate<2,F>(forces,r); break;
-    case 3: f=interpolate<3,F>(forces,r); break;
-    case 4: f=interpolate<4,F>(forces,r); break;
-    default: f=0; assert(iAssignment>=1 && iAssignment<=4); abort();
+    case 1: f = interpolate < 1, F>(forces, r); break;
+    case 2: f = interpolate < 2, F>(forces, r); break;
+    case 3: f = interpolate < 3, F>(forces, r); break;
+    case 4: f = interpolate < 4, F>(forces, r); break;
+    default: f = 0; assert(iAssignment >= 1 && iAssignment <= 4); abort();
     }
     return f;
 }
 
 // Fetch all forces into this local grid. Could be optimized by bulk fetches.
-static void fetch_forces(PKD pkd,int cid,int nGrid,force_array_t &forces, const shape_t &lower) {
-    auto wrap = [&nGrid](int i) { if (i>=nGrid) i-=nGrid; else if (i<0) i+=nGrid; return i; };
-    for (auto i=forces.begin(); i!=forces.end(); ++i) {
+static void fetch_forces(PKD pkd, int cid, int nGrid, force_array_t &forces, const shape_t &lower) {
+    auto wrap = [&nGrid](int i) { if (i >= nGrid) i -= nGrid; else if (i < 0) i += nGrid; return i; };
+    for (auto i = forces.begin(); i != forces.end(); ++i) {
         shape_t loc = i.position() + lower;
         loc[0] = wrap(loc[0]); loc[1] = wrap(loc[1]); loc[2] = wrap(loc[2]);
-        auto id = mdlFFTrId(pkd->mdl,pkd->fft,loc[0],loc[1],loc[2]);
-        auto idx = mdlFFTrIdx(pkd->mdl,pkd->fft,loc[0],loc[1],loc[2]);
-        auto p = reinterpret_cast<float *>(mdlFetch(pkd->mdl,cid,idx,id));
+        auto id = mdlFFTrId(pkd->mdl, pkd->fft, loc[0], loc[1], loc[2]);
+        auto idx = mdlFFTrIdx(pkd->mdl, pkd->fft, loc[0], loc[1], loc[2]);
+        auto p = reinterpret_cast<float *>(mdlFetch(pkd->mdl, cid, idx, id));
         *i = *p;
     }
 }
 
-void pkdLinearKick(PKD pkd,vel_t dtOpen,vel_t dtClose, int iAssignment=4) {
+void pkdLinearKick(PKD pkd, vel_t dtOpen, vel_t dtClose, int iAssignment = 4) {
     const std::size_t maxSize = 100000; // We would like this to remain in L2 cache
     std::vector<float> dataX, dataY, dataZ;
     dataX.reserve(maxSize);
@@ -294,15 +294,15 @@ void pkdLinearKick(PKD pkd,vel_t dtOpen,vel_t dtClose, int iAssignment=4) {
     shape_t index;
     position_t fPeriod(pkd->fPeriod), ifPeriod = 1.0 / fPeriod;
     int nGrid = pkd->fft->rgrid->n1;
-    assert(iAssignment>=1 && iAssignment<=4);
+    assert(iAssignment >= 1 && iAssignment <= 4);
 
     int iLocal = mdlCore(pkd->mdl) ? 0 : pkd->fft->rgrid->nLocal;
-    FFTW3(real)* forceX = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl,iLocal,sizeof(FFTW3(real)),pkd->pLite));
-    FFTW3(real)* forceY = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl,iLocal,sizeof(FFTW3(real)),forceX + pkd->fft->rgrid->nLocal));
-    FFTW3(real)* forceZ = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl,iLocal,sizeof(FFTW3(real)),forceY + pkd->fft->rgrid->nLocal));
-    mdlROcache(pkd->mdl,CID_GridLinFx,NULL, forceX, sizeof(FFTW3(real)),iLocal);
-    mdlROcache(pkd->mdl,CID_GridLinFy,NULL, forceY, sizeof(FFTW3(real)),iLocal );
-    mdlROcache(pkd->mdl,CID_GridLinFz,NULL, forceZ, sizeof(FFTW3(real)),iLocal );
+    FFTW3(real)* forceX = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl, iLocal, sizeof(FFTW3(real)), pkd->pLite));
+    FFTW3(real)* forceY = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl, iLocal, sizeof(FFTW3(real)), forceX + pkd->fft->rgrid->nLocal));
+    FFTW3(real)* forceZ = reinterpret_cast<FFTW3(real) *>(mdlSetArray(pkd->mdl, iLocal, sizeof(FFTW3(real)), forceY + pkd->fft->rgrid->nLocal));
+    mdlROcache(pkd->mdl, CID_GridLinFx, NULL, forceX, sizeof(FFTW3(real)), iLocal);
+    mdlROcache(pkd->mdl, CID_GridLinFy, NULL, forceY, sizeof(FFTW3(real)), iLocal );
+    mdlROcache(pkd->mdl, CID_GridLinFz, NULL, forceZ, sizeof(FFTW3(real)), iLocal );
 
     std::vector<std::uint32_t> stack;
     stack.push_back(ROOT);
@@ -310,8 +310,8 @@ void pkdLinearKick(PKD pkd,vel_t dtOpen,vel_t dtClose, int iAssignment=4) {
         auto kdn = pkd->tree[stack.back()];
         stack.pop_back(); // Go to the next node in the tree
         auto bnd = kdn->bound();
-        shape_t ilower = shape_t(floor((bnd.lower() * ifPeriod + 0.5) * nGrid)) - iAssignment/2;
-        shape_t iupper = shape_t(floor((bnd.upper() * ifPeriod + 0.5) * nGrid)) + iAssignment/2;
+        shape_t ilower = shape_t(floor((bnd.lower() * ifPeriod + 0.5) * nGrid)) - iAssignment / 2;
+        shape_t iupper = shape_t(floor((bnd.upper() * ifPeriod + 0.5) * nGrid)) + iAssignment / 2;
         shape_t ishape = iupper - ilower + 1;
         float3_t flower = ilower;
         std::size_t size = blitz::product(ishape);
@@ -325,12 +325,12 @@ void pkdLinearKick(PKD pkd,vel_t dtOpen,vel_t dtClose, int iAssignment=4) {
             dataX.resize(size); // Hold the right number of masses
             dataY.resize(size); // Hold the right number of masses
             dataZ.resize(size); // Hold the right number of masses
-            force_array_t forcesX(dataX.data(),ishape,blitz::neverDeleteData,blitz::ColumnMajorArray<3>());
-            force_array_t forcesY(dataY.data(),ishape,blitz::neverDeleteData,blitz::ColumnMajorArray<3>());
-            force_array_t forcesZ(dataZ.data(),ishape,blitz::neverDeleteData,blitz::ColumnMajorArray<3>());
-            fetch_forces(pkd,CID_GridLinFx,nGrid,forcesX,ilower);
-            fetch_forces(pkd,CID_GridLinFy,nGrid,forcesY,ilower);
-            fetch_forces(pkd,CID_GridLinFz,nGrid,forcesZ,ilower);
+            force_array_t forcesX(dataX.data(), ishape, blitz::neverDeleteData, blitz::ColumnMajorArray<3>());
+            force_array_t forcesY(dataY.data(), ishape, blitz::neverDeleteData, blitz::ColumnMajorArray<3>());
+            force_array_t forcesZ(dataZ.data(), ishape, blitz::neverDeleteData, blitz::ColumnMajorArray<3>());
+            fetch_forces(pkd, CID_GridLinFx, nGrid, forcesX, ilower);
+            fetch_forces(pkd, CID_GridLinFy, nGrid, forcesY, ilower);
+            fetch_forces(pkd, CID_GridLinFz, nGrid, forcesZ, ilower);
             for ( auto &p : *kdn) { // All particles in this tree cell
                 auto v = p.velocity();
                 float3_t r = p.position();
@@ -341,23 +341,23 @@ void pkdLinearKick(PKD pkd,vel_t dtOpen,vel_t dtClose, int iAssignment=4) {
             }
         }
     }
-    mdlFinishCache(pkd->mdl,CID_GridLinFx);
-    mdlFinishCache(pkd->mdl,CID_GridLinFy);
-    mdlFinishCache(pkd->mdl,CID_GridLinFz);
+    mdlFinishCache(pkd->mdl, CID_GridLinFx);
+    mdlFinishCache(pkd->mdl, CID_GridLinFy);
+    mdlFinishCache(pkd->mdl, CID_GridLinFz);
 }
 
-int pstLinearKick(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int pstLinearKick(PST pst, void *vin, int nIn, void *vout, int nOut) {
     LCL *plcl = pst->plcl;
     struct inLinearKick *in = reinterpret_cast<struct inLinearKick *>(vin);
-    assert( nIn==sizeof(struct inLinearKick) );
+    assert( nIn == sizeof(struct inLinearKick) );
 
     if (pstNotCore(pst)) {
-        int rID = mdlReqService(pst->mdl,pst->idUpper,PST_LINEARKICK,vin,nIn);
-        pstLinearKick(pst->pstLower,vin,nIn,NULL,0);
-        mdlGetReply(pst->mdl,rID,NULL,NULL);
+        int rID = mdlReqService(pst->mdl, pst->idUpper, PST_LINEARKICK, vin, nIn);
+        pstLinearKick(pst->pstLower, vin, nIn, NULL, 0);
+        mdlGetReply(pst->mdl, rID, NULL, NULL);
     }
     else {
-        pkdLinearKick(plcl->pkd,in->dtOpen,in->dtClose);
+        pkdLinearKick(plcl->pkd, in->dtOpen, in->dtClose);
     }
     return 0;
 }
@@ -369,26 +369,26 @@ void pkdMeasureLinPk(PKD pkd, int nGrid, double dA, double dBoxSize,
     mdlGridCoord first, last, index;
     FFTW3(complex) *fftDataK;
     double ak;
-    int i,j,k, idx, ks;
+    int i, j, k, idx, ks;
     int iNyquist = nGrid / 2;
 
-    mdlGridCoordFirstLast(pkd->mdl,fft->rgrid,&first,&last,1);
+    mdlGridCoordFirstLast(pkd->mdl, fft->rgrid, &first, &last, 1);
     /* Generate the grid of the linear species again,
     ** this should not be done this way for performances.
     ** - Well, for the gravity computation what is generated
     **   on the grid is \delta\rho averaged over one time step.
     **   Here we want the \delta power spectrum at a specific
     **   time, and so we need to generate the \delta field at this
-    **   time. We thus have to re-generate the grid.
+    **   time. We thus have to re - generate the grid.
     */
     int bRho = 0; double a_next = dA; /* Generate the \delta field at dA (no averaging) */
     pkdGenerateLinGrid(pkd, fft, dA, a_next, dBoxSize, iSeed, bFixed, fPhase, bRho);
 
-    /* Remember, the grid is now transposed to x,z,y (from x,y,z) */
-    mdlGridCoordFirstLast(pkd->mdl,fft->kgrid,&first,&last,0);
-    fftDataK = (FFTW3(complex) *)mdlSetArray(pkd->mdl,last.i,sizeof(FFTW3(complex)),pkd->pLite);
+    /* Remember, the grid is now transposed to x, z, y (from x, y, z) */
+    mdlGridCoordFirstLast(pkd->mdl, fft->kgrid, &first, &last, 0);
+    fftDataK = (FFTW3(complex) *)mdlSetArray(pkd->mdl, last.i, sizeof(FFTW3(complex)), pkd->pLite);
 
-    for ( i=0; i<nBins; i++ ) {
+    for (i = 0; i < nBins; i++) {
         fK[i] = 0.0;
         fPower[i] = 0.0;
         nPower[i] = 0;
@@ -401,30 +401,30 @@ void pkdMeasureLinPk(PKD pkd, int nGrid, double dA, double dBoxSize,
 #ifdef LINEAR_PK
     double scale = nBins * 1.0 / iNyquist;
 #else
-    double scale = nBins * 1.0 / log(iNyquist+1);
+    double scale = nBins * 1.0 / log(iNyquist + 1);
 #endif
     double dBox2 = dBoxSize * dBoxSize;
     int jj, kk;
     i = j = k = -1;
-    for ( index=first; !mdlGridCoordCompare(&index,&last); mdlGridCoordIncrement(&index) ) {
-        if ( j != index.z ) {
+    for ( index = first; !mdlGridCoordCompare(&index, &last); mdlGridCoordIncrement(&index) ) {
+        if (j != index.z) {
             j = index.z;
-            jj = j>iNyquist ? nGrid - j : j;
+            jj = j > iNyquist ? nGrid - j : j;
         }
-        if ( k != index.y ) {
+        if (k != index.y) {
             k = index.y;
-            kk = k>iNyquist ? nGrid - k : k;
+            kk = k > iNyquist ? nGrid - k : k;
         }
         i = index.x;
-        ak = sqrt(i*i + jj*jj + kk*kk);
+        ak = sqrt(i * i + jj * jj + kk * kk);
         ks = ak;
-        if ( ks >= 1 && ks <= iNyquist ) {
+        if (ks >= 1 && ks <= iNyquist) {
 #ifdef LINEAR_PK
-            ks = floor((ks-1.0) * scale);
+            ks = floor((ks - 1.0) * scale);
 #else
             ks = floor(log(ks) * scale);
 #endif
-            assert(ks>=0 && ks <nBins);
+            assert(ks >= 0 && ks <nBins);
             idx = index.i;
             double delta2 = dBox2*(pow2(fftDataK[idx][0]) + pow2(fftDataK[idx][1]));
             fK[ks] += ak;
@@ -434,23 +434,23 @@ void pkdMeasureLinPk(PKD pkd, int nGrid, double dA, double dBoxSize,
     }
 }
 
-int pstMeasureLinPk(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int pstMeasureLinPk(PST pst, void *vin, int nIn, void *vout, int nOut) {
     LCL *plcl = pst->plcl;
     struct inMeasureLinPk *in = reinterpret_cast<struct inMeasureLinPk *>(vin);
     struct outMeasureLinPk *out = reinterpret_cast<struct outMeasureLinPk *>(vout);
     struct outMeasureLinPk *outUpper;
     int i;
 
-    assert( nIn==sizeof(struct inMeasureLinPk) );
+    assert( nIn == sizeof(struct inMeasureLinPk) );
     if (pstNotCore(pst)) {
-        int rID = mdlReqService(pst->mdl,pst->idUpper,PST_MEASURELINPK,vin,nIn);
-        pstMeasureLinPk(pst->pstLower,vin,nIn,vout,nOut);
+        int rID = mdlReqService(pst->mdl, pst->idUpper, PST_MEASURELINPK, vin, nIn);
+        pstMeasureLinPk(pst->pstLower, vin, nIn, vout, nOut);
         outUpper = reinterpret_cast<struct outMeasureLinPk *>(malloc(sizeof(struct outMeasureLinPk)));
         assert(outUpper != NULL);
-        mdlGetReply(pst->mdl,rID,outUpper,&nOut);
-        assert(nOut==sizeof(struct outMeasureLinPk));
+        mdlGetReply(pst->mdl, rID, outUpper, &nOut);
+        assert(nOut == sizeof(struct outMeasureLinPk));
 
-        for (i=0; i<in->nBins; i++) {
+        for (i = 0; i < in->nBins; i++) {
             out->fK[i] += outUpper->fK[i];
             out->fPower[i] += outUpper->fPower[i];
             out->nPower[i] += outUpper->nPower[i];

@@ -21,7 +21,7 @@ public:
     using input = Bound;
     using output = void;
     explicit ServiceEnforcePeriodic(PST pst)
-        : TraversePST(pst,PST_ENFORCEPERIODIC,sizeof(input),"EnforcePeriodic") {}
+        : TraversePST(pst, PST_ENFORCEPERIODIC, sizeof(input), "EnforcePeriodic") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

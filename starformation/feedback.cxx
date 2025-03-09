@@ -34,7 +34,7 @@ static inline void snFeedback(PKD pkd, PARTICLE *pIn, int nSmooth, NN *nnList,
  * The helper snFeedback computes the probability of explosion and adds
  * the energy to the gas particles in nnList
  */
-void smSNFeedback(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void smSNFeedback(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     auto p = pkd->particles[pIn];
 
@@ -63,7 +63,7 @@ void smSNFeedback(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
 }
 
 
-void packSNFeedback(void *vpkd,void *dst,const void *src) {
+void packSNFeedback(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<snFeedbackPack *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -78,7 +78,7 @@ void packSNFeedback(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void unpackSNFeedback(void *vpkd,void *dst,const void *src) {
+void unpackSNFeedback(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const snFeedbackPack *>(src);
@@ -93,7 +93,7 @@ void unpackSNFeedback(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void initSNFeedback(void *vpkd,void *dst) {
+void initSNFeedback(void *vpkd, void *dst) {
     PKD pkd = (PKD) vpkd;
     auto p = pkd->particles[static_cast<PARTICLE *>(dst)];
 
@@ -112,7 +112,7 @@ void initSNFeedback(void *vpkd,void *dst) {
     }
 }
 
-void flushSNFeedback(void *vpkd,void *dst,const void *src) {
+void flushSNFeedback(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<snFeedbackFlush *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -132,7 +132,7 @@ void flushSNFeedback(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void combSNFeedback(void *vpkd,void *dst,const void *src) {
+void combSNFeedback(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const snFeedbackFlush *>(src);

@@ -14,7 +14,7 @@ public:
     void lock_read() {
         while (true) {
             int prev = count;
-            if (prev>=0 && count.compare_exchange_weak(prev,prev+1)) return;
+            if (prev>=0 && count.compare_exchange_weak(prev, prev + 1)) return;
             std::this_thread::yield();
         }
     }
@@ -24,7 +24,7 @@ public:
     void lock_write() {
         while (true) {
             int prev = count;
-            if (prev<=0 && count.compare_exchange_weak(prev,prev-1)) return;
+            if (prev<=0 && count.compare_exchange_weak(prev, prev - 1)) return;
             std::this_thread::yield();
         }
     }

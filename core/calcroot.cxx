@@ -20,15 +20,15 @@
 ** Hopefully we can bypass this step once we figure out how to do the
 ** Multipole Ewald with reduced multipoles.
 */
-static void pkdCalcRoot(PKD pkd,uint32_t uRoot,blitz::TinyVector<double,3> com,MOMC &mom) {
+static void pkdCalcRoot(PKD pkd, uint32_t uRoot, blitz::TinyVector<double, 3> com, MOMC &mom) {
     MOMC mc;
     auto kdn = pkd->tree[uRoot];
     momClearMomc(&mom);
     for (auto &p : *kdn) {
-        blitz::TinyVector<double,3> r = p.position() - com;
+        blitz::TinyVector<double, 3> r = p.position() - com;
         auto m = p.mass();
-        momMakeMomc(&mc,m,r[0],r[1],r[2]);
-        momAddMomc(&mom,&mc);
+        momMakeMomc(&mc, m, r[0], r[1], r[2]);
+        momAddMomc(&mom, &mc);
     }
 }
 
@@ -36,18 +36,18 @@ static void pkdCalcRoot(PKD pkd,uint32_t uRoot,blitz::TinyVector<double,3> com,M
 static_assert(std::is_void<ServiceCalcRoot::input>()  || std::is_standard_layout<ServiceCalcRoot::input>());
 static_assert(std::is_void<ServiceCalcRoot::output>() || std::is_standard_layout<ServiceCalcRoot::output>());
 
-int ServiceCalcRoot::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceCalcRoot::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    pkdCalcRoot(pst->plcl->pkd,in->uRoot,in->com,out->momc);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    pkdCalcRoot(pst->plcl->pkd, in->uRoot, in->com, out->momc);
     return sizeof(output);
 }
 
-int ServiceCalcRoot::Combine(void *vout,void *vout2) {
+int ServiceCalcRoot::Combine(void *vout, void *vout2) {
     auto out  = static_cast<output *>(vout);
     auto out2 = static_cast<output *>(vout2);
-    momAddMomc(&out->momc,&out2->momc);
+    momAddMomc(&out->momc, &out2->momc);
     return sizeof(output);
 }

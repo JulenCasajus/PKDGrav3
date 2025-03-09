@@ -37,7 +37,7 @@ public:
         const double dDeltaLog = log10(pdXVal[1]) - log10(pdXVal[0]);
         double dSum{};
         for (int i = 1; i < nPoints - 1; ++i) dSum += pdXVal[i] * pdYVal[i];
-        dSum += 0.5 * (pdXVal[0] * pdYVal[0] + pdXVal[nPoints-1] * pdYVal[nPoints-1]);
+        dSum += 0.5 * (pdXVal[0] * pdYVal[0] + pdXVal[nPoints - 1] * pdYVal[nPoints - 1]);
         return dSum * M_LN10 * dDeltaLog;
     }
 
@@ -250,9 +250,9 @@ private:
  * For example:
  * {
  *      ...
- *      auto IMF = ChooseIMF( ... );
- *      IMF->AnAlgorithm( ... );
- *      IMF->AnotherAlgorithm( ... );
+ *      auto IMF = ChooseIMF(...);
+ *      IMF->AnAlgorithm(...);
+ *      IMF->AnotherAlgorithm(...);
  *      ...
  * }
  */

@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -321,7 +321,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1)
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2)
-{ 
+{
 	BZPRECONDITION(r0.isAscendingContiguous() &&
 			r1.isAscendingContiguous() && r2.isAscendingContiguous());
 
@@ -353,7 +353,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(3, r3.first());
 
 	setupStorage(3);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -375,7 +375,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(4, r4.first());
 
 	setupStorage(4);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -400,7 +400,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(5, r5.first());
 
 	setupStorage(5);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -427,7 +427,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(6, r6.first());
 
 	setupStorage(6);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -457,7 +457,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(7, r7.first());
 
 	setupStorage(7);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -489,7 +489,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(8, r8.first());
 
 	setupStorage(8);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -525,7 +525,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(9, r9.first());
 
 	setupStorage(9);
-} 
+}
 
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
@@ -563,7 +563,7 @@ void Array<T_numtype, N_rank>::resize(Range r0, Range r1, Range r2,
 	storage_.setBase(10, r10.first());
 
 	setupStorage(10);
-} 
+}
 
 
 template<typename T_numtype, int N_rank>
@@ -585,9 +585,9 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0)
  *                     ^
  *         detected during:
  *           instantiation of class "blitz::TinyVector<int, 0>" at line 273 of
- *                     "./../blitz/array/resize.cc"
+ *                     "./../blitz/ array/resize.cc"
  *           instantiation of
- *                     "void blitz::Array<int, 1>::resizeAndPreserve(int)" 
+ *                     "void blitz::Array<int, 1>::resizeAndPreserve(int)"
  */
         T_array B(length0, storage_);
 #else
@@ -595,7 +595,7 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0)
 #endif
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
               ubound(0)));
             B(overlap0) = (*this)(overlap0);
         }
@@ -615,9 +615,9 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1)
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                 ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                 ubound(1)));
             B(overlap0, overlap1) = (*this)(overlap0, overlap1);
         }
@@ -635,17 +635,17 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
     if ((length0 != length_[0]) || (length1 != length_[1])
         || (length2 != length_[2]))
     {
-        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1, length2), 
+        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1, length2),
             storage_);
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                 ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                 ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                 ubound(2)));
-            B(overlap0, overlap1, overlap2) = (*this)(overlap0, overlap1, 
+            B(overlap0, overlap1, overlap2) = (*this)(overlap0, overlap1,
                 overlap2);
         }
         reference(B);
@@ -691,7 +691,7 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
         || (length2 != length_[2]) || (length3 != length_[3])
         || (length4 != length_[4]))
     {
-        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1, 
+        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1,
             length2, length3, length4), storage_);
 
         if (numElements())
@@ -720,7 +720,7 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
         || (length2 != length_[2]) || (length3 != length_[3])
         || (length4 != length_[4]) || (length5 != length_[5]))
     {
-        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1, length2, 
+        T_array B(base(), BZ_BLITZ_SCOPE(shape)(length0, length1, length2,
             length3, length4, length5), storage_);
 
         if (numElements())
@@ -758,19 +758,19 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                ubound(2)));
-            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3), 
+            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3),
                ubound(3)));
-            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4), 
+            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4),
                ubound(4)));
-            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5), 
+            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5),
                ubound(5)));
-            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6), 
+            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6),
                ubound(6)));
             B(overlap0, overlap1, overlap2, overlap3, overlap4, overlap5,
               overlap6)
@@ -802,21 +802,21 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                ubound(2)));
-            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3), 
+            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3),
                ubound(3)));
-            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4), 
+            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4),
                ubound(4)));
-            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5), 
+            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5),
                ubound(5)));
-            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6), 
+            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6),
                ubound(6)));
-            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7), 
+            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7),
                ubound(7)));
             B(overlap0, overlap1, overlap2, overlap3, overlap4, overlap5,
               overlap6, overlap7)
@@ -849,23 +849,23 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                ubound(2)));
-            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3), 
+            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3),
                ubound(3)));
-            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4), 
+            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4),
                ubound(4)));
-            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5), 
+            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5),
                ubound(5)));
-            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6), 
+            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6),
                ubound(6)));
-            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7), 
+            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7),
                ubound(7)));
-            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8), 
+            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8),
                ubound(8)));
             B(overlap0, overlap1, overlap2, overlap3, overlap4, overlap5,
               overlap6, overlap7, overlap8)
@@ -899,25 +899,25 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                ubound(2)));
-            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3), 
+            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3),
                ubound(3)));
-            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4), 
+            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4),
                ubound(4)));
-            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5), 
+            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5),
                ubound(5)));
-            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6), 
+            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6),
                ubound(6)));
-            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7), 
+            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7),
                ubound(7)));
-            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8), 
+            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8),
                ubound(8)));
-            Range overlap9 = Range(fromStart, (extrema::min)(B.ubound(9), 
+            Range overlap9 = Range(fromStart, (extrema::min)(B.ubound(9),
                ubound(9)));
             B(overlap0, overlap1, overlap2, overlap3, overlap4, overlap5,
               overlap6, overlap7, overlap8, overlap9)
@@ -952,27 +952,27 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 
         if (numElements())
         {
-            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0), 
+            Range overlap0 = Range(fromStart, (extrema::min)(B.ubound(0),
                ubound(0)));
-            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1), 
+            Range overlap1 = Range(fromStart, (extrema::min)(B.ubound(1),
                ubound(1)));
-            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2), 
+            Range overlap2 = Range(fromStart, (extrema::min)(B.ubound(2),
                ubound(2)));
-            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3), 
+            Range overlap3 = Range(fromStart, (extrema::min)(B.ubound(3),
                ubound(3)));
-            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4), 
+            Range overlap4 = Range(fromStart, (extrema::min)(B.ubound(4),
                ubound(4)));
-            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5), 
+            Range overlap5 = Range(fromStart, (extrema::min)(B.ubound(5),
                ubound(5)));
-            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6), 
+            Range overlap6 = Range(fromStart, (extrema::min)(B.ubound(6),
                ubound(6)));
-            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7), 
+            Range overlap7 = Range(fromStart, (extrema::min)(B.ubound(7),
                ubound(7)));
-            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8), 
+            Range overlap8 = Range(fromStart, (extrema::min)(B.ubound(8),
                ubound(8)));
-            Range overlap9 = Range(fromStart, (extrema::min)(B.ubound(9), 
+            Range overlap9 = Range(fromStart, (extrema::min)(B.ubound(9),
                ubound(9)));
-            Range overlap10 = Range(fromStart, (extrema::min)(B.ubound(10), 
+            Range overlap10 = Range(fromStart, (extrema::min)(B.ubound(10),
                ubound(10)));
             B(overlap0, overlap1, overlap2, overlap3, overlap4, overlap5,
               overlap6, overlap7, overlap8, overlap9, overlap10)
@@ -984,7 +984,7 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(int length0, int length1,
 }
 
 template<typename T_numtype, int N_rank>
-void Array<T_numtype, N_rank>::resize(const TinyVector<int,N_rank>& extent)
+void Array<T_numtype, N_rank>::resize(const TinyVector<int, N_rank>& extent)
 {
 // NEEDS_WORK -- don't resize if unnecessary
 //    BZPRECONDITION(all(extent > 0));
@@ -998,7 +998,7 @@ void Array<T_numtype, N_rank>::resize(const TinyVector<int,N_rank>& extent)
 /* Added by Julian Cummings */
 template<typename T_numtype, int N_rank>
 void Array<T_numtype, N_rank>::resizeAndPreserve(
-    const TinyVector<int,N_rank>& extent)
+    const TinyVector<int, N_rank>& extent)
 {
 // NEEDS_WORK -- don't resize if unnecessary
 //    BZPRECONDITION(all(extent > 0));
@@ -1008,10 +1008,10 @@ void Array<T_numtype, N_rank>::resizeAndPreserve(
 
         if (numElements())
         {
-          TinyVector<int,N_rank> ub;
-          for (int d=0; d < N_rank; ++d)
-            ub(d) = (extrema::min)(B.ubound(d),ubound(d));
-          RectDomain<N_rank> overlap(lbound(),ub);
+          TinyVector<int, N_rank> ub;
+          for (int d = 0; d < N_rank; ++d)
+            ub(d) = (extrema::min)(B.ubound(d), ubound(d));
+          RectDomain<N_rank> overlap(lbound(), ub);
           B(overlap) = (*this)(overlap);
         }
         reference(B);

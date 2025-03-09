@@ -21,23 +21,23 @@
 static_assert(std::is_void<ServiceHostname::input>()  || std::is_trivial<ServiceHostname::input>());
 static_assert(std::is_void<ServiceHostname::output>() || std::is_trivial<ServiceHostname::output>());
 
-int ServiceHostname::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceHostname::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     static_assert(std::is_void<input>());
     auto out = static_cast<output *>(vout);
-    auto outUp = out + pst->idUpper-pst->idSelf;
-    auto rID = mdlReqService(pst->mdl,pst->idUpper,getServiceID(),vin,nIn);
-    Traverse(pst->pstLower,vin,nIn,out,nOut);
-    mdlGetReply(pst->mdl,rID,outUp,NULL);
-    return pst->nLeaves*sizeof(output);
+    auto outUp = out + pst->idUpper - pst->idSelf;
+    auto rID = mdlReqService(pst->mdl, pst->idUpper, getServiceID(), vin, nIn);
+    Traverse(pst->pstLower, vin, nIn, out, nOut);
+    mdlGetReply(pst->mdl, rID, outUp, NULL);
+    return pst->nLeaves * sizeof(output);
 }
 
-int ServiceHostname::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceHostname::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     static_assert(std::is_void<input>());
     auto out = static_cast<output *>(vout);
     out->iMpiID = mdlSelf(pst->mdl);
-    strncpy(out->szHostname,mdlName(pst->mdl),sizeof(out->szHostname));
+    strncpy(out->szHostname, mdlName(pst->mdl), sizeof(out->szHostname));
     out->szHostname[sizeof(out->szHostname)-1] = 0;
-    auto p = strchr(out->szHostname,'.');
+    auto p = strchr(out->szHostname, '.');
     if (p) *p = 0;
     return sizeof(output);
 }

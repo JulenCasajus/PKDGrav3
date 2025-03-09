@@ -36,11 +36,11 @@
 #include "SPH/SPHOptions.h"
 #include <queue>
 
-class MessageEwald : public mdl::cudaMessage,public gpu::hostData {
+class MessageEwald : public mdl::cudaMessage, public gpu::hostData {
 protected:
     class CudaClient &cuda;
     std::vector<workParticle *> ppWP; // [CUDA_WP_MAX_BUFFERED]
-    virtual void launch(mdl::Stream &stream,void *pCudaBufIn, void *pCudaBufOut) override;
+    virtual void launch(mdl::Stream &stream, void *pCudaBufIn, void *pCudaBufOut) override;
     virtual void finish() override;
     int nParticles, nMaxParticles;
 public:
@@ -50,9 +50,9 @@ public:
 
 class MessageEwaldSetup : public mdl::cudaMessage {
 protected:
-    virtual void launch(mdl::Stream &stream,void *pCudaBufIn, void *pCudaBufOut) override;
+    virtual void launch(mdl::Stream &stream, void *pCudaBufIn, void *pCudaBufOut) override;
 public:
-    explicit MessageEwaldSetup(struct EwaldVariables *const ew, EwaldTable *const ewt,int iDevice=-1);
+    explicit MessageEwaldSetup(struct EwaldVariables *const ew, EwaldTable *const ewt, int iDevice=-1);
 protected:
     struct EwaldVariables *const ewIn;
     EwaldTable *const ewt;
@@ -90,23 +90,23 @@ protected:
     mdl::CUDA &cuda;
     mdl::gpu::Client &gpu;
 protected:
-    template<class MESSAGE,class QUEUE,class TILE>
-    int queue(MESSAGE *&M,QUEUE &Q, workParticle *work, TILE &tile, bool bGravStep) {
+    template<class MESSAGE, class QUEUE, class TILE>
+    int queue(MESSAGE *&M, QUEUE &Q, workParticle *work, TILE &tile, bool bGravStep) {
         if (M) { // If we are in the middle of building data for a kernel
-            if (M->queue(work,tile,bGravStep)) return work->nP; // Successfully queued
+            if (M->queue(work, tile, bGravStep)) return work->nP; // Successfully queued
             flush(M); // The buffer is full, so send it
         }
         gpu.flushCompleted();
         if (Q.empty()) return 0; // No buffers so the CPU has to do this part
         M = & Q.dequeue();
-        if (M->queue(work,tile,bGravStep)) return work->nP; // Successfully queued
+        if (M->queue(work, tile, bGravStep)) return work->nP; // Successfully queued
         return 0; // Not sure how this would happen, but okay.
     }
     template<class MESSAGE>
     void flush(MESSAGE *&M) {
         if (M) {
             M->prepare();
-            cuda.enqueue(*M,gpu);
+            cuda.enqueue(*M, gpu);
             M = nullptr;
         }
     }
@@ -115,23 +115,23 @@ public:
     explicit CudaClient( mdl::CUDA &cuda, mdl::gpu::Client &gpu);
     void flushCUDA();
     int queuePP(workParticle *work, ilpTile &tile, bool bGravStep) {
-        return queue(pp,freePP,work,tile,bGravStep);
+        return queue(pp, freePP, work, tile, bGravStep);
     }
 
     int queuePC(workParticle *work, ilcTile &tile, bool bGravStep) {
-        return queue(pc,freePC,work,tile,bGravStep);
+        return queue(pc, freePC, work, tile, bGravStep);
     }
 
     int queueDen(workParticle *work, ilpTile &tile) {
-        return queue(den,freeDen,work,tile, false);
+        return queue(den, freeDen, work, tile, false);
     }
 
     int queueDenCorr(workParticle *work, ilpTile &tile) {
-        return queue(denCorr,freeDenCorr,work,tile, false);
+        return queue(denCorr, freeDenCorr, work, tile, false);
     }
 
     int queueSPHForce(workParticle *work, ilpTile &tile) {
-        return queue(sphForce,freeSPHForce,work,tile, false);
+        return queue(sphForce, freeSPHForce, work, tile, false);
     }
     int  queueEwald(workParticle *wp);
     void setupEwald(struct EwaldVariables *const ew, EwaldTable *const ewt);

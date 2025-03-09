@@ -16,7 +16,7 @@
  */
 #include "TraversePST.h"
 
-class ServiceGetOrdSplits : public TraverseGatherPST<uint64_t> {
+class ServiceGetOrdSplits : public TraverseGatherPST < uint64_t> {
 public:
     using input = void;
     // struct input {
@@ -24,7 +24,7 @@ public:
     //     uint64_t iMaxOrder;
     // };
     explicit ServiceGetOrdSplits(PST pst)
-        : TraverseGatherPST(pst,PST_GET_ORD_SPLITS,0,sizeof(output)*pst->mdl->Threads(),"GetOrdSplits") {}
+        : TraverseGatherPST(pst, PST_GET_ORD_SPLITS, 0, sizeof(output)*pst->mdl->Threads(), "GetOrdSplits") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut) final;
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut) final;
 };

@@ -5,7 +5,7 @@
 arraydir = $(includedir)/blitz/array
 generatedir = ../generate
 
-genheaders = stencil-classes.cc 
+genheaders = stencil-classes.cc
 #bops.cc uops.cc
 
 array_HEADERS = asexpr.h asexpr.cc cartesian.h cgsolve.h complex.cc	\

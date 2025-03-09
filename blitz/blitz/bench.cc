@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -82,9 +82,9 @@ void Benchmark<P_parameter>::run(ostream& log)
 
     Timer t;
 
-    for (unsigned j=0; j < numImplementations_; ++j)
+    for (unsigned j = 0; j < numImplementations_; ++j)
     {
-        for (unsigned i=0; i < numParameterSettings(); ++i)
+        for (unsigned i = 0; i < numParameterSettings(); ++i)
         {
             log  << setw(20) << implementations_[j]->implementationName()
                  << " " << setw(8) << getParameterSetting(i) << "  ";
@@ -105,15 +105,15 @@ void Benchmark<P_parameter>::run(ostream& log)
             t.stop();
             double tmOverhead = t.elapsedSeconds();
 
-            rates_(j,i) = iterations / (tm - tmOverhead);
-            Mflops_(j,i) = rates_(j,i) 
+            rates_(j, i) = iterations / (tm - tmOverhead);
+            Mflops_(j, i) = rates_(j, i)
                 * implementations_[j]->flopsPerIteration() / 1.0e+6;
 
-            log << setw(10) << (rates_(j,i)/1.0e+6) << " Mops/s ";
+            log << setw(10) << (rates_(j, i)/1.0e+6) << " Mops / s ";
 
             if (implementations_[j]->flopsPerIteration() != 0)
             {
-                log << "[" << setw(7) << Mflops_(j,i) << " Mflops]";
+                log << "[" << setw(7) << Mflops_(j, i) << " Mflops]";
             }
 
             log << endl;
@@ -127,7 +127,7 @@ void Benchmark<P_parameter>::run(ostream& log)
 }
 
 template<typename P_parameter>
-double Benchmark<P_parameter>::getMflops(unsigned implementation, 
+double Benchmark<P_parameter>::getMflops(unsigned implementation,
     unsigned setting) const
 {
     BZPRECONDITION(state_ == done);
@@ -138,7 +138,7 @@ double Benchmark<P_parameter>::getMflops(unsigned implementation,
 }
 
 template<typename P_parameter>
-double Benchmark<P_parameter>::getRate(unsigned implementation,  
+double Benchmark<P_parameter>::getRate(unsigned implementation,
     unsigned setting) const
 {
     BZPRECONDITION(state_ == done);
@@ -156,12 +156,12 @@ void Benchmark<P_parameter>::saveMatlabGraph(const char* filename) const
     {
       //ugly but saveMatlabGraph is coded into all benchmarks
       std::string pyfn(filename);
-      pyfn=pyfn.replace(pyfn.find(".m"),2,std::string(".py"),0,3);
+      pyfn = pyfn.replace(pyfn.find(".m"), 2, std::string(".py"), 0, 3);
       savePylabGraph(pyfn.c_str());
     }
 
     ofstream ofs(filename);
-     
+
     assert(ofs.good());
 
     ofs << "% This matlab file generated automatically by class Benchmark"
@@ -171,34 +171,34 @@ void Benchmark<P_parameter>::saveMatlabGraph(const char* filename) const
 
     ofs << "parm = [ ";
     int i;
-    for (i=0; i < numParameterSettings(); ++i)
+    for (i = 0; i < numParameterSettings(); ++i)
         ofs << setprecision(12) << double(getParameterSetting(i)) << " ";
     ofs << "]; " << endl << endl;
 
     ofs << "Mf = [ ";
-    for (i=0; i < numParameterSettings(); ++i)
+    for (i = 0; i < numParameterSettings(); ++i)
     {
-        for (int j=0; j < numImplementations_; ++j)
+        for (int j = 0; j < numImplementations_; ++j)
         {
-            ofs << setprecision(12) << getMflops(j,i) << " ";
+            ofs << setprecision(12) << getMflops(j, i) << " ";
         }
         if (i != numParameterSettings()-1)
             ofs << ";" << endl;
     }
     ofs << "] ;" << endl << endl;
 
-    ofs << "semilogx(parm,Mf), title('" << description() << "'), " << endl
+    ofs << "semilogx(parm, Mf), title('" << description() << "'), " << endl
         << "    xlabel('" << parameterDescription() << "'), "
         << "ylabel('Mflops')" << endl
         << "legend(";
-    
-    for (int j=0; j < numImplementations_; ++j)
+
+    for (int j = 0; j < numImplementations_; ++j)
     {
         ofs << "'" << implementations_[j]->implementationName()
             << "'";
         if (j != numImplementations_ - 1)
             ofs << ", ";
-    } 
+    }
 
     ofs << ")" << endl;
 }
@@ -210,7 +210,7 @@ void Benchmark<P_parameter>::savePylabGraph(const char* filename) const
     BZPRECONDITION(state_ == done);
 
     ofstream ofs(filename);
-     
+
     assert(ofs.good());
 
     ofs << "# This python file generated automatically by class Benchmark\n"
@@ -222,34 +222,34 @@ void Benchmark<P_parameter>::savePylabGraph(const char* filename) const
 
     ofs << "parm = array([ ";
     int i;
-    for (i=0; i < numParameterSettings(); ++i)
+    for (i = 0; i < numParameterSettings(); ++i)
         ofs << setprecision(12) << double(getParameterSetting(i)) << ", ";
     ofs << "])\n\n";
 
     ofs << "Mf = array([[ ";
-    for (i=0; i < numParameterSettings(); ++i)
+    for (i = 0; i < numParameterSettings(); ++i)
     {
-        if(i>0) ofs << ", [ ";
-        for (int j=0; j < numImplementations_; ++j)
+        if (i > 0) ofs << ", [ ";
+        for (int j = 0; j < numImplementations_; ++j)
         {
-            ofs << setprecision(12) << getMflops(j,i) << ", ";
+            ofs << setprecision(12) << getMflops(j, i) << ", ";
         }
       ofs << "]";
     }
     ofs << "])" << endl << endl;
 
-    ofs << "semilogx(parm,Mf)\ntitle('" << description() << "')\n"
-        << "xlabel('" << parameterDescription() << "')\n" 
+    ofs << "semilogx(parm, Mf)\ntitle('" << description() << "')\n"
+        << "xlabel('" << parameterDescription() << "')\n"
         << "ylabel('Mflops')\n";
         << "legend([";
-    
-    for (int j=0; j < numImplementations_; ++j)
+
+    for (int j = 0; j < numImplementations_; ++j)
     {
         ofs << "'" << implementations_[j]->implementationName()
             << "'";
         if (j != numImplementations_ - 1)
             ofs << ", ";
-    } 
+    }
 
     ofs << "])\n";
 }

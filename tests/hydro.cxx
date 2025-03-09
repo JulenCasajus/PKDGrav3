@@ -47,22 +47,22 @@ protected:
     void set_vec_R(double rho, double p, std::vector<double> v) {
         vrho_R = rho;
         vp_R   = p;
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             vv_R[k]   = v[k];
     }
     void set_vec_L(double rho, double p, std::vector<double> v) {
         vrho_L = rho;
         vp_L   = p;
-        for (auto k=0; k<3; k++)
+        for (auto k = 0; k < 3; k++)
             vv_L[k]   = v[k];
     }
     double cs(double g, double rho, double p) {
-        return sqrt(g*p/rho);
+        return sqrt(g * p / rho);
     }
 
     dtype solve() {
         mtype mask = static_cast<dtype>(0.) == 0.;
-        RiemannSolverExact<dtype,mtype> riemann(dConstGamma,mask);
+        RiemannSolverExact < dtype, mtype> riemann(dConstGamma, mask);
         return riemann.solve(vrho_R, vp_R, vv_R,
                              vrho_L, vp_L, vv_L,
                              vP_M, vS_M,
@@ -72,32 +72,32 @@ protected:
 
 };
 
-typedef RiemannTest<vec<double,double>,mmask<bool>> RiemannTestNoVec;
-typedef RiemannTest<dvec,dmask> RiemannTestVec;
+typedef RiemannTest < vec < double, double>, mmask < bool>> RiemannTestNoVec;
+typedef RiemannTest < dvec, dmask> RiemannTestVec;
 
 #if   defined(HAVE_MM_POW) || defined(HAVE_LIBVECM_POW) || \
       defined(HAVE_MM256_POW) || defined(HAVE_LIBVECM256_POW) || \
       defined(HAVE_MM512_POW) || defined(HAVE_LIBVECM512_POW)
 TEST_F(RiemannTestVec, ToroVec1) {
 
-    set_vec_R(0.125, 0.1, {0.,0.,0.});
-    set_vec_L(1., 1., {0.,0.,0.});
+    set_vec_R(0.125, 0.1, {0., 0., 0.});
+    set_vec_L(1., 1., {0., 0., 0.});
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
-        EXPECT_NEAR(vP_M[i], 0.30313, 0.30313*TOL);
-        EXPECT_NEAR(vS_M[i], 0.92745, 0.92745*TOL);
+        EXPECT_NEAR(vP_M[i], 0.30313, 0.30313 * TOL);
+        EXPECT_NEAR(vS_M[i], 0.92745, 0.92745 * TOL);
     }
 }
 
 TEST_F(RiemannTestVec, ToroVec2) {
 
-    set_vec_R(1., 0.4, {2.,0.,0.});
-    set_vec_L(1., 0.4, {-2.,0.,0.});
+    set_vec_R(1., 0.4, {2., 0., 0.});
+    set_vec_L(1., 0.4, {-2., 0., 0.});
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
         EXPECT_NEAR(vP_M[i], 0.00189, 0.000005);
         EXPECT_NEAR(vS_M[i], 0.0, 5e-6);
@@ -106,40 +106,40 @@ TEST_F(RiemannTestVec, ToroVec2) {
 
 TEST_F(RiemannTestVec, ToroVec3) {
 
-    set_vec_R(1., 0.01, {0.,0.,0.});
-    set_vec_L(1., 1000., {0.,0.,0.});
+    set_vec_R(1., 0.01, {0., 0., 0.});
+    set_vec_L(1., 1000., {0., 0., 0.});
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
-        EXPECT_NEAR(vP_M[i], 460.894, 460.894*TOL);
-        EXPECT_NEAR(vS_M[i], 19.5975, 19.5975*TOL);
+        EXPECT_NEAR(vP_M[i], 460.894, 460.894 * TOL);
+        EXPECT_NEAR(vS_M[i], 19.5975, 19.5975 * TOL);
     }
 }
 
 TEST_F(RiemannTestVec, ToroVec4) {
 
-    set_vec_R(1., 100., {0.,0.,0.});
-    set_vec_L(1., 0.01, {0.,0.,0.});
+    set_vec_R(1., 100., {0., 0., 0.});
+    set_vec_L(1., 0.01, {0., 0., 0.});
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
-        EXPECT_NEAR(vP_M[i],  46.0950, 46.0950*TOL);
-        EXPECT_NEAR(vS_M[i], -6.19633, 6.19633*TOL);
+        EXPECT_NEAR(vP_M[i],  46.0950, 46.0950 * TOL);
+        EXPECT_NEAR(vS_M[i], -6.19633, 6.19633 * TOL);
     }
 }
 
 TEST_F(RiemannTestVec, ToroVec5) {
 
-    set_vec_R(5.99242, 46.0950, {-6.19633,0.,0.});
-    set_vec_L(5.99924, 460.894, {19.5975,0.,0.});
+    set_vec_R(5.99242, 46.0950, {-6.19633, 0., 0.});
+    set_vec_L(5.99924, 460.894, {19.5975, 0., 0.});
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
-        EXPECT_NEAR(vP_M[i], 1691.64, 1691.64*TOL);
-        EXPECT_NEAR(vS_M[i], 8.68975, 8.68975*TOL);
+        EXPECT_NEAR(vP_M[i], 1691.64, 1691.64 * TOL);
+        EXPECT_NEAR(vS_M[i], 8.68975, 8.68975 * TOL);
     }
 }
 
@@ -165,40 +165,40 @@ TEST_F(RiemannTestVec, ToroVecAll) {
 
     auto iters = solve();
 
-    for (auto i=0; i<width(); i++) {
+    for (auto i = 0; i < width(); i++) {
         EXPECT_NE(iters[i], 0);
         printf("%e %e %e\n", iters[i], vP_M[i], vS_M[i]);
     }
     //Test 1
-    EXPECT_NEAR(vP_M[0], 0.30313, 0.30313*TOL);
-    EXPECT_NEAR(vS_M[0], 0.92745, 0.92745*TOL);
+    EXPECT_NEAR(vP_M[0], 0.30313, 0.30313 * TOL);
+    EXPECT_NEAR(vS_M[0], 0.92745, 0.92745 * TOL);
     //Test 2
     EXPECT_NEAR(vP_M[1], 0.00189, 0.000005);
     EXPECT_NEAR(vS_M[1], 0.0, 5e-6);
     //Test 3
-    EXPECT_NEAR(vP_M[2], 460.894, 460.894*TOL);
-    EXPECT_NEAR(vS_M[2], 19.5975, 19.5975*TOL);
+    EXPECT_NEAR(vP_M[2], 460.894, 460.894 * TOL);
+    EXPECT_NEAR(vS_M[2], 19.5975, 19.5975 * TOL);
     //Test 5
-    EXPECT_NEAR(vP_M[3], 1691.64, 1691.64*TOL);
-    EXPECT_NEAR(vS_M[3], 8.68975, 8.68975*TOL);
+    EXPECT_NEAR(vP_M[3], 1691.64, 1691.64 * TOL);
+    EXPECT_NEAR(vS_M[3], 8.68975, 8.68975 * TOL);
 }
 
 // Generic test, this was extracted from an Evrard collapse, but can be reused
 // if a problematic flux is found...
 TEST_F(RiemannTestVec, VecTest) {
-    double allrho_R[4] = {4.289399e-02,3.237508e-02, 5.528355e-02,6.015821e-02 };
-    double allrho_L[4] = {5.161085e-02,3.163507e-02, 9.228625e-02,9.838759e-02 };
-    double allp_R[4] =  {8.342137e-04,8.310585e-04, 1.426528e-02,2.818890e-02 };
-    double allp_L[4] =  {0.000000e+00,0.000000e+00, 0.000000e+00,0.000000e+00 };
-    double allvx_R[4] = {2.872663e-01,3.538408e-03, 1.822213e-02,3.715746e-02 };
-    double allvx_L[4] = {-1.996461e-01,-8.412928e-02,-1.822213e-02,-3.715746e-02 };
-    double allvy_R[4] = {-6.350583e-02, 1.505490e-02,-1.020411e-02,-4.192078e-02 };
-    double allvy_L[4] = {6.350583e-02,1.175719e-02, 1.020411e-02,4.192078e-02 };
-    double allvz_R[4] = {-7.044196e-03,2.253765e-02,-3.883064e-03,-4.353969e-02 };
-    double allvz_L[4] = {7.044196e-03,5.634412e-03, 3.883064e-03,4.353969e-02 };
-    double n_unitx[4] = {-8.133081e-01,-8.340868e-01, 9.763322e-01,8.057771e-03 };
-    double n_unity[4] = {-1.497787e-01,-3.649328e-01, -2.116392e-01, -8.610773e-01 };
-    double n_unitz[4] = {-5.622244e-01,-4.136705e-01, -4.454557e-02, -5.084103e-01 };
+    double allrho_R[4] = {4.289399e-02, 3.237508e-02, 5.528355e-02, 6.015821e-02 };
+    double allrho_L[4] = {5.161085e-02, 3.163507e-02, 9.228625e-02, 9.838759e-02 };
+    double allp_R[4] =  {8.342137e-04, 8.310585e-04, 1.426528e-02, 2.818890e-02 };
+    double allp_L[4] =  {0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00 };
+    double allvx_R[4] = {2.872663e-01, 3.538408e-03, 1.822213e-02, 3.715746e-02 };
+    double allvx_L[4] = {-1.996461e-01, -8.412928e-02, -1.822213e-02, -3.715746e-02 };
+    double allvy_R[4] = {-6.350583e-02, 1.505490e-02, -1.020411e-02, -4.192078e-02 };
+    double allvy_L[4] = {6.350583e-02, 1.175719e-02, 1.020411e-02, 4.192078e-02 };
+    double allvz_R[4] = {-7.044196e-03, 2.253765e-02, -3.883064e-03, -4.353969e-02 };
+    double allvz_L[4] = {7.044196e-03, 5.634412e-03, 3.883064e-03, 4.353969e-02 };
+    double n_unitx[4] = {-8.133081e-01, -8.340868e-01, 9.763322e-01, 8.057771e-03 };
+    double n_unity[4] = {-1.497787e-01, -3.649328e-01, -2.116392e-01, -8.610773e-01 };
+    double n_unitz[4] = {-5.622244e-01, -4.136705e-01, -4.454557e-02, -5.084103e-01 };
 
     vrho_R.load(allrho_R);
     vrho_L.load(allrho_L);
@@ -224,14 +224,14 @@ TEST_F(RiemannTestVec, NaNguard) {
     // This test does not necessarily mean that the implementation is wrong,
     // rather, that the tests in this suite may present false negatives as
     // some of them rely on detecting nan values.
-    // In general, using -fno-finite-math-only will allow for the correct use
+    // In general, using -fno - finite - math - only will allow for the correct use
     // of NaNguard
     double test = nan("");
 
     dump(test);
     EXPECT_EQ(nan_guard(test, 0.), 1);
 
-    auto vtest = zero/zero;
+    auto vtest = zero / zero;
     dump(vtest);
     EXPECT_EQ(nan_guard(vtest, zero), 1);
 }
@@ -244,7 +244,7 @@ TEST_F(RiemannTestVec, VecVacuum) {
     double allp_R[4] =   {1.,    1.,  2.0,   2.0   };
     double allp_L[4] =   {1.,    1.0, 1.0, 1.0    };
     double allv_R[4] =   {-19.0, 100., 200., -100.  };
-    double allv_L[4] =   {-20.0,-100., 100., -200. };
+    double allv_L[4] =   {-20.0, -100., 100., -200. };
 
     vrho_R.load(allrho_R);
     vrho_L.load(allrho_L);
@@ -266,31 +266,31 @@ TEST_F(RiemannTestVec, VecVacuum) {
     EXPECT_NEAR(vP_M[1], 0.0, TOL);
     EXPECT_NEAR(vS_M[1], 0.0, TOL);
     //Test 3
-    double S_L = 100. + (2./(dConstGamma-1.0)) * cs(dConstGamma, 1., 1.);
+    double S_L = 100. + (2./(dConstGamma - 1.0)) * cs(dConstGamma, 1., 1.);
     EXPECT_NEAR(vP_M[2], 0.0, TOL);
-    EXPECT_NEAR(vS_M[2], S_L, S_L*TOL);
+    EXPECT_NEAR(vS_M[2], S_L, S_L * TOL);
     //Test 5
-    double S_R = -100. - (2./(dConstGamma-1.0)) * cs(dConstGamma, 1., 2.);
+    double S_R = -100. - (2./(dConstGamma - 1.0)) * cs(dConstGamma, 1., 2.);
     EXPECT_NEAR(vP_M[3], 0.0, TOL);
-    EXPECT_NEAR(vS_M[3], S_R, -S_R*TOL);
+    EXPECT_NEAR(vS_M[3], S_R, -S_R * TOL);
 }
 #endif
 
 TEST_F(RiemannTestNoVec, Toro1) {
 
-    set_vec_R(0.125, 0.1, {0.,0.,0.});
-    set_vec_L(1., 1., {0.,0.,0.});
+    set_vec_R(0.125, 0.1, {0., 0., 0.});
+    set_vec_L(1., 1., {0., 0., 0.});
     auto iters = solve();
 
     EXPECT_NE(iters, 0);
-    EXPECT_NEAR(vP_M, 0.30313, 0.30313*TOL);
-    EXPECT_NEAR(vS_M, 0.92745, 0.92745*TOL);
+    EXPECT_NEAR(vP_M, 0.30313, 0.30313 * TOL);
+    EXPECT_NEAR(vS_M, 0.92745, 0.92745 * TOL);
 }
 
 TEST_F(RiemannTestNoVec, Toro2) {
 
-    set_vec_R(1., 0.4, {2.,0.,0.});
-    set_vec_L(1., 0.4, {-2.,0.,0.});
+    set_vec_R(1., 0.4, {2., 0., 0.});
+    set_vec_L(1., 0.4, {-2., 0., 0.});
     auto iters = solve();
 
     EXPECT_NE(iters, 0);
@@ -300,40 +300,40 @@ TEST_F(RiemannTestNoVec, Toro2) {
 
 TEST_F(RiemannTestNoVec, Toro3) {
 
-    set_vec_R(1., 0.01, {0.,0.,0.});
-    set_vec_L(1., 1000., {0.,0.,0.});
+    set_vec_R(1., 0.01, {0., 0., 0.});
+    set_vec_L(1., 1000., {0., 0., 0.});
     auto iters = solve();
 
     EXPECT_NE(iters, 0);
-    EXPECT_NEAR(vP_M, 460.894, 460.894*TOL);
-    EXPECT_NEAR(vS_M, 19.5975, 19.5975*TOL);
+    EXPECT_NEAR(vP_M, 460.894, 460.894 * TOL);
+    EXPECT_NEAR(vS_M, 19.5975, 19.5975 * TOL);
 }
 
 TEST_F(RiemannTestNoVec, Toro4) {
 
-    set_vec_R(1., 100., {0.,0.,0.});
-    set_vec_L(1., 0.01, {0.,0.,0.});
+    set_vec_R(1., 100., {0., 0., 0.});
+    set_vec_L(1., 0.01, {0., 0., 0.});
     auto iters = solve();
 
     EXPECT_NE(iters, 0);
-    EXPECT_NEAR(vP_M,  46.0950, 46.0950*TOL);
-    EXPECT_NEAR(vS_M, -6.19633, 6.19633*TOL);
+    EXPECT_NEAR(vP_M,  46.0950, 46.0950 * TOL);
+    EXPECT_NEAR(vS_M, -6.19633, 6.19633 * TOL);
 }
 
 TEST_F(RiemannTestNoVec, Toro5) {
 
-    set_vec_R(5.99242, 46.0950, {-6.19633,0.,0.});
-    set_vec_L(5.99924, 460.894, {19.5975,0.,0.});
+    set_vec_R(5.99242, 46.0950, {-6.19633, 0., 0.});
+    set_vec_L(5.99924, 460.894, {19.5975, 0., 0.});
     auto iters = solve();
 
     EXPECT_NE(iters, 0);
-    EXPECT_NEAR(vP_M, 1691.64, 1691.64*TOL);
-    EXPECT_NEAR(vS_M, 8.68975, 8.68975*TOL);
+    EXPECT_NEAR(vP_M, 1691.64, 1691.64 * TOL);
+    EXPECT_NEAR(vS_M, 8.68975, 8.68975 * TOL);
 }
 
 TEST_F(RiemannTestNoVec, InputVacuumRho) {
-    set_R(0., 46.0950, {-6.19633,0.,0.});
-    set_L(0., 460.894, {19.5975,0.,0.});
+    set_R(0., 46.0950, {-6.19633, 0., 0.});
+    set_L(0., 460.894, {19.5975, 0., 0.});
     int iters = solve();
     EXPECT_NE(iters, 0);
     EXPECT_NEAR(P_M, 0.0, TOL);
@@ -341,8 +341,8 @@ TEST_F(RiemannTestNoVec, InputVacuumRho) {
 }
 
 TEST_F(RiemannTestNoVec, InputVacuumP) {
-    set_R(1., 0.0, {-6.19633,0.,0.});
-    set_L(1., 0.0, {19.5975,0.,0.});
+    set_R(1., 0.0, {-6.19633, 0., 0.});
+    set_L(1., 0.0, {19.5975, 0., 0.});
     int iters = solve();
     EXPECT_NE(iters, 0);
     EXPECT_NEAR(P_M, 0.0, TOL);
@@ -350,8 +350,8 @@ TEST_F(RiemannTestNoVec, InputVacuumP) {
 }
 
 TEST_F(RiemannTestNoVec, InternalVacuum) {
-    set_R(1., 1.0, { 100.,0.,0.});
-    set_L(1., 1.0, {-100.,0.,0.});
+    set_R(1., 1.0, { 100., 0., 0.});
+    set_L(1., 1.0, {-100., 0., 0.});
     int iters = solve();
     EXPECT_NE(iters, 0);
     EXPECT_NEAR(P_M, 0.0, TOL);

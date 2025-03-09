@@ -30,7 +30,7 @@ constexpr int MAX_ITTR = 64;
 static_assert(std::is_void<ServiceDomainDecomp::input>()  || std::is_standard_layout<ServiceDomainDecomp::input>());
 static_assert(std::is_void<ServiceDomainDecomp::output>() || std::is_standard_layout<ServiceDomainDecomp::output>());
 
-int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceDomainDecomp::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
@@ -38,7 +38,7 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
 
     Bound bnd = pst->bnd = in->bnd;
 
-    int /*nBndWrapd,*/ d=0;
+    int /*nBndWrapd, */ d = 0;
     mdlTimer t;
 
 #ifdef USE_ITT
@@ -47,7 +47,7 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
     __itt_task_begin(domain, __itt_null, __itt_null, shMyTask);
 #endif
     if (pst->iSplitDim != -1 && in->nActive < NMINFORROOTFIND) {
-        mdlprintf(pst->mdl,"Aborting RootFind -- too few actives.\n");
+        mdlprintf(pst->mdl, "Aborting RootFind -- too few actives.\n");
         in->bDoSplitDimFind = 0;
         in->bDoRootFind = 0;
     }
@@ -62,7 +62,7 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
         d = bnd.maxdim(); // Find the longest axis
         // If we already have a split, and the new size isn't significantly different
         // then just keep the existing split dimension (so less data movement)
-        if (pst->iSplitDim>=0 && bnd.width(d) < bnd.width(pst->iSplitDim)*NEWSPLITDIMCUT)
+        if (pst->iSplitDim >= 0 && bnd.width(d) < bnd.width(pst->iSplitDim)*NEWSPLITDIMCUT)
             d = pst->iSplitDim;
 #if 0
         d = pst->iSplitDim;
@@ -76,9 +76,9 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
             nBndWrapd = in->nBndWrap[d];
         }
 
-        for (auto j=0; j<3; ++j) {
+        for (auto j = 0; j < 3; ++j) {
             if (in->nBndWrap[j] < nBndWrapd || bnd.width(j) > dimsize) {
-                d=j;
+                d = j;
                 dimsize = bnd.width(d);
                 nBndWrapd = in->nBndWrap[d];
             }
@@ -88,11 +88,11 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
     else d = pst->iSplitDim;
     assert(d >= 0);
 
-    mdlPrintTimer(pst->mdl,"TIME Mass Check done in pstDomainDecomp",&t);
-    RootSplit(pst,d,in->bDoRootFind,in->bDoSplitDimFind);
-    mdlPrintTimer(pst->mdl,"TIME RootSplit done in pstDomainDecomp",&t);
+    mdlPrintTimer(pst->mdl, "TIME Mass Check done in pstDomainDecomp", &t);
+    RootSplit(pst, d, in->bDoRootFind, in->bDoSplitDimFind);
+    mdlPrintTimer(pst->mdl, "TIME RootSplit done in pstDomainDecomp", &t);
 
-    mdlPrintTimer(pst->mdl,"TIME Mass Check done in pstDomainDecomp",&t);
+    mdlPrintTimer(pst->mdl, "TIME Mass Check done in pstDomainDecomp", &t);
     /*
     ** Now go on to DD of next levels, but pass correct wrapping bounds.
     */
@@ -109,8 +109,8 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
     else
         in->nBndWrap[d]++;
 
-    in->bnd = Bound(l,u);
-    auto rID = mdl->ReqService(pst->idUpper,PST_DOMAINDECOMP,vin,sizeof(*in));
+    in->bnd = Bound(l, u);
+    auto rID = mdl->ReqService(pst->idUpper, PST_DOMAINDECOMP, vin, sizeof(*in));
 
     l = bnd.lower();
     u = bnd.upper();
@@ -125,8 +125,8 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
     else
         in->nBndWrap[d]++;
 
-    in->bnd = Bound(l,u);
-    Traverse(pst->pstLower,vin,sizeof(*in),NULL,0);
+    in->bnd = Bound(l, u);
+    Traverse(pst->pstLower, vin, sizeof(*in), NULL, 0);
 
     mdl->GetReply(rID);
 #ifdef USE_ITT
@@ -136,7 +136,7 @@ int ServiceDomainDecomp::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) 
     return 0;
 }
 
-int ServiceDomainDecomp::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceDomainDecomp::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     static_assert(std::is_void<output>());
     auto pkd = pst->plcl->pkd;
@@ -145,36 +145,36 @@ int ServiceDomainDecomp::Service(PST pst,void *vin,int nIn,void *vout,int nOut) 
     pkd->bnd = in->bnd;
 
     float offs = 0.5f / (pkd->Local()*1.0f - 1.0f);
-    pst->bnd = Bound(in->bnd.lower()-offs,in->bnd.upper()+offs);
+    pst->bnd = Bound(in->bnd.lower()-offs, in->bnd.upper()+offs);
 //    pst->bnd = in->bnd;
-//    for (auto j=0; j < 3; j++) {
+//    for (auto j = 0; j < 3; j++) {
     // pst->bnd.fMax[j] += offs;
     // }
 
     return 0;
 }
 
-void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bDoSplitDimFind) {
+void ServiceDomainDecomp::RootSplit(PST pst, int iSplitDim, int bDoRootFind, int bDoSplitDimFind) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     int NUM_SAFETY = 4;         /* slop space when filling up memory */
     uint64_t nSafeTot;          /* total slop space we have to play with */
     uint64_t margin;            /* more slop */
-    int d,ittr,nOut;
+    int d, ittr, nOut;
     /*
     ** Why are these initialized to -1 here???
-    int nLow=-1,nHigh=-1;
+    int nLow=-1, nHigh=-1;
     */
-    uint64_t nLow,nHigh;
-    uint64_t nLowerStore,nUpperStore;
-    uint64_t nLowTot,nHighTot;
+    uint64_t nLow, nHigh;
+    uint64_t nLowerStore, nUpperStore;
+    uint64_t nLowTot, nHighTot;
     uint64_t nLast;                 /* number of particles at the last split iteration */
     uint64_t nTotalActive;
-    int nDiff=0;                /* Difference between one iteration and the next, seems to only be used to warn. */
-    double fLow,fHigh;
-    double fl,fu,fm=-1,fmm;
+    int nDiff = 0;                /* Difference between one iteration and the next, seems to only be used to warn. */
+    double fLow, fHigh;
+    double fl, fu, fm=-1, fmm;
     ServiceFreeStore::output outFree;
     ServiceWeight::output outWtLow, outWtHigh;
-    ServiceWeightWrap::output outWtWrLow,outWtWrHigh;
+    ServiceWeightWrap::output outWtWrLow, outWtWrHigh;
     int iRet;
     char ach[256];              /* Debug */
     mdlTimer t;
@@ -182,25 +182,25 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
     int dBnd;
     int rID;
 
-    mdlZeroTimer(pst->mdl,&t);
+    mdlZeroTimer(pst->mdl, &t);
     /*
     ** First find out how much free storage there is available for particles
     ** on the lower and upper subset of processors.
     */
-    rID = mdl->ReqService(pst->idUpper,PST_FREESTORE);
-    Traverse(PST_FREESTORE,pst->pstLower,NULL,0,&outFree,sizeof(outFree));
+    rID = mdl->ReqService(pst->idUpper, PST_FREESTORE);
+    Traverse(PST_FREESTORE, pst->pstLower, NULL, 0, &outFree, sizeof(outFree));
     nLowerStore = outFree;
-    mdl->GetReply(rID,&outFree);
+    mdl->GetReply(rID, &outFree);
     nUpperStore = outFree;
 
-    mdlprintf(pst->mdl,"_pstRootSplit: id %d Level %d\n",pst->idSelf,pst->iLvl);
-    mdlPrintTimer(pst->mdl,"TIME START _pstRootSplit ",&t);
-    mdlprintf(pst->mdl,"_pstRootSplit: fA0 %f fIA0 %f RS? %d DC? %d\n",
-              pst->fSplit,pst->fSplitInactive,bDoRootFind, bDoSplitDimFind);
+    mdlprintf(pst->mdl, "_pstRootSplit: id %d Level %d\n", pst->idSelf, pst->iLvl);
+    mdlPrintTimer(pst->mdl, "TIME START _pstRootSplit ", &t);
+    mdlprintf(pst->mdl, "_pstRootSplit: fA0 %f fIA0 %f RS? %d DC? %d\n",
+              pst->fSplit, pst->fSplitInactive, bDoRootFind, bDoSplitDimFind);
     /* Debug */
     /*
-      sprintf(ach,"id: %d _pstRootSplit\n", pst->idSelf );
-      mdlDiag(pst->mdl,ach);
+      sprintf(ach, "id: %d _pstRootSplit\n", pst->idSelf );
+      mdlDiag(pst->mdl, ach);
     */
 
     if (bDoSplitDimFind || pst->iSplitDim == -1) {
@@ -214,9 +214,9 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
     fm = pst->fSplit;
     ittr = -1;
 
-    if (bDoRootFind || fm<fl || fm>fu) {
+    if (bDoRootFind || fm < fl || fm > fu) {
         /*
-        ** First order the particles into active/inactive order...
+        ** First order the particles into active / inactive order...
         */
         uint64_t nActiveOrder;
         pstActiveOrder(pst, NULL, 0, &nActiveOrder, sizeof(nActiveOrder)); /* SOON NO MORE ACTIVE ORDER */
@@ -231,20 +231,20 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
         inWt.ittr = 0;
         inWt.iSplitSide = 1;
         inWt.pFlag = 1;
-        rID = mdl->ReqService(pst->idUpper,PST_WEIGHT,&inWt,sizeof(inWt));
+        rID = mdl->ReqService(pst->idUpper, PST_WEIGHT, &inWt, sizeof(inWt));
         inWt.iSplitSide = 0;
-        Traverse(PST_WEIGHT,pst->pstLower,&inWt,sizeof(inWt),&outWtLow,sizeof(outWtLow));
-        mdl->GetReply(rID,&outWtHigh);
+        Traverse(PST_WEIGHT, pst->pstLower, &inWt, sizeof(inWt), &outWtLow, sizeof(outWtLow));
+        mdl->GetReply(rID, &outWtHigh);
         nTotalActive = outWtLow.nLow + outWtHigh.nLow
                        + outWtLow.nHigh + outWtHigh.nHigh;
-        mdlassert(pst->mdl,nActiveOrder == nTotalActive);
+        mdlassert(pst->mdl, nActiveOrder == nTotalActive);
         pFlag = 1;
         if (nTotalActive <=1) {
             pFlag = 0;          /* Divide them all */
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHT,&inWt,sizeof(inWt));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHT, &inWt, sizeof(inWt));
             inWt.iSplitSide = 0;
-            Traverse(PST_WEIGHT,pst->pstLower,&inWt,sizeof(inWt),&outWtLow,sizeof(outWtLow));
-            mdl->GetReply(rID,&outWtHigh);
+            Traverse(PST_WEIGHT, pst->pstLower, &inWt, sizeof(inWt), &outWtLow, sizeof(outWtLow));
+            mdl->GetReply(rID, &outWtHigh);
             nTotalActive = outWtLow.nLow + outWtHigh.nLow
                            + outWtLow.nHigh + outWtHigh.nHigh;
         }
@@ -261,10 +261,10 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             inWt.ittr = ittr;
             inWt.iSplitSide = 1;
             inWt.pFlag = pFlag;
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHT,&inWt,sizeof(inWt));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHT, &inWt, sizeof(inWt));
             inWt.iSplitSide = 0;
-            Traverse(PST_WEIGHT,pst->pstLower,&inWt,sizeof(inWt),&outWtLow,sizeof(outWtLow));
-            mdl->GetReply(rID,&outWtHigh);
+            Traverse(PST_WEIGHT, pst->pstLower, &inWt, sizeof(inWt), &outWtLow, sizeof(outWtLow));
+            mdl->GetReply(rID, &outWtHigh);
             /*
             ** Add lower and Upper subsets weights and numbers
             */
@@ -273,13 +273,13 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             fLow = outWtLow.fLow + outWtHigh.fLow;
             fHigh = outWtLow.fHigh + outWtHigh.fHigh;
             /*
-              printf("ittr:%d l:%d u:%d lw:%f uw:%f\n",ittr,nLow,nHigh,fLow,fHigh);
+              printf("ittr:%d l:%d u:%d lw:%f uw:%f\n", ittr, nLow, nHigh, fLow, fHigh);
             */
             if (nLow == 1 && nHigh == 1) /* break on trivial case */
                 break;
             if (pFlag) {            /* split on work */
-                if (fLow/pst->nLower > fHigh/pst->nUpper) fu = fm;
-                else if (fLow/pst->nLower < fHigh/pst->nUpper) fl = fm;
+                if (fLow / pst->nLower > fHigh / pst->nUpper) fu = fm;
+                else if (fLow / pst->nLower < fHigh / pst->nUpper) fl = fm;
                 else break;
             }
             else {              /* split on number */
@@ -292,18 +292,18 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             fmm = (fl + fu)/2;
             ++ittr;
         }
-        mdlPrintTimer(pst->mdl,"TIME active split _pstRootSplit ",&t);
+        mdlPrintTimer(pst->mdl, "TIME active split _pstRootSplit ", &t);
     }
 
     pst->fSplit = fm;
 
-    mdlprintf(pst->mdl, "id: %d (%d) Chose split: %f (%f,%f) %d %d\n",
+    mdlprintf(pst->mdl, "id: %d (%d) Chose split: %f (%f, %f) %d %d\n",
               pst->idSelf, pst->iLvl, fm, bnd.lower(dBnd),
               bnd.upper(dBnd), pst->nLower, pst->nUpper);
     if (ittr != -1)
         mdlprintf(pst->mdl, "  Low %" PRIu64 " %f,  High %" PRIu64 " %f, ittr=%d\n",
-                  nLow,outWtLow.fLow + outWtHigh.fLow, nHigh,
-                  outWtLow.fHigh + outWtHigh.fHigh,ittr);
+                  nLow, outWtLow.fLow + outWtHigh.fLow, nHigh,
+                  outWtLow.fHigh + outWtHigh.fHigh, ittr);
     nLow = 0;
     nHigh = 0;
     fLow = 0.0;
@@ -317,25 +317,25 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
     */
     ServiceWeightWrap::input inWtWrap;
     inWtWrap.iSplitDim = d;
-    fl = pst->fSplit + 1e-6*bnd.width(dBnd);
-    fu = pst->fSplit - 1e-6*bnd.width(dBnd);
+    fl = pst->fSplit + 1e-6 * bnd.width(dBnd);
+    fu = pst->fSplit - 1e-6 * bnd.width(dBnd);
 
     if (!bDoSplitDimFind) fm = pst->fSplitInactive;
     else {
-        fm = 0.5*(fl+fu);
-        if (fm < bnd.center(dBnd)) fm = bnd.upper(dBnd) + 1.000001*bnd.width(dBnd);
-        else fm = bnd.lower(dBnd) - 1.000001*bnd.width(dBnd);
+        fm = 0.5*(fl + fu);
+        if (fm < bnd.center(dBnd)) fm = bnd.upper(dBnd) + 1.000001 * bnd.width(dBnd);
+        else fm = bnd.lower(dBnd) - 1.000001 * bnd.width(dBnd);
     }
-    mdlprintf(pst->mdl, "id: %d (%d) Zeroeth guess reverse split: %f (%f,%f)\n",
+    mdlprintf(pst->mdl, "id: %d (%d) Zeroeth guess reverse split: %f (%f, %f)\n",
               pst->idSelf, pst->iLvl, fm, bnd.lower(dBnd), bnd.upper(dBnd));
     inWtWrap.fSplit = fm;
     inWtWrap.fSplit2 = pst->fSplit;
     inWtWrap.ittr = 0;
     inWtWrap.iSplitSide = 1;
-    rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,&inWtWrap,sizeof(inWtWrap));
+    rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, &inWtWrap, sizeof(inWtWrap));
     inWtWrap.iSplitSide = 0;
-    Traverse(PST_WEIGHTWRAP,pst->pstLower,&inWtWrap,sizeof(inWtWrap),&outWtWrLow,sizeof(outWtWrLow));
-    mdl->GetReply(rID,&outWtWrHigh);
+    Traverse(PST_WEIGHTWRAP, pst->pstLower, &inWtWrap, sizeof(inWtWrap), &outWtWrLow, sizeof(outWtWrLow));
+    mdl->GetReply(rID, &outWtWrHigh);
     /*
     ** Add lower and Upper subsets numbers of particles
     */
@@ -343,33 +343,33 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
     nHighTot = outWtWrLow.nHigh + outWtWrHigh.nHigh;
 
     nSafeTot = nLowerStore + nUpperStore - (nLowTot + nHighTot);
-    if (nSafeTot/pst->nLeaves < NUM_SAFETY) {
-        NUM_SAFETY = nSafeTot/pst->nLeaves;
-        snprintf(ach,sizeof(ach),"id: %d tripped inactive NUM_SAFETY %d  Low %" PRIu64 "/%" PRIu64 "  High %" PRIu64 "/%" PRIu64 "\n",
+    if (nSafeTot / pst->nLeaves < NUM_SAFETY) {
+        NUM_SAFETY = nSafeTot / pst->nLeaves;
+        snprintf(ach, sizeof(ach), "id: %d tripped inactive NUM_SAFETY %d  Low %" PRIu64 "/%" PRIu64 "  High %" PRIu64 "/%" PRIu64 "\n",
                  pst->idSelf, NUM_SAFETY, nLowTot, nLowerStore, nHighTot, nUpperStore);
-        mdlDiag(pst->mdl,ach);
-        mdlprintf(pst->mdl,"id: %d tripped inactive NUM_SAFETY %d  Low %%" PRIu64 "/%" PRIu64 "  High %" PRIu64 "/%" PRIu64 "\n",
+        mdlDiag(pst->mdl, ach);
+        mdlprintf(pst->mdl, "id: %d tripped inactive NUM_SAFETY %d  Low %%" PRIu64 "/%" PRIu64 "  High %" PRIu64 "/%" PRIu64 "\n",
                   pst->idSelf, NUM_SAFETY, nLowTot, nLowerStore, nHighTot, nUpperStore);
     }
 
-    margin = nSafeTot/pst->nLeaves/20;
-    if (margin < NUM_SAFETY/2) margin = NUM_SAFETY/2;
+    margin = nSafeTot / pst->nLeaves / 20;
+    if (margin < NUM_SAFETY / 2) margin = NUM_SAFETY / 2;
 
-    mdlprintf(pst->mdl,"id: %d  %d Low %" PRIu64 "/%" PRIu64 "   %d High %" PRIu64 "/%" PRIu64 "  NUM_SAFETY %d margin %d\n",
-              pst->idSelf, pst->nLower,nLowTot, nLowerStore, pst->nUpper,nHighTot, nUpperStore,NUM_SAFETY,margin);
+    mdlprintf(pst->mdl, "id: %d  %d Low %" PRIu64 "/%" PRIu64 "   %d High %" PRIu64 "/%" PRIu64 "  NUM_SAFETY %d margin %d\n",
+              pst->idSelf, pst->nLower, nLowTot, nLowerStore, pst->nUpper, nHighTot, nUpperStore, NUM_SAFETY, margin);
 
 
-    if (nLowTot > nLowerStore-NUM_SAFETY*pst->nLower) {
-        snprintf(ach,sizeof(ach),"id: %d: nLowTot > nLowerStore-NUM_SAFETY*pst->nLower %" PRIu64 " %" PRIu64 " %d %d\n",
+    if (nLowTot > nLowerStore - NUM_SAFETY * pst->nLower) {
+        snprintf(ach, sizeof(ach), "id: %d: nLowTot > nLowerStore - NUM_SAFETY * pst->nLower %" PRIu64 " %" PRIu64 " %d %d\n",
                  pst->idSelf, nLowTot, nLowerStore, NUM_SAFETY, pst->nLower);
-        mdlDiag(pst->mdl,ach);
-        fm = std::max(std::min(fm,bnd.upper(dBnd)),bnd.lower(dBnd));
+        mdlDiag(pst->mdl, ach);
+        fm = std::max(std::min(fm, bnd.upper(dBnd)), bnd.lower(dBnd));
         fl = fm;
 
-        if (fu > fl) fmm = 0.5*(fl+fu);
+        if (fu > fl) fmm = 0.5*(fl + fu);
         else {
-            fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+            fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
             mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
         }
         ittr = 1;
@@ -381,10 +381,10 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             inWtWrap.fSplit2 = pst->fSplit;
             inWtWrap.ittr = ittr;
             inWtWrap.iSplitSide = 1;
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,&inWtWrap,sizeof(inWtWrap));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, &inWtWrap, sizeof(inWtWrap));
             inWtWrap.iSplitSide = 0;
-            Traverse(PST_WEIGHTWRAP,pst->pstLower,&inWtWrap,sizeof(inWtWrap),&outWtWrLow,sizeof(outWtWrLow));
-            mdl->GetReply(rID,&outWtWrHigh);
+            Traverse(PST_WEIGHTWRAP, pst->pstLower, &inWtWrap, sizeof(inWtWrap), &outWtWrLow, sizeof(outWtWrLow));
+            mdl->GetReply(rID, &outWtWrHigh);
             /*
             ** Add lower and Upper subsets numbers of particles
             */
@@ -394,49 +394,49 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
                 nDiff = nLowTot - nLast;
             nLast = nLowTot;
             /*
-              if (nLowTot > nLowerStore-NUM_SAFETY*pst->nLower) fl = fm;
-              else if (nLowTot < nLowerStore-2*NUM_SAFETY*pst->nLower) fu = fm;
+              if (nLowTot > nLowerStore - NUM_SAFETY * pst->nLower) fl = fm;
+              else if (nLowTot < nLowerStore - 2 * NUM_SAFETY * pst->nLower) fu = fm;
             */
             /*
-              if (nLowTot/pst->nLower > nHighTot/pst->nUpper) fl = fm;
-              else if (nLowTot/pst->nLower < nHighTot/pst->nUpper-NUM_SAFETY) fu = fm;
+              if (nLowTot / pst->nLower > nHighTot / pst->nUpper) fl = fm;
+              else if (nLowTot / pst->nLower < nHighTot / pst->nUpper - NUM_SAFETY) fu = fm;
             */
-            if (nLowTot > nLowerStore-margin*pst->nLower) fl = fm;
-            else if (nLowTot < nLowerStore-2*margin*pst->nLower) fu = fm;
+            if (nLowTot > nLowerStore - margin * pst->nLower) fl = fm;
+            else if (nLowTot < nLowerStore - 2 * margin * pst->nLower) fu = fm;
             else {
                 fl = fm;
                 break;
             }
             if (fu == fl)
                 break;
-            else if (fu > fl) fmm = 0.5*(fl+fu);
+            else if (fu > fl) fmm = 0.5*(fl + fu);
             else {
-                fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+                fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
                 mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
             }
             ++ittr;
         }
-        mdlprintf(pst->mdl, "id: %d (%d) Fix Low %d th guess reverse split: %f (%f,%f) (%f,%f) Low %" PRIu64 " High %" PRIu64 "\n",
-                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd),bnd.upper(dBnd),nLowTot,nHighTot);
-        if (nLowTot != nLowerStore-NUM_SAFETY*pst->nLower) {
+        mdlprintf(pst->mdl, "id: %d (%d) Fix Low %d th guess reverse split: %f (%f, %f) (%f, %f) Low %" PRIu64 " High %" PRIu64 "\n",
+                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd), bnd.upper(dBnd), nLowTot, nHighTot);
+        if (nLowTot != nLowerStore - NUM_SAFETY * pst->nLower) {
             if (abs(nDiff) > 1)
                 mdlprintf(pst->mdl, "id: %d delta of %d, check NUM_SAFTEY\n",
                           pst->idSelf, nDiff);
         }
-        mdlassert(pst->mdl,nLowTot <= nLowerStore);
-        mdlPrintTimer(pst->mdl,"TIME fix lower II _pstRootSplit ",&t);
+        mdlassert(pst->mdl, nLowTot <= nLowerStore);
+        mdlPrintTimer(pst->mdl, "TIME fix lower II _pstRootSplit ", &t);
     }
-    else if (nHighTot > nUpperStore-NUM_SAFETY*pst->nUpper) {
-        snprintf(ach,sizeof(ach),"id: %d: nHighTot > nUpperStore-NUM_SAFETY*pst->nUpper %" PRIu64 " %" PRIu64 " %d %d\n",
+    else if (nHighTot > nUpperStore - NUM_SAFETY * pst->nUpper) {
+        snprintf(ach, sizeof(ach), "id: %d: nHighTot > nUpperStore - NUM_SAFETY * pst->nUpper %" PRIu64 " %" PRIu64 " %d %d\n",
                  pst->idSelf, nHighTot, nUpperStore, NUM_SAFETY, pst->nUpper);
-        mdlDiag(pst->mdl,ach);
-        fm = std::max(std::min(fm,bnd.upper(dBnd)),bnd.lower(dBnd));
+        mdlDiag(pst->mdl, ach);
+        fm = std::max(std::min(fm, bnd.upper(dBnd)), bnd.lower(dBnd));
         fu = fm;
-        if (fu > fl) fmm = 0.5*(fl+fu);
+        if (fu > fl) fmm = 0.5*(fl + fu);
         else {
-            fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+            fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
             mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
         }
         ittr = 1;
@@ -448,10 +448,10 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             inWtWrap.fSplit2 = pst->fSplit;
             inWtWrap.ittr = ittr;
             inWtWrap.iSplitSide = 1;
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,&inWtWrap,sizeof(inWtWrap));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, &inWtWrap, sizeof(inWtWrap));
             inWtWrap.iSplitSide = 0;
-            Traverse(PST_WEIGHTWRAP,pst->pstLower,&inWtWrap,sizeof(inWtWrap),&outWtWrLow,sizeof(outWtWrLow));
-            mdl->GetReply(rID,&outWtWrHigh);
+            Traverse(PST_WEIGHTWRAP, pst->pstLower, &inWtWrap, sizeof(inWtWrap), &outWtWrLow, sizeof(outWtWrLow));
+            mdl->GetReply(rID, &outWtWrHigh);
             /*
             ** Add lower and Upper subsets numbers of particles
             */
@@ -460,43 +460,43 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             if (nLowTot != nLast)
                 nDiff = nLowTot - nLast;
             nLast = nLowTot;
-            if (nHighTot > nUpperStore-margin*pst->nUpper) fu = fm;
-            else if (nHighTot < nUpperStore-2*margin*pst->nUpper) fl = fm;
+            if (nHighTot > nUpperStore - margin * pst->nUpper) fu = fm;
+            else if (nHighTot < nUpperStore - 2 * margin * pst->nUpper) fl = fm;
             else {
                 fu = fm;
                 break;
             }
             if (fu == fl)
                 break;
-            else if (fu > fl) fmm = 0.5*(fl+fu);
+            else if (fu > fl) fmm = 0.5*(fl + fu);
             else {
-                fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+                fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
                 mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
             }
             ++ittr;
         }
-        mdlprintf(pst->mdl, "id: %d (%d) Fix High %d th guess reverse split: %f (%f,%f) (%f,%f) Low %" PRIu64 " High %" PRIu64 "\n",
-                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd),bnd.upper(dBnd),nLowTot,nHighTot);
-        if (nHighTot != nUpperStore-NUM_SAFETY*pst->nUpper) {
+        mdlprintf(pst->mdl, "id: %d (%d) Fix High %d th guess reverse split: %f (%f, %f) (%f, %f) Low %" PRIu64 " High %" PRIu64 "\n",
+                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd), bnd.upper(dBnd), nLowTot, nHighTot);
+        if (nHighTot != nUpperStore - NUM_SAFETY * pst->nUpper) {
             if (abs(nDiff) > 1)
                 mdlprintf(pst->mdl, "id: %d delta of %d, check NUM_SAFETY\n",
                           pst->idSelf, nDiff);
         }
-        mdlassert(pst->mdl,nHighTot <= nUpperStore);
-        mdlPrintTimer(pst->mdl,"TIME fix upper II _pstRootSplit ",&t);
+        mdlassert(pst->mdl, nHighTot <= nUpperStore);
+        mdlPrintTimer(pst->mdl, "TIME fix upper II _pstRootSplit ", &t);
     }
 
-    if (nLowTot < NUM_SAFETY*pst->nLower) {
-        snprintf(ach,sizeof(ach),"id: %d: nLowTot < NUM_SAFETY*pst->nLower %" PRIu64 " %" PRIu64 " %d %d\n",
+    if (nLowTot < NUM_SAFETY * pst->nLower) {
+        snprintf(ach, sizeof(ach), "id: %d: nLowTot < NUM_SAFETY * pst->nLower %" PRIu64 " %" PRIu64 " %d %d\n",
                  pst->idSelf, nLowTot, nLowerStore, NUM_SAFETY, pst->nLower);
-        mdlDiag(pst->mdl,ach);
-        fm = std::max(std::min(fm,bnd.upper(dBnd)),bnd.lower(dBnd));
+        mdlDiag(pst->mdl, ach);
+        fm = std::max(std::min(fm, bnd.upper(dBnd)), bnd.lower(dBnd));
         fu = fm;
-        if (fu > fl) fmm = 0.5*(fl+fu);
+        if (fu > fl) fmm = 0.5*(fl + fu);
         else {
-            fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+            fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
             mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
         }
         ittr = 1;
@@ -508,10 +508,10 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             inWtWrap.fSplit2 = pst->fSplit;
             inWtWrap.ittr = ittr;
             inWtWrap.iSplitSide = 1;
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,&inWtWrap,sizeof(inWtWrap));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, &inWtWrap, sizeof(inWtWrap));
             inWtWrap.iSplitSide = 0;
-            Traverse(PST_WEIGHTWRAP,pst->pstLower,&inWtWrap,sizeof(inWtWrap),&outWtWrLow,sizeof(outWtWrLow));
-            mdl->GetReply(rID,&outWtWrHigh);
+            Traverse(PST_WEIGHTWRAP, pst->pstLower, &inWtWrap, sizeof(inWtWrap), &outWtWrLow, sizeof(outWtWrLow));
+            mdl->GetReply(rID, &outWtWrHigh);
             /*
             ** Add lower and Upper subsets numbers of particles
             */
@@ -520,42 +520,42 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             if (nLowTot != nLast)
                 nDiff = nLowTot - nLast;
             nLast = nLowTot;
-            if (nLowTot > margin*pst->nLower) fl = fm;
-            else if (nLowTot < NUM_SAFETY*pst->nLower) fu = fm;
+            if (nLowTot > margin * pst->nLower) fl = fm;
+            else if (nLowTot < NUM_SAFETY * pst->nLower) fu = fm;
             else {
                 fl = fm;
                 break;
             }
             if (fu == fl)
                 break;
-            else if (fu > fl) fmm = 0.5*(fl+fu);
+            else if (fu > fl) fmm = 0.5*(fl + fu);
             else {
-                fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+                fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
                 mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
             }
             ++ittr;
         }
-        mdlprintf(pst->mdl, "id: %d (%d) Fix too few Low %d th guess reverse split: %f (%f,%f) (%f,%f) Low %" PRIu64 " High %" PRIu64 "\n",
-                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd),bnd.upper(dBnd),nLowTot,nHighTot);
-        if (nLowTot != nLowerStore-NUM_SAFETY*pst->nLower) {
+        mdlprintf(pst->mdl, "id: %d (%d) Fix too few Low %d th guess reverse split: %f (%f, %f) (%f, %f) Low %" PRIu64 " High %" PRIu64 "\n",
+                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd), bnd.upper(dBnd), nLowTot, nHighTot);
+        if (nLowTot != nLowerStore - NUM_SAFETY * pst->nLower) {
             if (abs(nDiff) > 1)
                 mdlprintf(pst->mdl, "id: %d delta of %d, check NUM_SAFTEY\n",
                           pst->idSelf, nDiff);
         }
-        mdlassert(pst->mdl,nLowTot <= nLowerStore);
-        mdlPrintTimer(pst->mdl,"TIME fix lower II _pstRootSplit ",&t);
+        mdlassert(pst->mdl, nLowTot <= nLowerStore);
+        mdlPrintTimer(pst->mdl, "TIME fix lower II _pstRootSplit ", &t);
     }
-    if (nHighTot < NUM_SAFETY*pst->nUpper) {
-        snprintf(ach,sizeof(ach),"id: %d: nHighTot < NUM_SAFETY*pst->nUpper %" PRIu64 " %" PRIu64 " %d %d\n",
+    if (nHighTot < NUM_SAFETY * pst->nUpper) {
+        snprintf(ach, sizeof(ach), "id: %d: nHighTot < NUM_SAFETY * pst->nUpper %" PRIu64 " %" PRIu64 " %d %d\n",
                  pst->idSelf, nHighTot, nUpperStore, NUM_SAFETY, pst->nUpper);
-        mdlDiag(pst->mdl,ach);
-        fm = std::max(std::min(fm,bnd.upper(dBnd)),bnd.lower(dBnd));
+        mdlDiag(pst->mdl, ach);
+        fm = std::max(std::min(fm, bnd.upper(dBnd)), bnd.lower(dBnd));
         fl = fm;
-        if (fu > fl) fmm = 0.5*(fl+fu);
+        if (fu > fl) fmm = 0.5*(fl + fu);
         else {
-            fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+            fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+            if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
             mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
         }
         ittr = 1;
@@ -567,10 +567,10 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             inWtWrap.fSplit2 = pst->fSplit;
             inWtWrap.ittr = ittr;
             inWtWrap.iSplitSide = 1;
-            rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,&inWtWrap,sizeof(inWtWrap));
+            rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, &inWtWrap, sizeof(inWtWrap));
             inWtWrap.iSplitSide = 0;
-            Traverse(PST_WEIGHTWRAP,pst->pstLower,&inWtWrap,sizeof(inWtWrap),&outWtWrLow,sizeof(outWtWrLow));
-            mdl->GetReply(rID,&outWtWrHigh);
+            Traverse(PST_WEIGHTWRAP, pst->pstLower, &inWtWrap, sizeof(inWtWrap), &outWtWrLow, sizeof(outWtWrLow));
+            mdl->GetReply(rID, &outWtWrHigh);
             /*
             ** Add lower and Upper subsets numbers of particles
             */
@@ -579,31 +579,31 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
             if (nLowTot != nLast)
                 nDiff = nLowTot - nLast;
             nLast = nLowTot;
-            if (nHighTot > margin*pst->nUpper) fu = fm;
-            else if (nHighTot < NUM_SAFETY*pst->nUpper) fl = fm;
+            if (nHighTot > margin * pst->nUpper) fu = fm;
+            else if (nHighTot < NUM_SAFETY * pst->nUpper) fl = fm;
             else {
                 fu = fm;
                 break;
             }
             if (fu == fl)
                 break;
-            else if (fu > fl) fmm = 0.5*(fl+fu);
+            else if (fu > fl) fmm = 0.5*(fl + fu);
             else {
-                fmm = 0.5*(fl+fu)+bnd.apothem(dBnd);
-                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl+fu)-bnd.apothem(dBnd);
+                fmm = 0.5*(fl + fu)+bnd.apothem(dBnd);
+                if (fmm > bnd.upper(dBnd)) fmm = 0.5*(fl + fu)-bnd.apothem(dBnd);
                 mdlassert(pst->mdl, fmm >= bnd.lower(dBnd) && fmm <= bnd.upper(dBnd));
             }
             ++ittr;
         }
-        mdlprintf(pst->mdl, "id: %d (%d) Fix Too few High %d th guess reverse split: %f (%f,%f) (%f,%f) Low %" PRIu64 " High %" PRIu64 "\n",
-                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd),bnd.upper(dBnd),nLowTot,nHighTot);
-        if (nHighTot != nUpperStore-NUM_SAFETY*pst->nUpper) {
+        mdlprintf(pst->mdl, "id: %d (%d) Fix Too few High %d th guess reverse split: %f (%f, %f) (%f, %f) Low %" PRIu64 " High %" PRIu64 "\n",
+                  pst->idSelf, pst->iLvl, ittr, fm, fl, fu, bnd.lower(dBnd), bnd.upper(dBnd), nLowTot, nHighTot);
+        if (nHighTot != nUpperStore - NUM_SAFETY * pst->nUpper) {
             if (abs(nDiff) > 1)
                 mdlprintf(pst->mdl, "id: %d delta of %d, check NUM_SAFETY\n",
                           pst->idSelf, nDiff);
         }
-        mdlassert(pst->mdl,nHighTot <= nUpperStore);
-        mdlPrintTimer(pst->mdl,"TIME fix upper II _pstRootSplit ",&t);
+        mdlassert(pst->mdl, nHighTot <= nUpperStore);
+        mdlPrintTimer(pst->mdl, "TIME fix upper II _pstRootSplit ", &t);
     }
 
     mdlassert(pst->mdl, nLowTot >= pst->nLower);
@@ -611,66 +611,66 @@ void ServiceDomainDecomp::RootSplit(PST pst,int iSplitDim,int bDoRootFind,int bD
     mdlassert(pst->mdl, nLowTot <= nLowerStore);
     mdlassert(pst->mdl, nHighTot <= nUpperStore);
 
-    mdlPrintTimer(pst->mdl,"TIME Total Split _pstRootSplit ",&t);
+    mdlPrintTimer(pst->mdl, "TIME Total Split _pstRootSplit ", &t);
 
-    mdlprintf(pst->mdl, "id: %d (%d) Chose reverse split: %f (%f,%f)\n",
-              pst->idSelf, pst->iLvl, fm, bnd.lower(dBnd),bnd.upper(dBnd));
+    mdlprintf(pst->mdl, "id: %d (%d) Chose reverse split: %f (%f, %f)\n",
+              pst->idSelf, pst->iLvl, fm, bnd.lower(dBnd), bnd.upper(dBnd));
     pst->fSplitInactive = fm;
 
     auto pLowerRej = std::make_unique<ServiceColRejects::output[]>(pst->nLower);
     auto pUpperRej = std::make_unique<ServiceColRejects::output[]>(pst->nUpper);
     auto pidSwap = std::make_unique<int[]>(mdl->Threads());
 
-    rID = mdl->ReqService(pst->idUpper,PST_COLREJECTS,NULL,0);
-    nOut = Traverse(PST_COLREJECTS,pst->pstLower,NULL,0,pLowerRej.get(),mdl->Threads()*sizeof(ServiceColRejects::output));
-    assert(nOut/sizeof(ServiceColRejects::output) == pst->nLower);
-    nOut = mdl->GetReply(rID,pUpperRej.get());
-    assert(nOut/sizeof(ServiceColRejects::output) == pst->nUpper);
+    rID = mdl->ReqService(pst->idUpper, PST_COLREJECTS, NULL, 0);
+    nOut = Traverse(PST_COLREJECTS, pst->pstLower, NULL, 0, pLowerRej.get(), mdl->Threads()*sizeof(ServiceColRejects::output));
+    assert(nOut / sizeof(ServiceColRejects::output) == pst->nLower);
+    nOut = mdl->GetReply(rID, pUpperRej.get());
+    assert(nOut / sizeof(ServiceColRejects::output) == pst->nUpper);
 
-    mdlPrintTimer(pst->mdl,"TIME Collected Rejects _pstRootSplit ",&t);
+    mdlPrintTimer(pst->mdl, "TIME Collected Rejects _pstRootSplit ", &t);
 
 
     ittr = 0;
     while (1) {
-        iRet = RejMatch(pst,pst->nLower,pLowerRej.get(),pst->nUpper,pUpperRej.get(),pidSwap.get());
+        iRet = RejMatch(pst, pst->nLower, pLowerRej.get(), pst->nUpper, pUpperRej.get(), pidSwap.get());
         if (!iRet) break;
-        rID = mdl->ReqService(pst->idUpper,PST_SWAPREJECTS,pidSwap.get(),
+        rID = mdl->ReqService(pst->idUpper, PST_SWAPREJECTS, pidSwap.get(),
                               mdl->Threads()*sizeof(int));
-        nOut = Traverse(PST_SWAPREJECTS,pst->pstLower,
-                        pidSwap.get(),mdl->Threads()*sizeof(int),
-                        pLowerRej.get(),mdl->Threads()*sizeof(ServiceSwapRejects::output));
-        assert(nOut/sizeof(ServiceSwapRejects::output) == pst->nLower);
-        nOut = mdl->GetReply(rID,pUpperRej.get());
-        assert(nOut/sizeof(ServiceSwapRejects::output) == pst->nUpper);
+        nOut = Traverse(PST_SWAPREJECTS, pst->pstLower,
+                        pidSwap.get(), mdl->Threads()*sizeof(int),
+                        pLowerRej.get(), mdl->Threads()*sizeof(ServiceSwapRejects::output));
+        assert(nOut / sizeof(ServiceSwapRejects::output) == pst->nLower);
+        nOut = mdl->GetReply(rID, pUpperRej.get());
+        assert(nOut / sizeof(ServiceSwapRejects::output) == pst->nUpper);
 
         ++ittr;
     }
 
-    mdlPrintTimer(pst->mdl,"TIME (FINISH) Swapped Rejects _pstRootSplit ",&t);
+    mdlPrintTimer(pst->mdl, "TIME (FINISH) Swapped Rejects _pstRootSplit ", &t);
 }
 
 /*****************************************************************************\
 * ServiceDomain
 \*****************************************************************************/
 
-int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,ServiceColRejects::output *p2,int *pidSwap) {
+int ServiceDomain::RejMatch(PST pst, int n1, ServiceColRejects::output *p1, int n2, ServiceColRejects::output *p2, int *pidSwap) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
-    int id,i,i1=-1,i2=-1,id1,id2;
+    int id, i, i1=-1, i2=-1, id1, id2;
     local_t nLarge;
-    total_t s1,s2,r1,r2;
+    total_t s1, s2, r1, r2;
 
     /*
     ** Check to see if there is enough space...
     */
     s1 = 0;
     r1 = 0;
-    for (i=0; i<n1; ++i) {
+    for (i = 0; i < n1; ++i) {
         s1 += p1[i].nSpace;
         r1 += p1[i].nRejects;
     }
     s2 = 0;
     r2 = 0;
-    for (i=0; i<n2; ++i) {
+    for (i = 0; i < n2; ++i) {
         s2 += p2[i].nSpace;
         r2 += p2[i].nRejects;
     }
@@ -679,13 +679,13 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
     /*
     ** First invalidate the pidSwap array.
     */
-    for (id=0; id<mdl->Threads(); ++id) pidSwap[id] = -1;
+    for (id = 0; id < mdl->Threads(); ++id) pidSwap[id] = -1;
     /*
     ** Now map largest nReject of p1 to largest nSpace of p2.
     */
     while (1) {
         nLarge = 0;
-        for (i=0; i<n1; ++i) {
+        for (i = 0; i < n1; ++i) {
             if (p1[i].nRejects > nLarge) {
                 nLarge = p1[i].nRejects;
                 i1 = i;
@@ -693,7 +693,7 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
         }
         if (nLarge == 0) break;
         nLarge = 0;
-        for (i=0; i<n2; ++i) {
+        for (i = 0; i < n2; ++i) {
             if (p2[i].nSpace > nLarge) {
                 nLarge = p2[i].nSpace;
                 i2 = i;
@@ -715,7 +715,7 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
     */
     while (1) {
         nLarge = 0;
-        for (i=0; i<n2; ++i) {
+        for (i = 0; i < n2; ++i) {
             if (p2[i].nRejects > nLarge) {
                 nLarge = p2[i].nRejects;
                 i2 = i;
@@ -723,7 +723,7 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
         }
         if (nLarge == 0) break;
         nLarge = 0;
-        for (i=0; i<n1; ++i) {
+        for (i = 0; i < n1; ++i) {
             if (p1[i].nSpace > nLarge) {
                 nLarge = p1[i].nSpace;
                 i1 = i;
@@ -739,7 +739,7 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
         pidSwap[id1] = id2;
         pidSwap[id2] = id1;
     }
-    for (i=0; i<mdl->Threads(); ++i)
+    for (i = 0; i < mdl->Threads(); ++i)
         if (pidSwap[i] != -1) return (1);
     return (0);
 }
@@ -751,18 +751,18 @@ int ServiceDomain::RejMatch(PST pst,int n1,ServiceColRejects::output *p1,int n2,
 static_assert(std::is_void<ServiceColRejects::input>()  || std::is_trivial<ServiceColRejects::input>());
 static_assert(std::is_void<ServiceColRejects::output>() || std::is_trivial<ServiceColRejects::output>());
 
-int ServiceColRejects::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceColRejects::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto pOutRej = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_COLREJECTS,vin,nIn);
-    auto nLower = Traverse(pst->pstLower,vin,nIn,pOutRej,nOut);
-    auto iUpper = nLower/sizeof(output);
+    auto rID = mdl->ReqService(pst->idUpper, PST_COLREJECTS, vin, nIn);
+    auto nLower = Traverse(pst->pstLower, vin, nIn, pOutRej, nOut);
+    auto iUpper = nLower / sizeof(output);
     int nUpper;
-    nUpper = mdl->GetReply(rID,pOutRej+iUpper);
+    nUpper = mdl->GetReply(rID, pOutRej + iUpper);
     return nLower + nUpper;
 }
 
-int ServiceColRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceColRejects::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto pkd = pst->plcl->pkd;
     auto pOutRej = static_cast<output *>(vout);
     pOutRej->nRejects = pkdColRejects(pkd, pst->plcl->nSplit);
@@ -779,23 +779,23 @@ int ServiceColRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
 static_assert(std::is_void<ServiceSwapRejects::input>()  || std::is_trivial<ServiceSwapRejects::input>());
 static_assert(std::is_void<ServiceSwapRejects::output>() || std::is_trivial<ServiceSwapRejects::output>());
 
-int ServiceSwapRejects::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSwapRejects::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto pOutRej = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_SWAPREJECTS,vin,nIn);
-    auto nLower = Traverse(pst->pstLower,vin,nIn,pOutRej,nOut);
-    auto iUpper = nLower/sizeof(ServiceSwapRejects::output);
+    auto rID = mdl->ReqService(pst->idUpper, PST_SWAPREJECTS, vin, nIn);
+    auto nLower = Traverse(pst->pstLower, vin, nIn, pOutRej, nOut);
+    auto iUpper = nLower / sizeof(ServiceSwapRejects::output);
     int nUpper;
-    nUpper = mdl->GetReply(rID,pOutRej+iUpper);
+    nUpper = mdl->GetReply(rID, pOutRej + iUpper);
     return nLower + nUpper;
 }
 
-int ServiceSwapRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSwapRejects::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto pkd = pst->plcl->pkd;
     auto pidSwap = static_cast<input *>(vin);
     auto pOutRej = static_cast<output *>(vout);
     auto idSwap = pidSwap[pst->idSelf];
-    pOutRej->nRejects = pkdSwapRejects(pkd,idSwap);
+    pOutRej->nRejects = pkdSwapRejects(pkd, idSwap);
     pOutRej->nSpace = pkdSwapSpace(pkd);
     pOutRej->id = pst->idSelf;
     return sizeof(output);
@@ -808,22 +808,22 @@ int ServiceSwapRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
 static_assert(std::is_void<ServiceColOrdRejects::input>()  || std::is_trivial<ServiceColOrdRejects::input>());
 static_assert(std::is_void<ServiceColOrdRejects::output>() || std::is_trivial<ServiceColOrdRejects::output>());
 
-int ServiceColOrdRejects::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceColOrdRejects::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto pOutRej = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_COLORDREJECTS,vin,nIn);
-    auto nLower = Traverse(pst->pstLower,vin,nIn,&pOutRej[0],nOut);
-    auto iUpper = nLower/sizeof(output);
+    auto rID = mdl->ReqService(pst->idUpper, PST_COLORDREJECTS, vin, nIn);
+    auto nLower = Traverse(pst->pstLower, vin, nIn, &pOutRej[0], nOut);
+    auto iUpper = nLower / sizeof(output);
     int nUpper;
-    mdlGetReply(pst->mdl,rID,&pOutRej[iUpper],&nUpper);
+    mdlGetReply(pst->mdl, rID, &pOutRej[iUpper], &nUpper);
     return nLower + nUpper;
 }
 
-int ServiceColOrdRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceColOrdRejects::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto pkd = pst->plcl->pkd;
     auto in = static_cast<input *>(vin);
     auto pOutRej = static_cast<output *>(vout);
-    pOutRej->nRejects = pkdColOrdRejects(pkd,in->iOrdSplit,in->iSplitSide);
+    pOutRej->nRejects = pkdColOrdRejects(pkd, in->iOrdSplit, in->iSplitSide);
     pOutRej->nSpace = pkdSwapSpace(pkd);
     pOutRej->id = pst->idSelf;
     return sizeof(output);
@@ -837,41 +837,41 @@ int ServiceColOrdRejects::Service(PST pst,void *vin,int nIn,void *vout,int nOut)
 static_assert(std::is_void<ServiceDomainOrder::input>()  || std::is_trivial<ServiceDomainOrder::input>());
 static_assert(std::is_void<ServiceDomainOrder::output>() || std::is_trivial<ServiceDomainOrder::output>());
 
-int ServiceDomainOrder::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceDomainOrder::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     int rID;
     uint64_t iMinOrder = in->iMinOrder;
     uint64_t iMaxOrder = in->iMaxOrder;
     uint64_t iMidOrder;
-    iMidOrder = OrdSplit(pst,iMinOrder,iMaxOrder);
+    iMidOrder = OrdSplit(pst, iMinOrder, iMaxOrder);
     /*
     ** Now go on to Domain Order of next levels.
     */
     in->iMinOrder = iMidOrder;
-    rID = mdl->ReqService(pst->idUpper,PST_DOMAINORDER,in,nIn);
+    rID = mdl->ReqService(pst->idUpper, PST_DOMAINORDER, in, nIn);
     in->iMinOrder = iMinOrder;
-    in->iMaxOrder = iMidOrder-1;
-    Traverse(pst->pstLower,in,nIn,NULL,0);
+    in->iMaxOrder = iMidOrder - 1;
+    Traverse(pst->pstLower, in, nIn, NULL, 0);
     mdl->GetReply(rID);
 
     return 0;
 }
 
-int ServiceDomainOrder::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceDomainOrder::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in = static_cast<input *>(vin);
     pst->iOrdSplit = in->iMinOrder;
     return 0;
 }
 
-uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOrder) {
+uint64_t ServiceDomainOrder::OrdSplit(PST pst, uint64_t iMinOrder, uint64_t iMaxOrder) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     ServiceOrdWeight::input inWt;
-    ServiceOrdWeight::output outWtLow,outWtHigh;
-    uint64_t im,imm,il,iu;
-    uint64_t nLowerStore,nUpperStore,nLow,nHigh;
+    ServiceOrdWeight::output outWtLow, outWtHigh;
+    uint64_t im, imm, il, iu;
+    uint64_t nLowerStore, nUpperStore, nLow, nHigh;
     ServiceColOrdRejects::input inCol;
-    int iRet,nOut,ittr;
+    int iRet, nOut, ittr;
     int rID;
 
     /*
@@ -879,10 +879,10 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
     ** on the lower and upper subset of processors.
     */
     ServiceFreeStore::output outFree;
-    rID = mdl->ReqService(pst->idUpper,PST_FREESTORE,NULL,0);
-    Traverse(PST_FREESTORE,pst->pstLower,NULL,0,&outFree,sizeof(outFree));
+    rID = mdl->ReqService(pst->idUpper, PST_FREESTORE, NULL, 0);
+    Traverse(PST_FREESTORE, pst->pstLower, NULL, 0, &outFree, sizeof(outFree));
     nLowerStore = outFree;
-    mdl->GetReply(rID,&outFree);
+    mdl->GetReply(rID, &outFree);
     nUpperStore = outFree;
     /*
     ** Find the correct iOrdSplit, such that all processors will
@@ -893,7 +893,7 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
     iu = iMaxOrder;
     im = 0;        /* just initialization */
     nLow = 0;      /* just initialization */
-    nHigh = iu+1;  /* just initialization */
+    nHigh = iu + 1;  /* just initialization */
     imm = (il + iu + 1)/2;
     ittr = 0;
     while (il < imm && imm < iu && ittr < MAX_ITTR) {
@@ -901,10 +901,10 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
         inWt.iOrdSplit = im;
         inWt.ittr = ittr;
         inWt.iSplitSide = 1;
-        rID = mdl->ReqService(pst->idUpper,PST_ORDWEIGHT,&inWt,sizeof(inWt));
+        rID = mdl->ReqService(pst->idUpper, PST_ORDWEIGHT, &inWt, sizeof(inWt));
         inWt.iSplitSide = 0;
-        Traverse(PST_ORDWEIGHT,pst->pstLower,&inWt,sizeof(inWt),&outWtLow,sizeof(outWtLow));
-        mdl->GetReply(rID,&outWtHigh);
+        Traverse(PST_ORDWEIGHT, pst->pstLower, &inWt, sizeof(inWt), &outWtLow, sizeof(outWtLow));
+        mdl->GetReply(rID, &outWtHigh);
         /*
         ** Add lower and Upper subsets weights and numbers
         */
@@ -912,7 +912,7 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
         nHigh = outWtLow.nHigh + outWtHigh.nHigh;
         /*
           printf("ittr:%d l:%d u:%d : %llu < %llu < %llu\n",
-              ittr,nLow,nHigh, il, imm, iu);
+              ittr, nLow, nHigh, il, imm, iu);
         */
         if (nLow == 1 && nHigh == 1) /* break on trivial case */
             break;
@@ -926,8 +926,8 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
         imm = (il + iu)/2;
         ++ittr;
     }
-    mdlassert(pst->mdl,nLow <= nLowerStore);
-    mdlassert(pst->mdl,nHigh <= nUpperStore);
+    mdlassert(pst->mdl, nLow <= nLowerStore);
+    mdlassert(pst->mdl, nHigh <= nUpperStore);
     pst->iOrdSplit = im;
     /*
     ** Collect rejects.
@@ -940,23 +940,23 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
     assert(pidSwap);
     inCol.iOrdSplit = pst->iOrdSplit;
     inCol.iSplitSide = 1;
-    rID = mdl->ReqService(pst->idUpper,PST_COLORDREJECTS,&inCol,sizeof(inCol));
+    rID = mdl->ReqService(pst->idUpper, PST_COLORDREJECTS, &inCol, sizeof(inCol));
     inCol.iSplitSide = 0;
-    nOut = Traverse(PST_COLORDREJECTS,pst->pstLower,&inCol,sizeof(inCol),pLowerRej.get(),
+    nOut = Traverse(PST_COLORDREJECTS, pst->pstLower, &inCol, sizeof(inCol), pLowerRej.get(),
                     mdl->Threads()*sizeof(ServiceColRejects::output));
-    mdlassert(pst->mdl,nOut/sizeof(ServiceColRejects::output) == pst->nLower);
-    nOut = mdl->GetReply(rID,pUpperRej.get());
-    mdlassert(pst->mdl,nOut/sizeof(ServiceColRejects::output) == pst->nUpper);
+    mdlassert(pst->mdl, nOut / sizeof(ServiceColRejects::output) == pst->nLower);
+    nOut = mdl->GetReply(rID, pUpperRej.get());
+    mdlassert(pst->mdl, nOut / sizeof(ServiceColRejects::output) == pst->nUpper);
     while (1) {
-        iRet = RejMatch(pst,pst->nLower,pLowerRej.get(),pst->nUpper,pUpperRej.get(),pidSwap.get());
+        iRet = RejMatch(pst, pst->nLower, pLowerRej.get(), pst->nUpper, pUpperRej.get(), pidSwap.get());
         if (!iRet) break;
-        rID = mdl->ReqService(pst->idUpper,PST_SWAPREJECTS,pidSwap.get(),
+        rID = mdl->ReqService(pst->idUpper, PST_SWAPREJECTS, pidSwap.get(),
                               mdl->Threads()*sizeof(int));
-        nOut = Traverse(PST_SWAPREJECTS,pst->pstLower,pidSwap.get(),mdl->Threads()*sizeof(int),
-                        pLowerRej.get(),mdl->Threads()*sizeof(ServiceSwapRejects::output));
-        mdlassert(pst->mdl,nOut/sizeof(ServiceSwapRejects::output) == pst->nLower);
-        nOut = mdl->GetReply(rID,pUpperRej.get());
-        mdlassert(pst->mdl,nOut/sizeof(ServiceSwapRejects::output) == pst->nUpper);
+        nOut = Traverse(PST_SWAPREJECTS, pst->pstLower, pidSwap.get(), mdl->Threads()*sizeof(int),
+                        pLowerRej.get(), mdl->Threads()*sizeof(ServiceSwapRejects::output));
+        mdlassert(pst->mdl, nOut / sizeof(ServiceSwapRejects::output) == pst->nLower);
+        nOut = mdl->GetReply(rID, pUpperRej.get());
+        mdlassert(pst->mdl, nOut / sizeof(ServiceSwapRejects::output) == pst->nUpper);
     }
     return pst->iOrdSplit;
 }
@@ -968,7 +968,7 @@ uint64_t ServiceDomainOrder::OrdSplit(PST pst,uint64_t iMinOrder,uint64_t iMaxOr
 static_assert(std::is_void<ServiceLocalOrder::input>()  || std::is_trivial<ServiceLocalOrder::input>());
 static_assert(std::is_void<ServiceLocalOrder::output>() || std::is_trivial<ServiceLocalOrder::output>());
 
-int ServiceLocalOrder::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceLocalOrder::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     auto iMinOrder = in->iMinOrder;
@@ -976,18 +976,18 @@ int ServiceLocalOrder::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
     auto iMidOrder = pst->iOrdSplit;
     assert(iMidOrder >= iMinOrder && iMidOrder <= iMaxOrder);
     in->iMinOrder = iMidOrder;
-    auto rID = mdl->ReqService(pst->idUpper,PST_LOCALORDER,in,nIn);
+    auto rID = mdl->ReqService(pst->idUpper, PST_LOCALORDER, in, nIn);
     in->iMinOrder = iMinOrder;
-    in->iMaxOrder = iMidOrder-1;
-    Traverse(pst->pstLower,in,nIn,NULL,0);
+    in->iMaxOrder = iMidOrder - 1;
+    Traverse(pst->pstLower, in, nIn, NULL, 0);
     mdl->GetReply(rID);
     return 0;
 }
 
-int ServiceLocalOrder::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceLocalOrder::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto pkd = pst->plcl->pkd;
     auto in = static_cast<input *>(vin);
-    pkdLocalOrder(pkd,in->iMinOrder,in->iMaxOrder);
+    pkdLocalOrder(pkd, in->iMinOrder, in->iMaxOrder);
     return 0;
 }
 #endif
@@ -1005,14 +1005,14 @@ int ServiceLocalOrder::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
 static_assert(std::is_void<ServiceWeight::input>()  || std::is_trivial<ServiceWeight::input>());
 static_assert(std::is_void<ServiceWeight::output>() || std::is_trivial<ServiceWeight::output>());
 
-int ServiceWeight::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceWeight::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     auto out = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_WEIGHT,in,nIn);
-    Traverse(pst->pstLower,in,nIn,out,nOut);
+    auto rID = mdl->ReqService(pst->idUpper, PST_WEIGHT, in, nIn);
+    Traverse(pst->pstLower, in, nIn, out, nOut);
     output outWt;
-    mdl->GetReply(rID,&outWt);
+    mdl->GetReply(rID, &outWt);
     out->nLow += outWt.nLow;
     out->nHigh += outWt.nHigh;
     out->fLow += outWt.fLow;
@@ -1020,7 +1020,7 @@ int ServiceWeight::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
     return sizeof(output);
 }
 
-int ServiceWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceWeight::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto plcl = pst->plcl;
     auto pkd = plcl->pkd;
     auto in = static_cast<input *>(vin);
@@ -1039,14 +1039,14 @@ int ServiceWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
         }
         else if (in->pFlag > 0) {
             /*
-            ** Particles must be in the active-inactive order here!
+            ** Particles must be in the active - inactive order here!
             */
             plcl->iWtFrom = 0;
             plcl->iWtTo = pkdActive(pkd)-1;
         }
         else {
             /*
-            ** Particles must be in the active-inactive order here!
+            ** Particles must be in the active - inactive order here!
             */
             plcl->iWtFrom = pkdActive(pkd);
             plcl->iWtTo = pkd->Local()-1;
@@ -1061,21 +1061,21 @@ int ServiceWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
         if (fSplit < plcl->fSplit) {
             plcl->fWtHigh += plcl->fHigh;
             if (iSplitSide) plcl->iWtFrom = plcl->iPart;
-            else plcl->iWtTo = plcl->iPart-1;
+            else plcl->iWtTo = plcl->iPart - 1;
         }
         else {
             plcl->fWtLow += plcl->fLow;
-            if (iSplitSide) plcl->iWtTo = plcl->iPart-1;
+            if (iSplitSide) plcl->iWtTo = plcl->iPart - 1;
             else plcl->iWtFrom = plcl->iPart;
         }
         plcl->fSplit = fSplit;
     }
 
-    int nLow,nHigh;
-    double fLow,fHigh;
-    plcl->iPart = pkdWeight(pkd,in->iSplitDim,fSplit,iSplitSide,
-                            plcl->iWtFrom,plcl->iWtTo,
-                            &nLow,&nHigh,&fLow,&fHigh);
+    int nLow, nHigh;
+    double fLow, fHigh;
+    plcl->iPart = pkdWeight(pkd, in->iSplitDim, fSplit, iSplitSide,
+                            plcl->iWtFrom, plcl->iWtTo,
+                            &nLow, &nHigh, &fLow, &fHigh);
     out->nLow = nLow;
     out->nHigh = nHigh;
     out->fLow = fLow + plcl->fWtLow;
@@ -1107,20 +1107,20 @@ int ServiceWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
 static_assert(std::is_void<ServiceWeightWrap::input>()  || std::is_trivial<ServiceWeightWrap::input>());
 static_assert(std::is_void<ServiceWeightWrap::output>() || std::is_trivial<ServiceWeightWrap::output>());
 
-int ServiceWeightWrap::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceWeightWrap::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     auto out = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_WEIGHTWRAP,in,nIn);
-    Traverse(pst->pstLower,in,nIn,out,nOut);
+    auto rID = mdl->ReqService(pst->idUpper, PST_WEIGHTWRAP, in, nIn);
+    Traverse(pst->pstLower, in, nIn, out, nOut);
     output outWt;
-    mdl->GetReply(rID,&outWt);
+    mdl->GetReply(rID, &outWt);
     out->nLow += outWt.nLow;
     out->nHigh += outWt.nHigh;
     return sizeof(output);
 }
 
-int ServiceWeightWrap::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceWeightWrap::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto plcl = pst->plcl;
     auto pkd = plcl->pkd;
     auto in = static_cast<input *>(vin);
@@ -1138,21 +1138,21 @@ int ServiceWeightWrap::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
         /*
         ** Update the Weight Sums and use smaller weight region.
         */
-        if ((in->fSplit < plcl->fSplit && in->fSplit<in->fSplit2 && plcl->fSplit<in->fSplit2) ||
-                (in->fSplit < plcl->fSplit && in->fSplit>in->fSplit2 && plcl->fSplit>in->fSplit2) ||
-                (in->fSplit > plcl->fSplit && in->fSplit>in->fSplit2 && plcl->fSplit<in->fSplit2)) {
+        if ((in->fSplit < plcl->fSplit && in->fSplit < in->fSplit2 && plcl->fSplit < in->fSplit2) ||
+                (in->fSplit < plcl->fSplit && in->fSplit > in->fSplit2 && plcl->fSplit > in->fSplit2) ||
+                (in->fSplit > plcl->fSplit && in->fSplit > in->fSplit2 && plcl->fSplit < in->fSplit2)) {
             if (!in->iSplitSide) plcl->iWtFrom = plcl->iPart;
-            else plcl->iWtTo = plcl->iPart-1;
+            else plcl->iWtTo = plcl->iPart - 1;
         }
         else {
-            if (!in->iSplitSide) plcl->iWtTo = plcl->iPart-1;
+            if (!in->iSplitSide) plcl->iWtTo = plcl->iPart - 1;
             else plcl->iWtFrom = plcl->iPart;
         }
         plcl->fSplit = in->fSplit;
     }
-    int nLow,nHigh;
-    plcl->iPart = pkdWeightWrap(pkd,in->iSplitDim,in->fSplit,in->fSplit2,in->iSplitSide,
-                                plcl->iWtFrom,plcl->iWtTo,&nLow,&nHigh);
+    int nLow, nHigh;
+    plcl->iPart = pkdWeightWrap(pkd, in->iSplitDim, in->fSplit, in->fSplit2, in->iSplitSide,
+                                plcl->iWtFrom, plcl->iWtTo, &nLow, &nHigh);
     out->nLow = nLow;
     out->nHigh = nHigh;
     /* For collect rejects */
@@ -1168,20 +1168,20 @@ int ServiceWeightWrap::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
 static_assert(std::is_void<ServiceOrdWeight::input>()  || std::is_trivial<ServiceOrdWeight::input>());
 static_assert(std::is_void<ServiceOrdWeight::output>() || std::is_trivial<ServiceOrdWeight::output>());
 
-int ServiceOrdWeight::Recurse(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceOrdWeight::Recurse(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto mdl = static_cast<mdl::mdlClass *>(pst->mdl);
     auto in = static_cast<input *>(vin);
     auto out = static_cast<output *>(vout);
-    auto rID = mdl->ReqService(pst->idUpper,PST_ORDWEIGHT,in,nIn);
-    Traverse(pst->pstLower,in,nIn,out,nOut);
+    auto rID = mdl->ReqService(pst->idUpper, PST_ORDWEIGHT, in, nIn);
+    Traverse(pst->pstLower, in, nIn, out, nOut);
     output outWt;
-    mdl->GetReply(rID,&outWt);
+    mdl->GetReply(rID, &outWt);
     out->nLow += outWt.nLow;
     out->nHigh += outWt.nHigh;
     return sizeof(output);
 }
 
-int ServiceOrdWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceOrdWeight::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto plcl = pst->plcl;
     auto pkd = plcl->pkd;
     auto in = static_cast<input *>(vin);
@@ -1201,18 +1201,18 @@ int ServiceOrdWeight::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
         */
         if (in->iOrdSplit < plcl->iOrdSplit) {
             if (in->iSplitSide) plcl->iWtFrom = plcl->iPart;
-            else plcl->iWtTo = plcl->iPart-1;
+            else plcl->iWtTo = plcl->iPart - 1;
         }
         else {
-            if (in->iSplitSide) plcl->iWtTo = plcl->iPart-1;
+            if (in->iSplitSide) plcl->iWtTo = plcl->iPart - 1;
             else plcl->iWtFrom = plcl->iPart;
         }
         plcl->iOrdSplit = in->iOrdSplit;
     }
-    int nLow,nHigh;
-    plcl->iPart = pkdOrdWeight(pkd,in->iOrdSplit,in->iSplitSide,
-                               plcl->iWtFrom,plcl->iWtTo,
-                               &nLow,&nHigh);
+    int nLow, nHigh;
+    plcl->iPart = pkdOrdWeight(pkd, in->iOrdSplit, in->iSplitSide,
+                               plcl->iWtFrom, plcl->iWtTo,
+                               &nLow, &nHigh);
     out->nLow = nLow;
     out->nHigh = nHigh;
     return sizeof(output);

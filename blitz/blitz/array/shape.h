@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/array/shape.h        
+ * blitz/array/shape.h
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -41,52 +41,52 @@ BZ_NAMESPACE(blitz)
  * These routines make it easier to create shape parameters on
  * the fly: instead of having to write
  *
- * A.resize(TinyVector<int,4>(8,8,8,12));
+ * A.resize(TinyVector<int, 4>(8, 8, 8, 12));
  *
  * you can just say
  *
- * A.resize(shape(8,8,8,12));
+ * A.resize(shape(8, 8, 8, 12));
  *
  */
-inline TinyVector<int,1> shape(int n1)
-{ return TinyVector<int,1>(n1); }
+inline TinyVector<int, 1> shape(int n1)
+{ return TinyVector<int, 1>(n1); }
 
-inline TinyVector<int,2> shape(int n1, int n2)
-{ return TinyVector<int,2>(n1,n2); }
+inline TinyVector<int, 2> shape(int n1, int n2)
+{ return TinyVector<int, 2>(n1, n2); }
 
-inline TinyVector<int,3> shape(int n1, int n2, int n3)
-{ return TinyVector<int,3>(n1,n2,n3); }
+inline TinyVector<int, 3> shape(int n1, int n2, int n3)
+{ return TinyVector<int, 3>(n1, n2, n3); }
 
-inline TinyVector<int,4> shape(int n1, int n2, int n3, int n4)
-{ return TinyVector<int,4>(n1,n2,n3,n4); }
+inline TinyVector<int, 4> shape(int n1, int n2, int n3, int n4)
+{ return TinyVector<int, 4>(n1, n2, n3, n4); }
 
-inline TinyVector<int,5> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 5> shape(int n1, int n2, int n3, int n4,
     int n5)
-{ return TinyVector<int,5>(n1,n2,n3,n4,n5); }
+{ return TinyVector<int, 5>(n1, n2, n3, n4, n5); }
 
-inline TinyVector<int,6> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 6> shape(int n1, int n2, int n3, int n4,
     int n5, int n6)
-{ return TinyVector<int,6>(n1,n2,n3,n4,n5,n6); }
+{ return TinyVector<int, 6>(n1, n2, n3, n4, n5, n6); }
 
-inline TinyVector<int,7> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 7> shape(int n1, int n2, int n3, int n4,
     int n5, int n6, int n7)
-{ return TinyVector<int,7>(n1,n2,n3,n4,n5,n6,n7); }
+{ return TinyVector<int, 7>(n1, n2, n3, n4, n5, n6, n7); }
 
-inline TinyVector<int,8> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 8> shape(int n1, int n2, int n3, int n4,
     int n5, int n6, int n7, int n8)
-{ return TinyVector<int,8>(n1,n2,n3,n4,n5,n6,n7,n8); }
+{ return TinyVector<int, 8>(n1, n2, n3, n4, n5, n6, n7, n8); }
 
-inline TinyVector<int,9> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 9> shape(int n1, int n2, int n3, int n4,
     int n5, int n6, int n7, int n8, int n9)
-{ return TinyVector<int,9>(n1,n2,n3,n4,n5,n6,n7,n8,n9); }
+{ return TinyVector<int, 9>(n1, n2, n3, n4, n5, n6, n7, n8, n9); }
 
-inline TinyVector<int,10> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 10> shape(int n1, int n2, int n3, int n4,
     int n5, int n6, int n7, int n8, int n9, int n10)
-{ return TinyVector<int,10>(n1,n2,n3,n4,n5,n6,n7,n8,n9,n10); }
+{ return TinyVector<int, 10>(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10); }
 
-inline TinyVector<int,11> shape(int n1, int n2, int n3, int n4,
+inline TinyVector<int, 11> shape(int n1, int n2, int n3, int n4,
     int n5, int n6, int n7, int n8, int n9, int n10, int n11)
-{ return TinyVector<int,11>(n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11); }
+{ return TinyVector<int, 11>(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11); }
 
 BZ_NAMESPACE_END
 

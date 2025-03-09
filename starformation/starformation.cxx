@@ -31,16 +31,16 @@ void MSR::SetStarFormationParam() {
     const double dnHToRho = MHYDR / parameters.get_dInitialH() / units.dGmPerCcUnit;
     calc.dSFThresholdDen = parameters.get_dSFThresholdDen() * dnHToRho; // Code physical density now
     const double Msolpcm2 = 1. / units.dMsolUnit *
-                            pow(units.dKpcUnit*1e3, 2);
+                            pow(units.dKpcUnit * 1e3, 2);
     calc.dSFnormalizationKS = parameters.get_dSFnormalizationKS() / units.dMsolUnit *
-                              units.dSecUnit/SECONDSPERYEAR *
+                              units.dSecUnit / SECONDSPERYEAR *
                               pow(units.dKpcUnit, 2) *
-                              pow(Msolpcm2,-parameters.get_dSFindexKS());
+                              pow(Msolpcm2, -parameters.get_dSFindexKS());
 }
 
 int MSR::ValidateStarFormationParam() {
 #if !defined(EEOS_POLYTROPE) && !defined(EEOS_JEANS)
-    fprintf(stderr,"WARNING: Star formation is active but no eEOS is selected!\n");
+    fprintf(stderr, "WARNING: Star formation is active but no eEOS is selected!\n");
 #endif
     return 1;
 }
@@ -51,9 +51,9 @@ void MSR::StarForm(double dTime, double dDelta, int iRung) {
 
     TimerStart(TIMER_STARFORM);
 
-    const double a = csmTime2Exp(csm,dTime);
+    const double a = csmTime2Exp(csm, dTime);
 
-    in.dHubble = Comove() ? csmTime2Hub(csm,dTime) : 0.0;
+    in.dHubble = Comove() ? csmTime2Hub(csm, dTime) : 0.0;
     in.dScaleFactor = a;
     in.dTime = dTime;
     in.dDelta = dDelta;
@@ -77,7 +77,7 @@ void MSR::StarForm(double dTime, double dDelta, int iRung) {
     in.dSNFBEffnH0 = calc.dSNFBEffnH0;
 #endif
 #if defined(EEOS_POLYTROPE) || defined(EEOS_JEANS)
-    in.eEOS = eEOSparam(parameters,calc);
+    in.eEOS = eEOSparam(parameters, calc);
 #endif
 #ifdef STELLAR_EVOLUTION
     in.dSNIaMaxMass = parameters.get_dSNIaMaxMass();
@@ -87,7 +87,7 @@ void MSR::StarForm(double dTime, double dDelta, int iRung) {
 
     if (parameters.get_bVDetails()) printf("Star Form (rung: %d) ... ", iRung);
 
-    ActiveRung(iRung,1);
+    ActiveRung(iRung, 1);
     pstStarForm(pst, &in, sizeof(in), &out, 0);
     if (parameters.get_bVDetails())
         printf("%d Stars formed with mass %g, %d gas deleted\n",
@@ -100,7 +100,7 @@ void MSR::StarForm(double dTime, double dDelta, int iRung) {
 
     TimerStop(TIMER_STARFORM);
     auto dsec = TimerGet(TIMER_STARFORM);
-    printf("Star Formation Calculated, Wallclock: %f secs\n\n",dsec);
+    printf("Star Formation Calculated, Wallclock: %f secs\n\n", dsec);
 
 }
 
@@ -116,18 +116,18 @@ static inline double density_SFR(const float fMass, const float fDens, const dou
                                  const double dSFThresholdu, const double dSFEfficiency,
                                  meshless::FIELDS &sph);
 
-int pstStarForm(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int pstStarForm(PST pst, void *vin, int nIn, void *vout, int nOut) {
     struct inStarForm *in = (struct inStarForm *) vin;
     struct outStarForm *out = (struct outStarForm *) vout;
     int rID;
 
-    mdlassert(pst->mdl,nIn == sizeof(struct inStarForm));
+    mdlassert(pst->mdl, nIn == sizeof(struct inStarForm));
     if (pst->nLeaves > 1) {
         struct outStarForm fsStats;
 
-        rID = mdlReqService(pst->mdl,pst->idUpper,PST_STARFORM,in,nIn);
-        pstStarForm(pst->pstLower,in,nIn,vout,nOut);
-        mdlGetReply(pst->mdl,rID,&fsStats,NULL);
+        rID = mdlReqService(pst->mdl, pst->idUpper, PST_STARFORM, in, nIn);
+        pstStarForm(pst->pstLower, in, nIn, vout, nOut);
+        mdlGetReply(pst->mdl, rID, &fsStats, NULL);
         out->nFormed += fsStats.nFormed;
         out->nDeleted += fsStats.nDeleted;
         out->dMassFormed += fsStats.dMassFormed;
@@ -153,9 +153,9 @@ void pkdStarForm(PKD pkd,
     *nDeleted = 0;
     *dMassFormed = 0.0;
 
-    const double a_m1 = 1.0/in.dScaleFactor;
-    const double a_m2 = a_m1*a_m1;
-    const double a_m3 = a_m2*a_m1;
+    const double a_m1 = 1.0 / in.dScaleFactor;
+    const double a_m2 = a_m1 * a_m1;
+    const double a_m3 = a_m2 * a_m1;
 
     for (auto &p : pkd->particles) {
 
@@ -198,21 +198,21 @@ void pkdStarForm(PKD pkd,
             const double prob = 1.0 - exp(-dmstar * dt / mass);
 
             // Star formation event?
-            if (rand()<RAND_MAX*prob) {
+            if (rand()<RAND_MAX * prob) {
 #ifdef STELLAR_EVOLUTION
-                blitz::TinyVector<float,ELEMENT_COUNT> ElemMass;
+                blitz::TinyVector<float, ELEMENT_COUNT> ElemMass;
                 float fMetalMass;
                 ElemMass = sph.ElemMass;
                 fMetalMass = sph.fMetalMass;
 #endif
 
                 // We just change the class of the particle to stellar one
-                p.set_class(mass, p.soft0(),0, FIO_SPECIES_STAR);
+                p.set_class(mass, p.soft0(), 0, FIO_SPECIES_STAR);
                 auto &star = p.star();
 
                 // When changing the class, we have to take into account that
                 // the code velocity has different scale factor dependencies for
-                // dm/star particles and gas particles
+                // dm / star particles and gas particles
                 p.velocity() *= in.dScaleFactor;
 
                 // We log statistics about the formation time
@@ -273,7 +273,7 @@ static inline double pressure_SFR(const float fMass, const float fDens,
     //         above the polytropic eEOS
 #if defined(EEOS_POLYTROPE) || defined(EEOS_JEANS)
     const double maxUint = 3.16228 * fMass *
-                           eEOSEnergyFloor<vec<double,double>,mmask<bool>>(a_m3, fDens, fBall, dConstGamma, eEOS);
+                           eEOSEnergyFloor < vec < double, double>, mmask < bool>>(a_m3, fDens, fBall, dConstGamma, eEOS);
 #else
     // This configuration is allowed, but can easily produce numerical fragmentation!!!
     const double maxUint = INFINITY;
@@ -289,11 +289,11 @@ static inline double pressure_SFR(const float fMass, const float fDens,
     const double dUint = sph.Uint;
 #endif
 
-    if (std::max(dUint,sph.lastUint) > maxUint || fDens < dThreshDen) {
+    if (std::max(dUint, sph.lastUint) > maxUint || fDens < dThreshDen) {
         return 0.0;
     }
 
-    const double SFexp = 0.5*(dSFindexKS-1.);
+    const double SFexp = 0.5*(dSFindexKS - 1.);
     const double dmstar = dSFnormalizationKS * fMass *
                           pow(dConstGamma * dSFGasFraction * sph.P * a_m3, SFexp);
     return dmstar;
@@ -313,7 +313,7 @@ static inline double density_SFR(const float fMass, const float fDens, const dou
         return 0.0;
     }
 
-    const double tff = sqrt(3.*M_PI/(32.*fDens*a_m3));
+    const double tff = sqrt(3.*M_PI/(32.*fDens * a_m3));
     const double dmstar = dSFEfficiency * fMass / tff;
     return dmstar;
 }

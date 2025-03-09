@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -46,17 +46,17 @@ struct _tm_evaluator {
 
   /** The select_evaluation function redirects expressions that do not
       contains solely TinyMatrix operands to the general evaluation
-      function. The generic template (for unroll=false, note that
+      function. The generic template (for unroll = false, note that
       "unroll" us the wrong name for this function, the template
       parameter in this context really means "use_full_eval") uses the
-      TinyMatrix-only evaluation. Since TinyMatrixs can't have funny
+      TinyMatrix - only evaluation. Since TinyMatrixs can't have funny
       storage, ordering, stride, or anything, it's now just a matter
       of evaluating it like in the old vecassign. */
   template<typename T, typename T_expr, typename T_update>
   static _bz_forceinline void
-  select_evaluation(TinyMatrix<T, N_rows, N_columns>& dest, 
+  select_evaluation(TinyMatrix<T, N_rows, N_columns>& dest,
 		    const T_expr& expr, T_update) {
-    
+
     // since we can't resize tinyvectors, there are two options: all
     // vectors have our size or the expression is malformed.
     // Check that all operands have the same shape
@@ -80,7 +80,7 @@ struct _tm_evaluator {
 	     "Shape check failed." << endl << "Expression:");
 
   // now call the aligned (unrolled or not) evaluation function
-  const bool do_unroll = N_rows*N_columns < BZ_TV_EVALUATE_UNROLL_LENGTH;
+  const bool do_unroll = N_rows * N_columns < BZ_TV_EVALUATE_UNROLL_LENGTH;
   _tm_evaluator<do_unroll, N_rows, N_columns>::evaluate_aligned(dest.data(), expr, T_update());
   }
 
@@ -95,7 +95,7 @@ struct _tm_evaluator {
 #pragma ivdep
 #pragma vector aligned
 #endif
-    for (int i=0; i < N_rows*N_columns; ++i)
+    for (int i = 0; i < N_rows * N_columns; ++i)
       T_update::update(data[i], expr.fastRead(i));
   }
 
@@ -110,11 +110,11 @@ struct _tm_evaluator {
 #pragma ivdep
 #pragma vector unaligned
 #endif
-  for (int i=0; i < N_rows*N_columns; ++i)
+  for (int i = 0; i < N_rows * N_columns; ++i)
     T_update::update(data[i], expr.fastRead(i));
   }
 };
-  
+
 /** Specialization of the _tm_evaluator class for false template arguments. */
 template<int N_rows, int N_columns>
 struct _tm_evaluator<true, N_rows, N_columns> {
@@ -124,7 +124,7 @@ struct _tm_evaluator<true, N_rows, N_columns> {
       to the general evaluation function. */
   template<typename T, typename T_expr, typename T_update>
   static _bz_forceinline void
-  select_evaluation(TinyMatrix<T, N_rows, N_columns>& dest, 
+  select_evaluation(TinyMatrix<T, N_rows, N_columns>& dest,
 		    const T_expr& expr, T_update) {
     _bz_evaluate(dest, expr, T_update());
   }
@@ -140,7 +140,7 @@ struct _tm_evaluator<true, N_rows, N_columns> {
     //#pragma ivdep
     //#pragma vector aligned
 #endif
-  _bz_meta_vecAssign<N_rows*N_columns, 0>::fastAssign(data, expr, T_update());
+  _bz_meta_vecAssign<N_rows * N_columns, 0>::fastAssign(data, expr, T_update());
   }
 
   /** This version of the evaluation function is used when vectorizing
@@ -152,7 +152,7 @@ struct _tm_evaluator<true, N_rows, N_columns> {
   evaluate_unaligned(T_numtype* data, const T_expr& expr, T_update) {
     //#pragma ivdep
     //#pragma vector unaligned
-  _bz_meta_vecAssign<N_rows*N_columns, 0>::fastAssign(data, expr, T_update());
+  _bz_meta_vecAssign<N_rows * N_columns, 0>::fastAssign(data, expr, T_update());
   }
 };
 
@@ -164,12 +164,12 @@ template<typename P_numtype, int N_rows, int N_columns>
 template<typename T_expr, typename T_update>
 _bz_forceinline
 void
-TinyMatrix<P_numtype,N_rows, N_columns>::_tm_evaluate(const T_expr& expr, T_update)
+TinyMatrix<P_numtype, N_rows, N_columns>::_tm_evaluate(const T_expr& expr, T_update)
 {
   const bool mixed_expr =
-    (T_expr::numArrayOperands>0) || 
-    (T_expr::numTVOperands>0) ||
-    (T_expr::numIndexPlaceholders>0);
+    (T_expr::numArrayOperands > 0) ||
+    (T_expr::numTVOperands > 0) ||
+    (T_expr::numIndexPlaceholders > 0);
   _tm_evaluator<mixed_expr, N_rows, N_columns>::select_evaluation(*this, expr, T_update());
 }
 

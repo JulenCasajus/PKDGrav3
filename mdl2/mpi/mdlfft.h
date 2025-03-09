@@ -6,7 +6,7 @@
 */
 
 typedef struct mdlGridContext {
-    uint32_t n1,n2,n3;     /* Real dimensions */
+    uint32_t n1, n2, n3;     /* Real dimensions */
     uint32_t a1;           /* Actual size of dimension 1 */
     uint32_t sSlab, nSlab; /* Start and number of slabs */
     uint64_t nLocal;       /* Number of local elements */

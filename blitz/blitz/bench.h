@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -63,7 +63,7 @@ public:
 
     ~Benchmark();
 
-    void addImplementation(BenchmarkImplementation<T_parameter>* 
+    void addImplementation(BenchmarkImplementation<T_parameter>*
         implementation);
 
     void run(ostream& log = cout);
@@ -88,7 +88,7 @@ public:
     { return 19; }
 
     virtual T_parameter getParameterSetting(unsigned i) const
-    { return BZ_MATHFN_SCOPE(pow)(10.0, (i+1)/4.0); }
+    { return BZ_MATHFN_SCOPE(pow)(10.0, (i + 1)/4.0); }
 
     virtual long getIterationSetting(unsigned i) const
     { return 1000000L / getParameterSetting(i); }
@@ -104,8 +104,8 @@ private:
 
     BenchmarkImplementation<T_parameter>** implementations_;
 
-    Matrix<double,RowMajor> rates_;       // Iterations per second array
-    Matrix<double,RowMajor> Mflops_;
+    Matrix < double, RowMajor> rates_;       // Iterations per second array
+    Matrix < double, RowMajor> Mflops_;
 };
 
 template<typename P_parameter>
@@ -123,9 +123,9 @@ public:
 
     virtual void run(long iterations) = 0;
 
-    virtual void runOverhead(long iterations) 
-    { 
-        for (long i=0; i < iterations; ++i)
+    virtual void runOverhead(long iterations)
+    {
+        for (long i = 0; i < iterations; ++i)
         {
         }
     };
@@ -138,6 +138,6 @@ public:
 
 BZ_NAMESPACE_END
 
-#include <blitz/bench.cc>  
+#include <blitz/bench.cc>
 
 #endif // BZ_BENCH_H

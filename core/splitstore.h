@@ -25,12 +25,12 @@
 //! The length of the elements is choosen at run-time before the
 //! container is created. This class provides a way to access the
 //! individual fields
-template<typename DATA,typename FIELD>
-class splitStore : public dataFields<DATA,FIELD> {
+template<typename DATA, typename FIELD>
+class splitStore : public dataFields<DATA, FIELD> {
 public:
     using value_type = DATA;
-    using dataFields<DATA,FIELD>::Element;
-    using dataFields<DATA,FIELD>::ElementSize;
+    using dataFields<DATA, FIELD>::Element;
+    using dataFields<DATA, FIELD>::ElementSize;
     splitStore() = default;
 protected:
     std::vector<DATA *> tiles; //!< Array of "tiles"
@@ -62,13 +62,13 @@ public:
     }
 
     auto AlignNode() {
-        if (nNodes&1) ++nNodes;
+        if (nNodes & 1) ++nNodes;
         return nNodes;
     }
 
     //! Allocate one or more elements. Extend if necessary
     //! \param n Number of elements to allocate
-    auto AllocNode(int n=1) {
+    auto AllocNode(int n = 1) {
         int iNode = nNodes;
         nNodes += n;
         while (nNodes > nMaxNodes) extend();
@@ -78,7 +78,7 @@ public:
     //! Set the size and location of the storage.
     //! \param p Pointer to the block of storage
     //! \param n Maximum number of element
-    void setStore(int Lo, int Hi, uint64_t nData=0, void *pData=nullptr) {
+    void setStore(int Lo, int Hi, uint64_t nData = 0, void *pData = nullptr) {
         nBitsLo = Lo;
         nBitsHi = Hi;
         iMask = (1<<nBitsLo) - 1;
@@ -87,7 +87,7 @@ public:
         // If we were given a block of storage then try to use it for the first block of tiles
         auto tile_size = ElementSize() * (1<<nBitsLo);
         auto p = static_cast<char *>(pData);
-        while (nData>tile_size) {
+        while (nData > tile_size) {
             tiles.push_back(reinterpret_cast<DATA *>(p));
             nData -= tile_size;
             p += tile_size;
@@ -97,11 +97,11 @@ public:
         if (tiles.empty()) extend(); // Make sure that we have at least one tile
     }
 
-    DATA *Element(int iNode) const { return this->Element(tiles[iNode>>nBitsLo],iNode&iMask); }
+    DATA *Element(int iNode) const { return this->Element(tiles[iNode>>nBitsLo], iNode & iMask); }
     // int FreeStore() const { return nStore; }
     // int Local() const { return nLocal; }
-    // int SetLocal(int n) { return (nLocal=n);}
-    // int AddLocal(int n) { return (nLocal+=n);}
+    // int SetLocal(int n) { return (nLocal = n);}
+    // int AddLocal(int n) { return (nLocal += n);}
     DATA *operator[](int i) {return Element(i);}
 
     virtual ~splitStore() {

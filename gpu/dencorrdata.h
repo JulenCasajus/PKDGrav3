@@ -23,15 +23,15 @@
 
 namespace gpu {
 
-inline double getFlopsDenCorr(workParticle *wp,ilpTile &tile) {
-    return 0.0*wp->nP*tile.count();
+inline double getFlopsDenCorr(workParticle *wp, ilpTile &tile) {
+    return 0.0 * wp->nP * tile.count();
 }
 
 inline int copyBLKs(denCorrInteract *out, ilpTile &in) {
     auto n = in.width;
     auto nIlp = in.count();
-    int i, nBlk = (nIlp+n-1) / n;
-    for (i=0; i<nBlk; ++i) {
+    int i, nBlk = (nIlp + n - 1) / n;
+    for (i = 0; i < nBlk; ++i) {
         memcpy(&out[i].dx,      &in[i].dx,      sizeof(out[i].dx));
         memcpy(&out[i].dy,      &in[i].dy,      sizeof(out[i].dy));
         memcpy(&out[i].dz,      &in[i].dz,      sizeof(out[i].dz));
@@ -44,7 +44,7 @@ inline int copyBLKs(denCorrInteract *out, ilpTile &in) {
 
 /// Extend hostData to keeps track of interaction lists and work packages.
 /// We are still GPU agnostic.
-template<int WIDTH=32>
+template<int WIDTH = 32>
 class denCorrData : public hostData {
 protected:
     bool bGravStep;
@@ -76,15 +76,15 @@ public:
         const auto nP = wp->nP;                                 // Queue this many particles
         const auto nI = tile.count();                           // ... operating on this many interactions
 
-        if (inputSize<BLK>(nP,nI) > requestBufferSize - 1024) return false;     // Refuse if this tile won't fit in this buffer
-        if (outputSize<BLK>(nP,nI) > requestBufferSize) return false;           // Refuse if this response won't fit
+        if (inputSize<BLK>(nP, nI) > requestBufferSize - 1024) return false;     // Refuse if this tile won't fit in this buffer
+        if (outputSize<BLK>(nP, nI) > requestBufferSize) return false;           // Refuse if this response won't fit
         auto blk = reinterpret_cast<denCorrBlk<WIDTH> *>(pHostBufIn);             // Copy the blocks to the input buffer
-        nTotalInteractionBlocks += copyBLKs(blk+nTotalInteractionBlocks,tile); // (the ILP tile can now be freed/reused)
+        nTotalInteractionBlocks += copyBLKs(blk + nTotalInteractionBlocks, tile); // (the ILP tile can now be freed / reused)
         nTotalParticles += align_nP(nP);
 
         ++wp->nRefs;
-        work.emplace_back(wp,tile.count());
-        wp->dFlopSingleGPU += getFlopsDenCorr(wp,tile);
+        work.emplace_back(wp, tile.count());
+        wp->dFlopSingleGPU += getFlopsDenCorr(wp, tile);
         return true;
     }
     void prepare() {
@@ -96,14 +96,14 @@ public:
         // The interaction block descriptors
         auto *__restrict__ wuHost = reinterpret_cast<ppWorkUnit *>(partHost + nTotalParticles);
         uint32_t iP = 0;
-        for ( auto &w : work ) {
+        for (auto &w : work) {
             int nI = w.nInteractions;
             auto nP = w.wp->nP;
             auto *pInfoIn = w.wp->pInfoIn;
             auto nBlocks = (nI + WIDTH - 1) / WIDTH;
 
             // Generate a interaction block descriptor for each block
-            for (auto j=0; j<nBlocks; ++j) {
+            for (auto j = 0; j < nBlocks; ++j) {
                 wuHost->nP = nP;
                 wuHost->iP = iP;
                 wuHost->nI = nI > WIDTH ? WIDTH : nI;
@@ -112,7 +112,7 @@ public:
             }
 
             // Copy in nP particles
-            for (auto j=0; j<nP; ++j) {
+            for (auto j = 0; j < nP; ++j) {
                 partHost[j].dx    = pInfoIn[j].r[0];
                 partHost[j].dy    = pInfoIn[j].r[1];
                 partHost[j].dz    = pInfoIn[j].r[2];
@@ -123,7 +123,7 @@ public:
             iP += nP;
         }
         // Pad the work unit
-        for (auto i=nTotalInteractionBlocks; i&wp_unit_mask; ++i) {
+        for (auto i = nTotalInteractionBlocks; i & wp_unit_mask; ++i) {
             wuHost->nP = 0;
             wuHost->iP = 0;
             wuHost->nI = 0;
@@ -138,21 +138,21 @@ public:
 
     auto align_nP(int nP) {
         constexpr int mask = 32 * sizeof(float) / sizeof(denCorrInput) - 1;
-        static_assert(32 * sizeof(float) == (mask+1)*sizeof(denCorrInput));
+        static_assert(32 * sizeof(float) == (mask + 1)*sizeof(denCorrInput));
         return (nP + mask) & ~mask;
     }
 
     template<class BLK>
-    int inputSize(int nP=0, int nI=0) {
-        const auto nBlocks = (nI+WIDTH-1) / WIDTH; // number of interaction blocks needed
+    int inputSize(int nP = 0, int nI = 0) {
+        const auto nBlocks = (nI + WIDTH - 1) / WIDTH; // number of interaction blocks needed
         return (nBlocks + nTotalInteractionBlocks) * (sizeof(BLK) + sizeof(ppWorkUnit))
                + (align_nP(nP) + nTotalParticles) * sizeof(denCorrInput)
                + wp_unit_mask * sizeof(ppWorkUnit);
     }
 
     template<class BLK>
-    int outputSize(int nP=0, int nI=0) {
-        //const auto nBlocks = (nI+BLK::width-1) / BLK::width; // number of interaction blocks needed
+    int outputSize(int nP = 0, int nI = 0) {
+        //const auto nBlocks = (nI + BLK::width - 1) / BLK::width; // number of interaction blocks needed
         return (align_nP(nP) + nTotalParticles) * sizeof(denCorrResult);
     }
 };

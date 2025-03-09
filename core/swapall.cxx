@@ -28,6 +28,6 @@ int ServiceSwapAll::operator()(int nIn, void *vin, void *vout) {
     static_assert(std::is_void<output>());
     auto pkd = node_pst->plcl->pkd;
     assert(nIn == sizeof(input));
-    pkdSwapAll(pkd,in->idSwap);
+    pkdSwapAll(pkd, in->idSwap);
     return 0;
 }

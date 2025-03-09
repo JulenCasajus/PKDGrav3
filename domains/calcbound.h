@@ -21,8 +21,8 @@ public:
     using input = void;
     using output = Bound;
     explicit ServiceCalcBound(PST pst)
-        : TraverseCombinePST(pst,PST_CALCBOUND,0,sizeof(output),"CalcBound") {}
+        : TraverseCombinePST(pst, PST_CALCBOUND, 0, sizeof(output), "CalcBound") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
-    virtual int Combine(void *vout,void *vout2);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
+    virtual int Combine(void *vout, void *vout2);
 };

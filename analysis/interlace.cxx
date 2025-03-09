@@ -31,7 +31,7 @@ void pkdInterlace(PKD pkd, int iGridTarget, int iGridSource) {
     complex_array_t K1, K2;
     auto data1 = reinterpret_cast <real_t *> (mdlSetArray(pkd->mdl, 0, 0, pkd->pLite)) + fft->rgrid->nLocal * iGridTarget;
     auto data2 = reinterpret_cast <real_t *> (mdlSetArray(pkd->mdl, 0, 0, pkd->pLite)) + fft->rgrid->nLocal * iGridSource;
-    
+
     G.setupArray(data1, K1);
     G.setupArray(data2, K2);
 
@@ -51,9 +51,9 @@ void pkdInterlace(PKD pkd, int iGridTarget, int iGridSource) {
 int pstInterlace(PST pst, void *vin, int nIn, void *vout, int nOut) {
     LCL *plcl = pst->plcl;
     struct inInterlace *in = reinterpret_cast <struct inInterlace *> (vin);
-    
+
     assert(nIn == sizeof(struct inInterlace));
-    
+
     if (pstNotCore(pst)) {
         int rID = mdlReqService(pst->mdl, pst->idUpper, PST_INTERLACE, vin, nIn);
         pstInterlace(pst->pstLower, vin, nIn, NULL, 0);

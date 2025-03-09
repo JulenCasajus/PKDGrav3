@@ -41,23 +41,23 @@
 **   uint64_t N, i;
 **
 **   fio = fioOpen("test.std");
-**   if (fio==NULL) ...
+**   if (fio == NULL) ...
 **
-**   N = fioGetN(fio,FIO_SPECIES_ALL);
-**   for( i=0; i<N; i++ ) {
-**       switch(fioSpecies(fio)) {
+**   N = fioGetN(fio, FIO_SPECIES_ALL);
+**   for (i = 0; i < N; i++) {
+**       switch (fioSpecies(fio)) {
 **       case FIO_SPECIES_DARK:
-**           fioReadDark(fio,...);
+**           fioReadDark(fio, ...);
 **           break;
 **       case FIO_SPECIES_SPH:
-**           fioReadSph(fio,...);
+**           fioReadSph(fio, ...);
 **           break;
 **       case FIO_SPECIES_STAR:
-**           fioReadStar(fio,...);
+**           fioReadStar(fio, ...);
 **           break;
 **           }
 **       default:
-**           perror("invalid/unknown particle type");
+**           perror("invalid/unknown/particle type");
 **           }
 **       }
 **
@@ -69,12 +69,12 @@
 **   uint64_t nDark, i;
 **
 **   fio = fioOpen("test.std");
-**   if (fio==NULL) ...
+**   if (fio == NULL) ...
 **
-**   nDark = fioGetN(fio,FIO_SPECIES_DARK);
-**   fioSeek(fio,0,FIO_SPECIES_DARK);
-**   for( i=0; i<nDark; i++ ) {
-**       fioReadDark(fio,...);
+**   nDark = fioGetN(fio, FIO_SPECIES_DARK);
+**   fioSeek(fio, 0, FIO_SPECIES_DARK);
+**   for (i = 0; i < nDark; i++) {
+**       fioReadDark(fio, ...);
 **       }
 **
 **   fioClose(fio);
@@ -120,7 +120,7 @@ typedef enum {
 ** These are the valid data types for attributes.
 */
 typedef enum {
-    FIO_TYPE_FLOAT=0,
+    FIO_TYPE_FLOAT = 0,
     FIO_TYPE_DOUBLE,
     FIO_TYPE_UINT32,
     FIO_TYPE_UINT64,
@@ -140,10 +140,10 @@ enum FIO_SPECIES {
     FIO_SPECIES_BH,
     FIO_SPECIES_UNKNOWN,    /* Deleted for example */
     FIO_SPECIES_LAST,       /* This is the count of valid species (all is added on the end) */
-    FIO_SPECIES_ALL=FIO_SPECIES_LAST /* Internally keep an ALL count */
+    FIO_SPECIES_ALL = FIO_SPECIES_LAST /* Internally keep an ALL count */
 };
 
-typedef uint64_t fioSpeciesList[FIO_SPECIES_LAST+1];
+typedef uint64_t fioSpeciesList[FIO_SPECIES_LAST + 1];
 
 typedef struct {
     uint64_t       iFirst;      /* Starting particle index */
@@ -164,46 +164,46 @@ typedef struct fioInfo {
     int        mFlags;
     fioSpeciesList nSpecies;
 
-    /* This is for multi-file support */
+    /* This is for multi - file support */
     fioFileList fileList;
 
     void (*fcnClose)(struct fioInfo *fio);
-    int  (*fcnSeek) (struct fioInfo *fio,uint64_t iPart,enum FIO_SPECIES eSpecies);
+    int  (*fcnSeek) (struct fioInfo *fio, uint64_t iPart, enum FIO_SPECIES eSpecies);
     enum FIO_SPECIES (*fcnSpecies) (struct fioInfo *fio);
 
     int  (*fcnReadDark) (struct fioInfo *fio,
-                         uint64_t *piParticleID,double *pdPos,double *pdVel,
-                         float *pfMass,float *pfSoft,float *pfPot,float *pfDen);
+                         uint64_t *piParticleID, double *pdPos, double *pdVel,
+                         float *pfMass, float *pfSoft, float *pfPot, float *pfDen);
     int  (*fcnReadSph) (struct fioInfo *fio,
-                        uint64_t *piParticleID,double *pdPos,double *pdVel,
-                        float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-                        float *pfTemp,float *pfMetals,float *pfOtherData);
+                        uint64_t *piParticleID, double *pdPos, double *pdVel,
+                        float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+                        float *pfTemp, float *pfMetals, float *pfOtherData);
     int  (*fcnReadStar) (struct fioInfo *fio,
-                         uint64_t *piParticleID,double *pdPos,double *pdVel,
-                         float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-                         float *pfMetals,float *pfTform,float *pfOtherData);
+                         uint64_t *piParticleID, double *pdPos, double *pdVel,
+                         float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+                         float *pfMetals, float *pfTform, float *pfOtherData);
     /* IA: We left some dummy arguments, that later can be renamed to actual IO variables interesting
      *  for black holes */
     int  (*fcnReadBH) (struct fioInfo *fio,
-                       uint64_t *piParticleID,double *pdPos,double *pdVel,
-                       float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-                       float *pfOtherData,float *pfTform);
+                       uint64_t *piParticleID, double *pdPos, double *pdVel,
+                       float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+                       float *pfOtherData, float *pfTform);
 
     int  (*fcnWriteDark) (struct fioInfo *fio,
-                          uint64_t iParticleID,const double *pdPos,const double *pdVel,
-                          float fMass,float fSoft,float fPot,float fDen,float *pfOtherData);
+                          uint64_t iParticleID, const double *pdPos, const double *pdVel,
+                          float fMass, float fSoft, float fPot, float fDen, float *pfOtherData);
     int  (*fcnWriteSph) (struct fioInfo *fio,
-                         uint64_t iParticleID,const double *pdPos,const double *pdVel,
-                         float fMass,float fSoft,float fPot,float fDen,
-                         float fTemp,float *pfMetals,float fBall,float fIntEnergy,float *pfOtherData);
+                         uint64_t iParticleID, const double *pdPos, const double *pdVel,
+                         float fMass, float fSoft, float fPot, float fDen,
+                         float fTemp, float *pfMetals, float fBall, float fIntEnergy, float *pfOtherData);
     int  (*fcnWriteStar) (struct fioInfo *fio,
-                          uint64_t iParticleID,const double *pdPos,const double *pdVel,
-                          float fMass,float fSoft,float fPot,float fDen,
-                          float *pfMetals,float *pfOtherData);
+                          uint64_t iParticleID, const double *pdPos, const double *pdVel,
+                          float fMass, float fSoft, float fPot, float fDen,
+                          float *pfMetals, float *pfOtherData);
     int  (*fcnWriteBH) (struct fioInfo *fio,
-                        uint64_t iParticleID,const double *pdPos,const double *pdVel,
-                        float fMass,float fSoft,float fPot,float fDen,
-                        float *pfOtherData,float fTform);
+                        uint64_t iParticleID, const double *pdPos, const double *pdVel,
+                        float fMass, float fSoft, float fPot, float fDen,
+                        float *pfOtherData, float fTform);
 
     int  (*fcnGetAttr)(struct fioInfo *fio, const int headerType,
                        const char *attr, FIO_TYPE dataType, void *data);
@@ -219,12 +219,12 @@ extern "C" {
 #endif
 
 /*
-** Auto-detects the file format by looking at header information.
+** Auto - detects the file format by looking at header information.
 */
-FIO fioOpen(const char *fileName,double dOmega0,double dOmegab);
-FIO fioOpenMany(int nFiles, const char *const *fileNames,double dOmega0,double dOmegab);
+FIO fioOpen(const char *fileName, double dOmega0, double dOmegab);
+FIO fioOpenMany(int nFiles, const char *const *fileNames, double dOmega0, double dOmegab);
 size_t fioDump(FIO fio, size_t nBytes, void *pBuffer);
-FIO fioLoad(void *pBuffer,double dOmega0,double dOmegab);
+FIO fioLoad(void *pBuffer, double dOmega0, double dOmegab);
 
 /*
 ** Close an open file of any format.
@@ -250,7 +250,7 @@ static inline FIO_MODE fioMode(FIO fio) {
 /*
 ** Returns the number of particles of a given species (or ALL).
 */
-static inline uint64_t fioGetN(FIO fio,enum FIO_SPECIES eSpecies) {
+static inline uint64_t fioGetN(FIO fio, enum FIO_SPECIES eSpecies) {
     assert(eSpecies<=FIO_SPECIES_LAST);
     return fio->nSpecies[eSpecies];
 }
@@ -258,8 +258,8 @@ static inline uint64_t fioGetN(FIO fio,enum FIO_SPECIES eSpecies) {
 /*
 ** Seek to the N'th particle or the N'th particle of a given species.
 */
-static inline int fioSeek(struct fioInfo *fio,uint64_t iPart,enum FIO_SPECIES eSpecies) {
-    return (*fio->fcnSeek)(fio,iPart,eSpecies);
+static inline int fioSeek(struct fioInfo *fio, uint64_t iPart, enum FIO_SPECIES eSpecies) {
+    return (*fio->fcnSeek)(fio, iPart, eSpecies);
 }
 
 /*
@@ -275,59 +275,59 @@ static inline enum FIO_SPECIES fioSpecies(struct fioInfo *fio) {
 ** specific seek is performed to start reading a particular type.
 */
 static inline int fioReadDark(
-    FIO fio,uint64_t *piParticleID,double *pdPos,double *pdVel,
-    float *pfMass,float *pfSoft,float *pfPot,float *pfDen) {
-    return (*fio->fcnReadDark)(fio,piParticleID,pdPos,pdVel,pfMass,pfSoft,pfPot,pfDen);
+    FIO fio, uint64_t *piParticleID, double *pdPos, double *pdVel,
+    float *pfMass, float *pfSoft, float *pfPot, float *pfDen) {
+    return (*fio->fcnReadDark)(fio, piParticleID, pdPos, pdVel, pfMass, pfSoft, pfPot, pfDen);
 }
 static inline int  fioReadSph(
-    FIO fio,uint64_t *piParticleID,double *pdPos,double *pdVel,
-    float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-    float *pfTemp,float *pfMetals,float *pfOtherData) {
-    return (*fio->fcnReadSph)(fio,piParticleID,pdPos,pdVel,pfMass,pfSoft,pfPot,pfDen,
-                              pfTemp,pfMetals,pfOtherData);
+    FIO fio, uint64_t *piParticleID, double *pdPos, double *pdVel,
+    float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+    float *pfTemp, float *pfMetals, float *pfOtherData) {
+    return (*fio->fcnReadSph)(fio, piParticleID, pdPos, pdVel, pfMass, pfSoft, pfPot, pfDen,
+                              pfTemp, pfMetals, pfOtherData);
 }
 static inline int fioReadStar(
-    FIO fio,uint64_t *piParticleID,double *pdPos,double *pdVel,
-    float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-    float *pfMetals,float *pfTform,float *pfOtherData) {
-    return (*fio->fcnReadStar)(fio,piParticleID,pdPos,pdVel,pfMass,pfSoft,pfPot,pfDen,
-                               pfMetals,pfTform,pfOtherData);
+    FIO fio, uint64_t *piParticleID, double *pdPos, double *pdVel,
+    float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+    float *pfMetals, float *pfTform, float *pfOtherData) {
+    return (*fio->fcnReadStar)(fio, piParticleID, pdPos, pdVel, pfMass, pfSoft, pfPot, pfDen,
+                               pfMetals, pfTform, pfOtherData);
 }
 static inline int fioReadBH(
-    FIO fio,uint64_t *piParticleID,double *pdPos,double *pdVel,
-    float *pfMass,float *pfSoft,float *pfPot,float *pfDen,
-    float *pfOtherData,float *pfTform) {
-    return (*fio->fcnReadBH)(fio,piParticleID,pdPos,pdVel,pfMass,pfSoft,pfPot,pfDen,
-                             pfOtherData,pfTform);
+    FIO fio, uint64_t *piParticleID, double *pdPos, double *pdVel,
+    float *pfMass, float *pfSoft, float *pfPot, float *pfDen,
+    float *pfOtherData, float *pfTform) {
+    return (*fio->fcnReadBH)(fio, piParticleID, pdPos, pdVel, pfMass, pfSoft, pfPot, pfDen,
+                             pfOtherData, pfTform);
 }
 /*
 ** Write a particle.  Must already be positioned at the appropriate particle.
 */
 static inline int fioWriteDark(
-    FIO fio,uint64_t iParticleID,const double *pdPos,const double *pdVel,
-    float fMass,float fSoft,float fPot,float fDen,float *pfOtherData) {
-    return (*fio->fcnWriteDark)(fio,iParticleID,pdPos,pdVel,fMass,fSoft,fPot,fDen,pfOtherData);
+    FIO fio, uint64_t iParticleID, const double *pdPos, const double *pdVel,
+    float fMass, float fSoft, float fPot, float fDen, float *pfOtherData) {
+    return (*fio->fcnWriteDark)(fio, iParticleID, pdPos, pdVel, fMass, fSoft, fPot, fDen, pfOtherData);
 }
 static inline int  fioWriteSph(
-    FIO fio,uint64_t iParticleID,const double *pdPos,const double *pdVel,
-    float fMass,float fSoft,float fPot,float fDen,
-    float fTemp,float *pfMetals,float fBall,float fIntEnergy,float *pfOtherData) {
-    return (*fio->fcnWriteSph)(fio,iParticleID,pdPos,pdVel,fMass,fSoft,fPot,fDen,
-                               fTemp,pfMetals,fBall,fIntEnergy,pfOtherData);
+    FIO fio, uint64_t iParticleID, const double *pdPos, const double *pdVel,
+    float fMass, float fSoft, float fPot, float fDen,
+    float fTemp, float *pfMetals, float fBall, float fIntEnergy, float *pfOtherData) {
+    return (*fio->fcnWriteSph)(fio, iParticleID, pdPos, pdVel, fMass, fSoft, fPot, fDen,
+                               fTemp, pfMetals, fBall, fIntEnergy, pfOtherData);
 }
 static inline int fioWriteStar(
-    FIO fio,uint64_t iParticleID,const double *pdPos,const double *pdVel,
-    float fMass,float fSoft,float fPot,float fDen,
-    float *pfMetals,float *pfOtherData) {
-    return (*fio->fcnWriteStar)(fio,iParticleID,pdPos,pdVel,fMass,fSoft,fPot,fDen,
-                                pfMetals,pfOtherData);
+    FIO fio, uint64_t iParticleID, const double *pdPos, const double *pdVel,
+    float fMass, float fSoft, float fPot, float fDen,
+    float *pfMetals, float *pfOtherData) {
+    return (*fio->fcnWriteStar)(fio, iParticleID, pdPos, pdVel, fMass, fSoft, fPot, fDen,
+                                pfMetals, pfOtherData);
 }
 static inline int fioWriteBH(
-    FIO fio,uint64_t iParticleID,const double *pdPos,const double *pdVel,
-    float fMass,float fSoft,float fPot,float fDen,
-    float *pfOtherData,float fTform) {
-    return (*fio->fcnWriteBH)(fio,iParticleID,pdPos,pdVel,fMass,fSoft,fPot,fDen,
-                              pfOtherData,fTform);
+    FIO fio, uint64_t iParticleID, const double *pdPos, const double *pdVel,
+    float fMass, float fSoft, float fPot, float fDen,
+    float *pfOtherData, float fTform) {
+    return (*fio->fcnWriteBH)(fio, iParticleID, pdPos, pdVel, fMass, fSoft, fPot, fDen,
+                              pfOtherData, fTform);
 }
 /*
 ** Returns the value of a given attribute.  Only "dTime" is available for
@@ -335,7 +335,7 @@ static inline int fioWriteBH(
 */
 static inline int fioGetAttr(FIO fio, int headerType,
                              const char *attr, FIO_TYPE dataType, void *data) {
-    return (*fio->fcnGetAttr)(fio, headerType, attr,dataType,data);
+    return (*fio->fcnGetAttr)(fio, headerType, attr, dataType, data);
 }
 
 /*
@@ -344,7 +344,7 @@ static inline int fioGetAttr(FIO fio, int headerType,
 */
 static inline int fioSetAttr(FIO fio, int headerType,
                              const char *attr, FIO_TYPE dataType, int size, void *data) {
-    return (*fio->fcnSetAttr)(fio, headerType, attr,dataType,size,data);
+    return (*fio->fcnSetAttr)(fio, headerType, attr, dataType, size, data);
 }
 
 static inline int fioGetFlags(FIO fio) {
@@ -355,10 +355,10 @@ static inline int fioGetFlags(FIO fio) {
 ** TIPSY FORMAT
 \******************************************************************************/
 
-FIO fioTipsyCreate(const char *fileName,int mFlags,int bStandard,
-                   double dTime,uint64_t nSph, uint64_t nDark, uint64_t nStar);
-FIO fioTipsyAppend(const char *fileName,int mFlags,int bStandard);
-FIO fioTipsyCreatePart(const char *fileName,int bAppend,int mFlags,int bStandard,
+FIO fioTipsyCreate(const char *fileName, int mFlags, int bStandard,
+                   double dTime, uint64_t nSph, uint64_t nDark, uint64_t nStar);
+FIO fioTipsyAppend(const char *fileName, int mFlags, int bStandard);
+FIO fioTipsyCreatePart(const char *fileName, int bAppend, int mFlags, int bStandard,
                        double dTime, uint64_t nSph, uint64_t nDark, uint64_t nStar,
                        uint64_t iStart);
 int fioTipsyIsDouble(FIO fio);
@@ -375,14 +375,14 @@ int fioTipsyIsStandard(FIO fio);
 #define HDF5_COSMO_G  1
 #define HDF5_UNITS_G  2
 #define HDF5_PARAM_G  3
-FIO fioHDF5Create(const char *fileName,int mFlags);
+FIO fioHDF5Create(const char *fileName, int mFlags);
 
 /******************************************************************************\
 ** GADGET2 FORMAT
 \******************************************************************************/
 
 FIO fioGadgetCreate(
-    const char *fileName,int mFlags, double dTime, double Lbox,
+    const char *fileName, int mFlags, double dTime, double Lbox,
     double Omega0, double OmegaLambda, double HubbleParam,
     int nTypes, const uint64_t *nPart,
     int nFiles, const uint64_t *nAll,

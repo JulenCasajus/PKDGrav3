@@ -22,21 +22,21 @@
 #include "blitz/array.h"
 
 typedef struct {
-    blitz::TinyVector<float,3> dr;
-    blitz::TinyVector<float,3> v;
+    blitz::TinyVector<float, 3> dr;
+    blitz::TinyVector<float, 3> v;
 } basicParticle;
 
 typedef struct {
     uint64_t ix : 21;
     uint64_t iy : 21;
     uint64_t iz : 21;
-    blitz::TinyVector<float,3> dr;
-    blitz::TinyVector<float,3> v;
+    blitz::TinyVector<float, 3> dr;
+    blitz::TinyVector<float, 3> v;
 } expandParticle;
 
 typedef struct {
-    blitz::TinyVector<int32_t,3> r;
-    blitz::TinyVector<float,3> v;
+    blitz::TinyVector<int32_t, 3> r;
+    blitz::TinyVector<float, 3> v;
 } integerParticle;
 
 typedef union {
@@ -48,15 +48,15 @@ typedef union {
 #ifdef MDL_FFTW
 
 typedef struct {
-    FFTW3(real) x,y,z;
+    FFTW3(real) x, y, z;
 } gridpos;
 
 typedef struct {
-    FFTW3(real) x,y,z;
-    FFTW3(real) vx,vy,vz;
+    FFTW3(real) x, y, z;
+    FFTW3(real) vx, vy, vz;
 } gridpsc;
 
-int pkdGenerateIC(PKD pkd,MDLFFT fft,int iSeed,int bFixed,float fPhase,int nGrid,int b2LPT,double dBoxSize,
-                  double a,int nTf, double *tk, double *tf, double *noiseMean, double *noiseCSQ);
+int pkdGenerateIC(PKD pkd, MDLFFT fft, int iSeed, int bFixed, float fPhase, int nGrid, int b2LPT, double dBoxSize,
+                  double a, int nTf, double *tk, double *tf, double *noiseMean, double *noiseCSQ);
 #endif
 #endif

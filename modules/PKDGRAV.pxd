@@ -166,9 +166,9 @@ cdef extern from *:
 
     template<typename T>
     inline MeasurePkStruct UnpackMeasurePk(T t) {
-        return {std::move(std::get<0>(t)), 
-                std::move(std::get<1>(t)), 
-                std::move(std::get<2>(t)), 
+        return {std::move(std::get<0>(t)),
+                std::move(std::get<1>(t)),
+                std::move(std::get<2>(t)),
                 std::move(std::get<3>(t))};
     }
 

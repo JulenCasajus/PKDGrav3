@@ -23,8 +23,8 @@
 class ServiceRestore : public ServiceInput {
 public:
     explicit ServiceRestore(PST pst)
-        : ServiceInput(pst,PST_RESTORE) {}
-    virtual void Read(PST pst,uint64_t iElement,const std::string &filename,uint64_t iBeg,uint64_t iEnd) override;
+        : ServiceInput(pst, PST_RESTORE) {}
+    virtual void Read(PST pst, uint64_t iElement, const std::string &filename, uint64_t iBeg, uint64_t iEnd) override;
 };
 
 #endif /* E5B60112_B4E2_46CB_AC8A_564BF342E5D3 */

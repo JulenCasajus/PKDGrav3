@@ -70,11 +70,11 @@
 #define PTHREAD_CANCELED ((void *) 0xDEADBEEF)
 
 #define PTHREAD_ONCE_INIT 0
-#define PTHREAD_MUTEX_INITIALIZER {(PRTL_CRITICAL_SECTION_DEBUG)-1,-1,0,0,0,0}
+#define PTHREAD_MUTEX_INITIALIZER {(PRTL_CRITICAL_SECTION_DEBUG)-1, -1, 0, 0, 0, 0}
 #define PTHREAD_RWLOCK_INITIALIZER {0}
 #define PTHREAD_COND_INITIALIZER {0}
 #define PTHREAD_BARRIER_INITIALIZER \
-    {0,0,PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER}
+    {0, 0, PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER}
 #define PTHREAD_SPINLOCK_INITIALIZER 0
 
 #define PTHREAD_DESTRUCTOR_ITERATIONS 256
@@ -453,7 +453,7 @@ static int pthread_rwlock_timedrdlock(pthread_rwlock_t *l, const struct timespec
 
     pthread_testcancel();
 
-    /* Use a busy-loop */
+    /* Use a busy - loop */
     while (1) {
         /* Try to grab lock */
         if (!pthread_rwlock_tryrdlock(l)) return 0;
@@ -472,7 +472,7 @@ static int pthread_rwlock_timedwrlock(pthread_rwlock_t *l, const struct timespec
 
     pthread_testcancel();
 
-    /* Use a busy-loop */
+    /* Use a busy - loop */
     while (1) {
         /* Try to grab lock */
         if (!pthread_rwlock_trywrlock(l)) return 0;
@@ -1011,7 +1011,7 @@ static int pthread_key_create(pthread_key_t *key, void (* dest)(void *)) {
     }
 
     /* Clear new region */
-    memset((void *) &d[_pthread_key_max], 0, (nmax-_pthread_key_max)*sizeof(void *));
+    memset((void *) &d[_pthread_key_max], 0, (nmax - _pthread_key_max)*sizeof(void *));
 
     /* Use new region */
     _pthread_key_dest = d;
@@ -1089,7 +1089,7 @@ static int pthread_spin_destroy(pthread_spinlock_t *l) {
     return 0;
 }
 
-/* No-fair spinlock due to lack of knowledge of thread number */
+/* No - fair spinlock due to lack of knowledge of thread number */
 static int pthread_spin_lock(pthread_spinlock_t *l) {
     while (_InterlockedExchange(l, EBUSY)) {
         /* Don't lock the bus whilst waiting */
@@ -1203,7 +1203,7 @@ static int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *a, int s) {
 
 
 /* No fork() in windows - so ignore this */
-#define pthread_atfork(F1,F2,F3) 0
+#define pthread_atfork(F1, F2, F3) 0
 
 /* Windows has rudimentary signals support */
 #define pthread_kill(T, S) 0

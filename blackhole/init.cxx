@@ -22,8 +22,8 @@ int MSR::ValidateBlackholeParam() {
     if (parameters.get_bBHAccretion()) {
         if (parameters.get_dBHAccretionAlpha() <= 0) {
             fprintf(stderr, "ERROR: dBHAccretionAlpha should be positive."
-                    "If you want to avoid boosting the Bondi accretion rate,"
-                    "just set dBHAccretionAlpha=1.0\n");
+                    "If you want to avoid boosting the Bondi accretion rate, "
+                    "just set dBHAccretionAlpha = 1.0\n");
             return 0;
         }
     }

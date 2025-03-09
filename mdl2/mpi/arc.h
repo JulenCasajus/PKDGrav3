@@ -48,10 +48,10 @@ public:
 class GARC {
 public:
     virtual ~GARC() = default;
-    virtual void *fetch(uint32_t uIndex,    uint32_t uId,bool bLock,bool bModify,bool bVirtual) = 0;
-    virtual void *fetch(uint32_t uHash, const void *pKey,bool bLock,bool bModify,bool bVirtual) = 0;
+    virtual void *fetch(uint32_t uIndex,    uint32_t uId, bool bLock, bool bModify, bool bVirtual) = 0;
+    virtual void *fetch(uint32_t uHash, const void *pKey, bool bLock, bool bModify, bool bVirtual) = 0;
     virtual void *inject(uint32_t uHash, uint32_t uId, const void *pKey) = 0;
-    virtual void initialize(ARChelper *helper, uint32_t uCacheSizeInBytes,uint32_t uLineSizeInBytes,uint32_t nLineBits=0) = 0;
+    virtual void initialize(ARChelper *helper, uint32_t uCacheSizeInBytes, uint32_t uLineSizeInBytes, uint32_t nLineBits = 0) = 0;
     virtual void release(void *vp) = 0;
     virtual void clear() = 0;
     virtual uint32_t key_size() = 0;
@@ -63,7 +63,7 @@ uint64_t murmur(const uint64_t *key) {
     const uint64_t m = 0xc6a4a7935bd1e995;
     const int r = 47;
     uint64_t h = 0xdeadbeefdeadbeef;
-    for (auto i=0; i<len; ++i) {
+    for (auto i = 0; i < len; ++i) {
         uint64_t k = *key++;
         k *= m;
         k ^= k >> r;
@@ -82,7 +82,7 @@ uint32_t murmur2(const uint32_t *key) {
     const uint32_t m = 0x5bd1e995;
     const int r = 24;
     uint32_t h = 0xdeadbeef /*^ len : len will be the same */;
-    for (auto i=0; i<len; ++i) {
+    for (auto i = 0; i < len; ++i) {
         uint32_t k = *key++;
         k *= m;
         k ^= k >> r;
@@ -105,7 +105,7 @@ uint32_t murmur2(const uint32_t *key) {
 template<int len>
 uint32_t murmur3(const uint32_t *key) {
     uint32_t h = 0xdeadbeef;
-    for (auto i=0; i<len; ++i) {
+    for (auto i = 0; i < len; ++i) {
         uint32_t k = *key++;
         k *= 0xcc9e2d51;
         k = (k << 15) | (k >> 17);
@@ -128,15 +128,15 @@ using std::uint32_t;
 using std::uint64_t;
 using std::size_t;
 
-static inline uint32_t hash(uint32_t uLine,uint32_t uId) {
-    uint32_t key[] = {uLine,uId};
+static inline uint32_t hash(uint32_t uLine, uint32_t uId) {
+    uint32_t key[] = {uLine, uId};
     return murmur::murmur2<2>(key);
 }
 
 class GHASH {
 public:
     virtual ~GHASH() = default;
-    virtual class GARC *clone(GARC *arc=nullptr) = 0;
+    virtual class GARC *clone(GARC *arc = nullptr) = 0;
     virtual void  insert(uint32_t uHash, const void *pKey, void *data) = 0;
     virtual void *lookup(uint32_t uHash, const void *pKey) = 0;
     virtual void  remove(uint32_t uHash, const void *pKey) = 0;
@@ -149,12 +149,12 @@ protected:
     struct CDB {
         static const int whereBits = 3;
         uint64_t *data;                 // page's location in cache
-        uint32_t uId    : 31-whereBits; // Processor that owns this
+        uint32_t uId    : 31 - whereBits; // Processor that owns this
 uint32_t iWhere :    whereBits; // Which list we are on
         bool     bDirty :            1; // True if we need to flush
         uint32_t uPage;                 // page's ID number (or hash id for advanced keys)
 
-        explicit CDB(uint64_t *data=nullptr) : data(data), uId(0), iWhere(0), bDirty(0), uPage(0) {}
+        explicit CDB(uint64_t *data = nullptr) : data(data), uId(0), iWhere(0), bDirty(0), uPage(0) {}
         uint32_t    where()   const {return iWhere;}
         uint32_t    getId()   const {return uId;}
         uint32_t    getPage() const {return uPage;}
@@ -167,13 +167,13 @@ uint32_t iWhere :    whereBits; // Which list we are on
 protected:
     struct HashChain { struct HashChain *next; };
     typedef std::tuple<KEYS...> KEY;
-    typedef std::tuple<CDB,KEY> PAIR;
+    typedef std::tuple<CDB, KEY> PAIR;
     class ENTRY : public PAIR, public boost::intrusive::list_base_hook<>, public HashChain {};
-    typedef boost::intrusive::list<ENTRY,boost::intrusive::constant_time_size<true>> CDBL;
+    typedef boost::intrusive::list<ENTRY, boost::intrusive::constant_time_size < true>> CDBL;
 
     template<class T>
     constexpr T &get(HASH::ENTRY &t) noexcept
-    { return std::get<T,CDB,KEY>(static_cast<PAIR &>(t)); }
+    { return std::get<T, CDB, KEY>(static_cast<PAIR &>(t)); }
 
 protected:
     uint32_t uHashMask = 0;
@@ -185,9 +185,9 @@ protected:
     std::vector<HashChain> HashChains; // Collision chain (one for each hash value)
 protected:
     // Locate by advanced key, or by simple key
-    ENTRY *find_key(HashChain &Hash,const KEY &key, bool bRemove=false);
-    ENTRY *find_key(HashChain &Hash,const KEYS &... keys, bool bRemove=false);
-    ENTRY *find_key(HashChain &Hash,uint32_t uLine,uint32_t uId, bool bRemove=false);
+    ENTRY *find_key(HashChain &Hash, const KEY &key, bool bRemove = false);
+    ENTRY *find_key(HashChain &Hash, const KEYS &... keys, bool bRemove = false);
+    ENTRY *find_key(HashChain &Hash, uint32_t uLine, uint32_t uId, bool bRemove = false);
 
     typename CDBL::iterator move(uint32_t iTarget);
     typename CDBL::iterator move(uint32_t iTarget, typename CDBL::iterator item);
@@ -212,7 +212,7 @@ private:
     virtual void  remove(uint32_t uHash, const void *pKey) override;
 
 public:
-    virtual class GARC *clone(GARC *arc=nullptr) override;
+    virtual class GARC *clone(GARC *arc = nullptr) override;
     void print_statistics();
     void clear(); // Empty the hash table (by moving all elements to the free list)
     void resize(size_t count);
@@ -264,7 +264,7 @@ private:
     using HASH::HashChains;
     template<class T>
     constexpr T &get(ENTRY &t) noexcept
-    { return std::get<T,CDB,KEY>(static_cast<PAIR &>(t)); }
+    { return std::get<T, CDB, KEY>(static_cast<PAIR &>(t)); }
 
     typename std::vector<CDBL>::size_type target_T1;
     uint32_t nCache = 0;
@@ -279,21 +279,21 @@ private:
     void flush(ENTRY &temp);
 
     // Find a victim to give us some cache space. Victim is evicted.
-    auto victim(bool bInB2=false);
+    auto victim(bool bInB2 = false);
     auto replace(WHERE iTarget, typename CDBL::iterator item);
     auto replace(typename CDBL::iterator item);
-    auto replace(bool bInB2=false);
+    auto replace(bool bInB2 = false);
 
     // The element is already in the cache so we process a "hit"
     // On return, data will be valid, or it will be NULL and we have to fetch it.
-    void update(typename CDBL::iterator item,bool bLock,bool bModify);
+    void update(typename CDBL::iterator item, bool bLock, bool bModify);
 
     // Here we want to insert a new key that is not in the ARC cache.
     // This routine will return a free entry that we can use.
     auto insert_present(HashChain &Hash);
     auto insert_absent(HashChain &Hash);
 
-    void *fetch(uint32_t uHash,uint32_t uId,const KEY &key,bool bLock,bool bModify,bool bVirtual);
+    void *fetch(uint32_t uHash, uint32_t uId, const KEY &key, bool bLock, bool bModify, bool bVirtual);
     void *inject(uint32_t uHash, uint32_t uId, const KEY &key);
 
 public:
@@ -305,17 +305,17 @@ public:
     explicit ARC() = default;
     virtual ~ARC() = default;
 
-    virtual void initialize(ARChelper *helper, uint32_t uCacheSizeInBytes,uint32_t uLineSizeInBytes,uint32_t nLineBits=0) override;
-    virtual void clear() override; // Empty the cache. Evict/flush any dirty elements.
-    virtual uint32_t key_size() override {return std::tuple_size<KEY>::value ? sizeof(KEY) : 0;}
+    virtual void initialize(ARChelper *helper, uint32_t uCacheSizeInBytes, uint32_t uLineSizeInBytes, uint32_t nLineBits = 0) override;
+    virtual void clear() override; // Empty the cache. Evict / flush any dirty elements.
+    virtual uint32_t key_size() override {return std::tuple_size < KEY>::value ? sizeof(KEY) : 0;}
 
     // Decrements the lock count of an element. When the lock count is zero then it is eligible to be flushed.
     virtual void release(void *vp) override;
 
     // Fetch using simple or advanced key
-    void *fetch(uint32_t uHash,        const KEYS &... keys,bool bLock,bool bModify,bool bVirtual);
-    virtual void *fetch(uint32_t uIndex,    uint32_t uId,bool bLock,bool bModify,bool bVirtual) override;
-    virtual void *fetch(uint32_t uHash, const void *pKey,bool bLock,bool bModify,bool bVirtual) override;
+    void *fetch(uint32_t uHash,        const KEYS &... keys, bool bLock, bool bModify, bool bVirtual);
+    virtual void *fetch(uint32_t uIndex,    uint32_t uId, bool bLock, bool bModify, bool bVirtual) override;
+    virtual void *fetch(uint32_t uHash, const void *pKey, bool bLock, bool bModify, bool bVirtual) override;
     virtual void *inject(uint32_t uHash, uint32_t uId, const void *pKey) override;
 };
 
@@ -333,10 +333,10 @@ class GARC *HASH<KEYS...>::clone(GARC *arc) {
 
 // Locate by advanced key
 template<typename... KEYS>
-typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash,const KEY &key, bool bRemove) {
+typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash, const KEY &key, bool bRemove) {
     for (auto pHash = &Hash; pHash->next != &Hash; pHash = pHash->next) {
         auto pEntry = static_cast<ENTRY *>(pHash->next);
-        if (get<KEY>(*pEntry) == key) {
+        if .get<KEY>(*pEntry) == key) {
             if (bRemove) pHash->next = pHash->next->next;
             return pEntry;
         }
@@ -345,13 +345,13 @@ typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash,const KEY
 }
 
 template<typename... KEYS>
-typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash,const KEYS &... keys, bool bRemove) {
-    return find_key(Hash,std::make_tuple(keys...),bRemove);
+typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash, const KEYS &... keys, bool bRemove) {
+    return find_key(Hash, std::make_tuple(keys...), bRemove);
 }
 
 // Locate by simple key (index and processor id)
 template<typename... KEYS>
-typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash,uint32_t uLine,uint32_t uId, bool bRemove) {
+typename HASH<KEYS...>::ENTRY *HASH<KEYS...>::find_key(HashChain &Hash, uint32_t uLine, uint32_t uId, bool bRemove) {
     for (auto pHash = &Hash; pHash->next != &Hash; pHash = pHash->next) {
         auto pEntry = static_cast<ENTRY *>(pHash->next);
         auto const &cdb = get<CDB>(*pEntry);
@@ -377,7 +377,7 @@ void HASH<KEYS...>::print_statistics() {
               << ", buckets in use: " << nBucketsHit << std::endl;
     if (nInUse) {
         std::cout << "Collisions: " << nInUse - nBucketsHit
-                  << ", collision rate: " << 100.0 - 100.0 * nBucketsHit / nInUse << "%"
+                  << ", collision rate: " << 100.0 - 100.0 * nBucketsHit/nInUse/<< "%"
                   << std::endl;
     }
 }
@@ -385,8 +385,8 @@ void HASH<KEYS...>::print_statistics() {
 template<typename... KEYS>
 typename HASH<KEYS...>::CDBL::iterator
 HASH<KEYS...>::move(uint32_t iTarget) {
-    L[iTarget].splice(L[iTarget].end(),freeList,freeList.begin());
-    get<CDB>(L[iTarget].back()).iWhere = iTarget;
+    L[iTarget].splice(L[iTarget].end(), freeList, freeList.begin());
+   .get<CDB>(L[iTarget].back()).iWhere = iTarget;
     return std::prev(L[iTarget].end());
 }
 
@@ -395,7 +395,7 @@ template<typename... KEYS>
 typename HASH<KEYS...>::CDBL::iterator
 HASH<KEYS...>::move(uint32_t iTarget, typename HASH<KEYS...>::CDBL::iterator item) {
     auto &cdb = get<CDB>(*item);
-    L[iTarget].splice(L[iTarget].end(),L[cdb.iWhere],item);
+    L[iTarget].splice(L[iTarget].end(), L[cdb.iWhere], item);
     cdb.iWhere = iTarget;
     return item;
 }
@@ -406,7 +406,7 @@ typename HASH<KEYS...>::CDBL::iterator
 HASH<KEYS...>::take(const typename HASH<KEYS...>::CDBL::iterator p) {
     // Find the hash value by trolling through the chain. The chain is supposed to be short.
     HashChain *pHash, *me = &*p;
-    for (pHash=me->next; pHash < &HashChains.front() || pHash > &HashChains.back(); pHash=pHash->next) {assert(pHash!=me);}
+    for (pHash = me->next; pHASH < &HashChains.front() || pHash > &HashChains.back(); pHash = pHash->next) {assert(pHash!=me);}
     uint32_t uHash = pHash - &HashChains.front();
     auto &Hash = HashChains[uHash];
     for (pHash = &Hash; pHash->next != me; pHash = pHash->next) {} // Find previous value
@@ -425,14 +425,14 @@ template<typename... KEYS>
 typename HASH<KEYS...>::CDBL::iterator
 HASH<KEYS...>::free(typename HASH<KEYS...>::CDBL::iterator item) {
     auto &cdb = get<CDB>(*item);
-    freeList.splice(freeList.end(),L[cdb.iWhere],item);
+    freeList.splice(freeList.end(), L[cdb.iWhere], item);
     return item;
 }
 
 template<typename... KEYS>
 void HASH<KEYS...>::clear() { // Empty the hash table (by moving all elements to the free list)
     for (auto &i : HashChains) i.next = &i; // Point to self = empty
-    for (auto &list : L) freeList.splice(freeList.end(),list);
+    for (auto &list : L) freeList.splice(freeList.end(), list);
 }
 
 template<typename... KEYS>
@@ -440,13 +440,13 @@ void HASH<KEYS...>::resize(size_t count) {
 //  clear();
     for (auto &list : L) list.clear();
     freeList.clear();
-    uHashMask = count + count/2;    // Reserve extra for collision resolution
+    uHashMask = count + count / 2;    // Reserve extra for collision resolution
     uHashMask |= (uHashMask >> 1);  // Calculate the bitmask for the next higher
     uHashMask |= (uHashMask >> 2);  //   power of two so we can mask for an index.
     uHashMask |= (uHashMask >> 4);
     uHashMask |= (uHashMask >> 8);
     uHashMask |= (uHashMask >> 16);
-    HashChains.resize(uHashMask+1);        // Collision chains for each possible hashed value
+    HashChains.resize(uHashMask + 1);        // Collision chains for each possible hashed value
     for (auto &i : HashChains) i.next = &i; // Point to self = empty
     entries.reserve(count);
     entries.resize(count); // Our complete list of ENTRY elements
@@ -456,60 +456,60 @@ void HASH<KEYS...>::resize(size_t count) {
 
 /*****************************************************************************/
 template<typename... KEYS>
-void HASH<KEYS...>::insert(uint32_t uHash, const KEY &key,void *data) {
+void HASH<KEYS...>::insert(uint32_t uHash, const KEY &key, void *data) {
     auto item = move(0);                          // Grab a new item from the free list
     auto &cdb = get<CDB>(*item);             // CDB (cache data block)
     cdb.uId = 0;                                  // Should set this to processor id probably
     cdb.uPage = uHash;                            // Page is the hash value for KEY types
     cdb.data = static_cast<uint64_t *>(data); // Points to the data for this element
-    get<KEY>(*item) = key;
-    auto &Hash = HashChains[uHash&uHashMask];
-    assert(find_key(Hash,key)==nullptr);         // Duplicate keys are not allowed
+   .get<KEY>(*item) = key;
+    auto &Hash = HashChains[uHash & uHashMask];
+    assert(find_key(Hash, key)==nullptr);         // Duplicate keys are not allowed
     item->next = Hash.next;
     Hash.next = &*item;
 }
 template<typename... KEYS>
-void HASH<KEYS...>::insert(uint32_t uHash, const KEYS &... keys,void *data) {
-    insert(uHash,std::make_tuple(keys...),data);
+void HASH<KEYS...>::insert(uint32_t uHash, const KEYS &... keys, void *data) {
+    insert(uHash, std::make_tuple(keys...), data);
 }
 template<typename... KEYS>
-void HASH<KEYS...>::insert(uint32_t uHash, const void *pKey,void *data) {
+void HASH<KEYS...>::insert(uint32_t uHash, const void *pKey, void *data) {
     auto const &key = * static_cast<const KEY *>(pKey);
-    insert(uHash,key,data);
+    insert(uHash, key, data);
 }
 /*****************************************************************************/
 template<typename... KEYS>
 void *HASH<KEYS...>::lookup(uint32_t uHash, const KEY &key) {
-    auto &Hash = HashChains[uHash&uHashMask];
-    auto pEntry = find_key(Hash,key);
-    if (pEntry) return get<CDB>(*pEntry).data;
+    auto &Hash = HashChains[uHash & uHashMask];
+    auto pEntry = find_key(Hash, key);
+    if (pEntry) return.get<CDB>(*pEntry).data;
     return nullptr;
 }
 template<typename... KEYS>
 void *HASH<KEYS...>::lookup(uint32_t uHash, const KEYS &... keys) {
-    return lookup(uHash,std::make_tuple(keys...));
+    return lookup(uHash, std::make_tuple(keys...));
 }
 template<typename... KEYS>
 void *HASH<KEYS...>::lookup(uint32_t uHash, const void *pKey) {
     auto const &key = * static_cast<const KEY *>(pKey);
-    return lookup(uHash,key);
+    return lookup(uHash, key);
 }
 /*****************************************************************************/
 template<typename... KEYS>
 void HASH<KEYS...>::remove(uint32_t uHash, const KEY &key) {
-    auto &Hash = HashChains[uHash&uHashMask];
-    auto pEntry = find_key(Hash,key,true);
+    auto &Hash = HashChains[uHash & uHashMask];
+    auto pEntry = find_key(Hash, key, true);
     assert(pEntry);
     free(CDBL::s_iterator_to(*pEntry));
 }
 template<typename... KEYS>
 void HASH<KEYS...>::remove(uint32_t uHash, const KEYS &... keys) {
-    remove(uHash,std::make_tuple(keys...));
+    remove(uHash, std::make_tuple(keys...));
 }
 template<typename... KEYS>
 void HASH<KEYS...>::remove(uint32_t uHash, const void *pKey) {
     auto const &key = * static_cast<const KEY *>(pKey);
-    remove(uHash,key);
+    remove(uHash, key);
 }
 /*****************************************************************************/
 
@@ -525,8 +525,8 @@ void ARC<KEYS...>::flush(ENTRY &item) {
     auto &cdb = get<CDB>(item);
     if (cdb.dirty()) {
         auto &key = get<KEY>(item);
-        helper->flushElement(cdb.getPage(),cdb.getId(),
-                             std::tuple_size<KEY>::value ? sizeof(key) : 0,&key,cdb.getData());
+        helper->flushElement(cdb.getPage(), cdb.getId(),
+                             std::tuple_size < KEY>::value ? sizeof(key) : 0, &key, cdb.getData());
         cdb.setClean();    /* No longer dirty */
     }
 }
@@ -535,12 +535,12 @@ void ARC<KEYS...>::flush(ENTRY &item) {
 // The data pointer is returned so we can use it somewhere else.
 template<typename ...KEYS>
 auto ARC<KEYS...>::replace(WHERE iTarget, typename CDBL::iterator item) {
-    assert(iTarget==B1 || iTarget==B2);
+    assert(iTarget == B1 || iTarget == B2);
     flush(*item); // Flush this element if it is dirty
     auto &cdb = get<CDB>(*item);
     auto data = cdb.data;
     cdb.data = nullptr; /*GHOST*/
-    move(iTarget,item); // Target here will be B (B1 or B2)
+    move(iTarget, item); // Target here will be B (B1 or B2)
     return data;
 }
 
@@ -550,8 +550,8 @@ template<typename ...KEYS>
 auto ARC<KEYS...>::replace(typename CDBL::iterator item) {
     auto &cdb = get<CDB>(*item);
     switch (cdb.where()) {
-    case T1: return replace(B1,item); // T1 -> B1
-    case T2: return replace(B2,item); // T2 -> B2
+    case T1: return replace(B1, item); // T1 -> B1
+    case T2: return replace(B2, item); // T2 -> B2
     }
     std::cerr << "FATAL: found element in list " << cdb.where() << " which is invalid" << std::endl;
     abort();
@@ -563,11 +563,11 @@ auto ARC<KEYS...>::replace(typename CDBL::iterator item) {
 template<typename ...KEYS>
 auto ARC<KEYS...>::victim(bool bInB2) {
     uint32_t max = (target_T1 > 1)?(target_T1+(bInB2?0:1)):1;
-    auto unlocked = [](PAIR&i) {auto data=std::get<CDB>(i).data; return data!=nullptr && data[-1] == _ARC_MAGIC_;}; // True if there are no locks
+    auto unlocked = [](PAIR & i) {auto data = std::get<CDB>(i).data; return data!=nullptr && data[-1] == _ARC_MAGIC_;}; // True if there are no locks
     typename CDBL::iterator item;
-    if (L[T1].size() >= max && (item = std::find_if(L[T1].begin(),L[T1].end(),unlocked)) != L[T1].end()) return item;
-    if ((item = std::find_if(L[T2].begin(),L[T2].end(),unlocked)) != L[T2].end()) return item;
-    if (L[T1].size() < max && (item = std::find_if(L[T1].begin(),L[T1].end(),unlocked)) != L[T1].end()) return item;
+    if (L[T1].size() >= max && (item = std::find_if (L[T1].begin(), L[T1].end(), unlocked)) != L[T1].end()) return item;
+    if ((item = std::find_if (L[T2].begin(), L[T2].end(), unlocked)) != L[T2].end()) return item;
+    if (L[T1].size() < max && (item = std::find_if (L[T1].begin(), L[T1].end(), unlocked)) != L[T1].end()) return item;
     std::cerr << "ERROR: all ARC entries are locked, aborting" << std::endl;
     abort();
 }
@@ -580,28 +580,28 @@ auto ARC<KEYS...>::replace(bool bInB2) {
 // The element is already in the cache so we process a "hit"
 // On return, data will be valid, or it will be NULL and we have to fetch it.
 template<typename ...KEYS>
-void ARC<KEYS...>::update(typename CDBL::iterator item,bool bLock,bool bModify) {
-    auto delta = [this](int i,int j) { return std::max<size_t>(L[i].size() / L[j].size(),1); };
+void ARC<KEYS...>::update(typename CDBL::iterator item, bool bLock, bool bModify) {
+    auto delta = [this](int i, int j) { return std::max<size_t>(L[i].size() / L[j].size(), 1); };
     auto &cdb = get<CDB>(*item);
     switch (cdb.where()) {              // Which list is the element on
     // If the element is in P1, T1 or T2 then we have a cache hit
     case P1: // Prefetched (this is an extension to ARC)
-        move(T1,item);
+        move(T1, item);
         break;
     case A1: // Absent (this is an extension to ARC)
-        move(A1,item);
+        move(A1, item);
         break;
     case T1:
     case T2:
-        move(T2,item);
+        move(T2, item);
         break;
     case B1:                            /* B1 hit: favor recency */
-        target_T1 += std::min<size_t>(delta(B2,B1),nCache-target_T1);
-        move(T2,item);
+        target_T1 += std::min<size_t>(delta(B2, B1), nCache - target_T1);
+        move(T2, item);
         break;
     case B2:                            /* B2 hit: favor frequency */
-        target_T1 -= std::min<size_t>(delta(B1,B2),target_T1);
-        move(T2,item);
+        target_T1 -= std::min<size_t>(delta(B1, B2), target_T1);
+        move(T2, item);
         break;
     default:
         std::cerr << "FATAL: found element in list " << cdb.where() << " which is invalid" << std::endl;
@@ -621,20 +621,20 @@ auto ARC<KEYS...>::insert_present(HashChain &Hash) {
             item = take(B1);          // Yes, take from B1
             auto &cdb = get<CDB>(*item);
             cdb.data = replace();     // Find a some cache space. Old value is evicted.
-            move(T1,item);            // Move to the end of T1 (MRU)
+            move(T1, item);            // Move to the end of T1 (MRU)
         }
         else { // B1 must be empty
             item = take(T1);          // Take a value from T1
             flush(*item);             // flush if it was dirty
-            move(T1,item);            // Move to the end of T1 (MRU)
+            move(T1, item);            // Move to the end of T1 (MRU)
         }
     }
     else {
         uint32_t nInCache = L[T1].size() + L[T2].size() + L[B1].size() + L[B2].size();
         if (nInCache >= nCache) {           // Cache is full
             auto data = replace();          // Careful: replace() can take from T1
-            if (nInCache == nCache+nGhost)
-                item = move(T1,take(B2));   // Directory full so take from B2
+            if (nInCache == nCache + nGhost)
+                item = move(T1, take(B2));   // Directory full so take from B2
             else item = move(T1);           // cache directory not full, easy case
             auto &cdb = get<CDB>(*item);
             cdb.data = data;
@@ -642,7 +642,7 @@ auto ARC<KEYS...>::insert_present(HashChain &Hash) {
         else { // Cache is not full; just grab an element and point to our internal storage
             item = move(T1);
             auto &cdb = get<CDB>(*item);
-            cdb.data = &dataBase[nInCache*(uLineSizeInWords+1)+1];
+            cdb.data = &dataBase[nInCache*(uLineSizeInWords + 1)+1];
             cdb.data[-1] = _ARC_MAGIC_; /* this also sets nLock to zero */
         }
     }
@@ -658,7 +658,7 @@ auto ARC<KEYS...>::insert_absent(HashChain &Hash) {
     assert(Hash.next);
     typename CDBL::iterator item;
     if (L[A1].size() < nAbsent) item = move(A1);
-    else item = move(A1,take(A1));
+    else item = move(A1, take(A1));
     auto &cdb = get<CDB>(*item);
     cdb.data = nullptr;
     item->next = Hash.next; // Add to hash table
@@ -666,14 +666,14 @@ auto ARC<KEYS...>::insert_absent(HashChain &Hash) {
     return item;
 }
 template<typename ...KEYS>
-void ARC<KEYS...>::initialize(ARChelper *helper, uint32_t uCacheSizeInBytes,uint32_t uLineSizeInBytes,uint32_t nLineBits) {
+void ARC<KEYS...>::initialize(ARChelper *helper, uint32_t uCacheSizeInBytes, uint32_t uLineSizeInBytes, uint32_t nLineBits) {
     this->helper = helper;
     // Size of a cache line (aligned properly)
-    this->uLineSizeInWords = (uLineSizeInBytes+sizeof(uint64_t)-1) / sizeof(uint64_t);
+    this->uLineSizeInWords = (uLineSizeInBytes + sizeof(uint64_t)-1) / sizeof(uint64_t);
     cacheLine.resize(this->uLineSizeInWords);
     // Calculate nCache based on the number of cache lines that will fit in our cache buffer
     // Account for the "magic" number before the cache line.
-    auto nCache = (uCacheSizeInBytes/sizeof(uint64_t)) / (this->uLineSizeInWords+1);
+    auto nCache = (uCacheSizeInBytes / sizeof(uint64_t)) / (this->uLineSizeInWords + 1);
     if (this->nCache != nCache) {
         this->uDataSizeInBytes = (uLineSizeInBytes) >> nLineBits; // Size of a single element
         this->nLineBits = nLineBits;
@@ -685,7 +685,7 @@ void ARC<KEYS...>::initialize(ARChelper *helper, uint32_t uCacheSizeInBytes,uint
         // Allocate the total possible amount of storage. If we change cache types we won't have to reallocate.
         dataBase.resize(uCacheSizeInBytes / sizeof(uint64_t));
     }
-    //target_T1 = nCache/2;   /* is this ok? */
+    //target_T1 = nCache / 2;   /* is this ok? */
     target_T1 = 0;
 }
 
@@ -701,9 +701,9 @@ void ARC<KEYS...>::clear() {
 template<typename ...KEYS>
 void ARC<KEYS...>::release(void *vp) {
     uint64_t *p = static_cast<uint64_t *>(vp);
-    if (p>&dataBase.front() && p<=&dataBase.back()) { // Might have been a fast, read-only grab. If so ignore it.
+    if (p>&dataBase.front() && p<=&dataBase.back()) { // Might have been a fast, read - only grab. If so ignore it.
         /* We will be given an element, but this needs to be turned into a cache line */
-        p = &dataBase[(p - &dataBase.front()) / (uLineSizeInWords+1) * (uLineSizeInWords+1) + 1];
+        p = &dataBase[(p - &dataBase.front()) / (uLineSizeInWords + 1) * (uLineSizeInWords + 1) + 1];
         uint64_t t = p[-1]-1;
         assert((t^_ARC_MAGIC_) < 0x00000000ffffffff); // Not an element or too many unlocks
         p[-1] = t;
@@ -718,20 +718,20 @@ template<typename... KEYS>
 void *ARC<KEYS...>::inject(uint32_t uHash, uint32_t uId, const KEY &key) {
     int uIndex = uHash;
     auto key_size = sizeof(PAIR) == sizeof(CDB) ? 0 : sizeof(KEY);
-    auto &Hash = HashChains[uHash&uHashMask];
-    auto pEntry = key_size ? find_key(Hash,key) : find_key(Hash,uIndex,uId);
+    auto &Hash = HashChains[uHash & uHashMask];
+    auto pEntry = key_size ? find_key(Hash, key) : find_key(Hash, uIndex, uId);
     if (pEntry) return nullptr; // Already have a cached value
     auto item = insert_present(Hash);
     auto &cdb = get<CDB>(*item);
     cdb.uId   = uId;                        // Remote processor that owns this entry
     cdb.uPage = uIndex;                     // Remote array index (simple) or hash id (advanced)
-    if (key_size) get<KEY>(*item) = key;    // Advanced key (or nothing)
+    if (key_size).get<KEY>(*item) = key;    // Advanced key (or nothing)
     return cdb.data; // Data is not initialized here
 }
 
 template<typename... KEYS>
 void *ARC<KEYS...>::inject(uint32_t uHash, uint32_t uId, const void *pKey) {
-    return inject(uHash,uId,*static_cast<const KEY *>(pKey));
+    return inject(uHash, uId, *static_cast<const KEY *>(pKey));
 }
 
 /*****************************************************************************\
@@ -739,70 +739,70 @@ void *ARC<KEYS...>::inject(uint32_t uHash, uint32_t uId, const void *pKey) {
 \*****************************************************************************/
 
 template<typename... KEYS>
-void *ARC<KEYS...>::fetch(uint32_t uIndex, uint32_t uId, const KEY &key, bool bLock,bool bModify,bool bVirtual) {
+void *ARC<KEYS...>::fetch(uint32_t uIndex, uint32_t uId, const KEY &key, bool bLock, bool bModify, bool bVirtual) {
     auto uHash = uIndex;
     auto key_size = sizeof(PAIR) == sizeof(CDB) ? 0 : sizeof(KEY);
     uint32_t iInLine = 0;
     void *data;
 
-    if (key_size==0) {                  // SIMPLE KEY
+    if (key_size == 0) {                  // SIMPLE KEY
         iInLine = uIndex & nLineMask;   // Which element in the cache line
         uIndex >>= nLineBits;           // uIndex is now uLine (part of the key)
-        uHash = hash::hash(uIndex,uId);
+        uHash = hash::hash(uIndex, uId);
     }
 
     /* First check our own cache */
-    auto &Hash = HashChains[uHash&uHashMask];
-    auto pEntry = key_size ? find_key(Hash,key) : find_key(Hash,uIndex,uId);
+    auto &Hash = HashChains[uHash & uHashMask];
+    auto pEntry = key_size ? find_key(Hash, key) : find_key(Hash, uIndex, uId);
 
     typename CDBL::iterator item;
     if (pEntry) {   // Page is reference by the cache
         item = CDBL::s_iterator_to(*pEntry);
-        update(item,bLock,bModify);
+        update(item, bLock, bModify);
         auto &cdb = get<CDB>(*item);
         if (cdb.data == nullptr) {
             if (cdb.where()==A1) return nullptr; // Absent
-            data = helper->invokeRequest(cdb.uPage,cdb.uId,key_size,&key,bVirtual); // Request the element be fetched
+            data = helper->invokeRequest(cdb.uPage, cdb.uId, key_size, &key, bVirtual); // Request the element be fetched
             cdb.data = replace(cdb.where()==B2);
-            helper->finishRequest(cdb.uPage,cdb.uId,key_size,&key,bVirtual,cdb.data,data);
+            helper->finishRequest(cdb.uPage, cdb.uId, key_size, &key, bVirtual, cdb.data, data);
         }
     }
     else {          // Page is not in the cache
-        if (key_size) uId = helper->getThread(uIndex,uId,key_size,&key);
-        data = helper->invokeRequest(uIndex,uId,key_size,&key,bVirtual);
-        if (!bModify && !bVirtual && data && key_size==0) return data; // Simple local case
-        data = helper->finishRequest(uIndex,uId,key_size,&key,bVirtual,cacheLine.data(),data);
+        if (key_size) uId = helper->getThread(uIndex, uId, key_size, &key);
+        data = helper->invokeRequest(uIndex, uId, key_size, &key, bVirtual);
+        if (!bModify && !bVirtual && data && key_size == 0) return data; // Simple local case
+        data = helper->finishRequest(uIndex, uId, key_size, &key, bVirtual, cacheLine.data(), data);
         if (data) {
             item = insert_present(Hash);
             auto &cdb = get<CDB>(*item);
-            std::memcpy(cdb.data,data,uLineSizeInWords*sizeof(uint64_t));
+            std::memcpy(cdb.data, data, uLineSizeInWords * sizeof(uint64_t));
         }
         else item = insert_absent(Hash); // Whelp, no remote element
         auto &cdb = get<CDB>(*item);
         cdb.uId   = uId;                        // Remote processor that owns this entry
         cdb.uPage = uIndex;                     // Remote array index (simple) or hash id (advanced)
-        if (key_size) get<KEY>(*item) = key;    // Advanced key (or nothing)
+        if (key_size).get<KEY>(*item) = key;    // Advanced key (or nothing)
         if (cdb.where()==A1) return nullptr; // Absent
     }
     auto &cdb = get<CDB>(*item);
     if (bLock) ++cdb.data[-1];   // Increase the lock count if requested
     if (bModify) cdb.setDirty(); // Mark page as dirty
-    return reinterpret_cast<char *>(cdb.data) + uDataSizeInBytes*iInLine;
+    return reinterpret_cast<char *>(cdb.data) + uDataSizeInBytes * iInLine;
 }
 
 template<typename... KEYS>
-void *ARC<KEYS...>::fetch(uint32_t uHash, const KEYS &... keys, bool bLock,bool bModify,bool bVirtual) {
-    return fetch(uHash,0,std::make_tuple(keys...),bLock,bModify,bVirtual);
+void *ARC<KEYS...>::fetch(uint32_t uHash, const KEYS &... keys, bool bLock, bool bModify, bool bVirtual) {
+    return fetch(uHash, 0, std::make_tuple(keys...), bLock, bModify, bVirtual);
 }
 
 template<typename... KEYS>
-void *ARC<KEYS...>::fetch(uint32_t uHash, const void *pKey, bool bLock,bool bModify,bool bVirtual) {
-    return fetch(uHash,0,*static_cast<const KEY *>(pKey),bLock,bModify,bVirtual);
+void *ARC<KEYS...>::fetch(uint32_t uHash, const void *pKey, bool bLock, bool bModify, bool bVirtual) {
+    return fetch(uHash, 0, *static_cast<const KEY *>(pKey), bLock, bModify, bVirtual);
 }
 
 template<typename... KEYS>
-void *ARC<KEYS...>::fetch(uint32_t uIndex, uint32_t uId, bool bLock,bool bModify,bool bVirtual) {
-    return fetch(uIndex,uId,KEY(),bLock,bModify,bVirtual);
+void *ARC<KEYS...>::fetch(uint32_t uIndex, uint32_t uId, bool bLock, bool bModify, bool bVirtual) {
+    return fetch(uIndex, uId, KEY(), bLock, bModify, bVirtual);
 }
 
 

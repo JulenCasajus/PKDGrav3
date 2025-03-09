@@ -26,10 +26,10 @@ public:
     };
     typedef void output;
     explicit ServiceDistribTopTree(PST pst)
-        : TraversePST(pst,PST_DISTRIBTOPTREE,
+        : TraversePST(pst, PST_DISTRIBTOPTREE,
                       sizeof(input)
-                      + (mdlThreads(pst->mdl)==1?1:2*mdlThreads(pst->mdl)-1)*pkdContext::MaxNodeSize(),
+                      + (mdlThreads(pst->mdl)==1?1:2 * mdlThreads(pst->mdl)-1)*pkdContext::MaxNodeSize(),
                       "DistribTopTree") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

@@ -6,7 +6,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -16,11 +16,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -37,7 +37,7 @@ namespace blitz {
 // Typedefs for vectors
 
 
-// Typedefs for multi-dimensional arrys
+// Typedefs for multi - dimensional arrys
 
 typedef Array<int, 1>  Array1i;
 typedef Array<int, 2>  Array2i;
@@ -48,8 +48,8 @@ typedef Array<int, 6>  Array6i;
 typedef Array<int, 7>  Array7i;
 typedef Array<int, 8>  Array8i;
 typedef Array<int, 9>  Array9i;
-typedef Array<int,10>  Array10i;
-typedef Array<int,11>  Array11i;
+typedef Array<int, 10>  Array10i;
+typedef Array<int, 11>  Array11i;
 
 
 typedef Array<unsigned int, 1 >  Array1ui;
@@ -74,8 +74,8 @@ typedef Array<double, 6>  Array6d;
 typedef Array<double, 7>  Array7d;
 typedef Array<double, 8>  Array8d;
 typedef Array<double, 9>  Array9d;
-typedef Array<double,10>  Array10d;
-typedef Array<double,11>  Array11d;
+typedef Array<double, 10>  Array10d;
+typedef Array<double, 11>  Array11d;
 
 typedef Array<float, 1>  Array1f;
 typedef Array<float, 2>  Array2f;
@@ -86,8 +86,8 @@ typedef Array<float, 6>  Array6f;
 typedef Array<float, 7>  Array7f;
 typedef Array<float, 8>  Array8f;
 typedef Array<float, 9>  Array9f;
-typedef Array<float,10>  Array10f;
-typedef Array<float,11>  Array11f;
+typedef Array<float, 10>  Array10f;
+typedef Array<float, 11>  Array11f;
 
 #ifdef BZ_HAVE_COMPLEX
 
@@ -103,8 +103,8 @@ typedef Array<cmplxf, 6>  Array6c;
 typedef Array<cmplxf, 7>  Array7c;
 typedef Array<cmplxf, 8>  Array8c;
 typedef Array<cmplxf, 9>  Array9c;
-typedef Array<cmplxf,10>  Array10c;
-typedef Array<cmplxf,11>  Array11c;
+typedef Array<cmplxf, 10>  Array10c;
+typedef Array<cmplxf, 11>  Array11c;
 
 typedef Array<cmplxd, 1>  Array1z;
 typedef Array<cmplxd, 2>  Array2z;
@@ -115,8 +115,8 @@ typedef Array<cmplxd, 6>  Array6z;
 typedef Array<cmplxd, 7>  Array7z;
 typedef Array<cmplxd, 8>  Array8z;
 typedef Array<cmplxd, 9>  Array9z;
-typedef Array<cmplxd,10>  Array10z;
-typedef Array<cmplxd,11>  Array11z;
+typedef Array<cmplxd, 10>  Array10z;
+typedef Array<cmplxd, 11>  Array11z;
 
 
 #endif // BZ_HAVE_COMPLEX
@@ -136,8 +136,8 @@ typedef Array<quad, 6>  Array6q;
 typedef Array<quad, 7>  Array7q;
 typedef Array<quad, 8>  Array8q;
 typedef Array<quad, 9>  Array9q;
-typedef Array<quad,10>  Array10q;
-typedef Array<quad,11>  Array11q;
+typedef Array<quad, 10>  Array10q;
+typedef Array<quad, 11>  Array11q;
 #endif
 */
 

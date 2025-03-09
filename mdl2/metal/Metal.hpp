@@ -518,7 +518,7 @@ struct OperatingSystemVersion
 
 namespace NS
 {
-template <class _Class, class _Base = class Object>
+template<class _Class, class _Base = class Object>
 class Referencing : public _Base
 {
 public:
@@ -530,7 +530,7 @@ public:
     UInteger retainCount() const;
 };
 
-template <class _Class, class _Base = class Object>
+template<class _Class, class _Base = class Object>
 class Copying : public Referencing<_Class, _Base>
 {
 public:
@@ -549,22 +549,22 @@ public:
 protected:
     friend class Referencing<Object, objc_object>;
 
-    template <class _Class>
+    template<class _Class>
     static _Class* alloc(const char* pClassName);
-    template <class _Class>
+    template<class _Class>
     static _Class* alloc(const void* pClass);
-    template <class _Class>
+    template<class _Class>
     _Class* init();
 
-    template <class _Dst>
+    template<class _Dst>
     static _Dst                   bridgingCast(const void* pObj);
     static class MethodSignature* methodSignatureForSelector(const void* pObj, SEL selector);
     static bool                   respondsToSelector(const void* pObj, SEL selector);
-    template <typename _Type>
+    template<typename _Type>
     static constexpr bool doesRequireMsgSendStret();
-    template <typename _Ret, typename... _Args>
+    template<typename _Ret, typename... _Args>
     static _Ret sendMessage(const void* pObj, SEL selector, _Args... args);
-    template <typename _Ret, typename... _Args>
+    template<typename _Ret, typename... _Args>
     static _Ret sendMessageSafe(const void* pObj, SEL selector, _Args... args);
 
 private:
@@ -576,37 +576,37 @@ private:
 };
 }
 
-template <class _Class, class _Base /* = Object */>
+template<class _Class, class _Base/*/= Object */>
 _NS_INLINE _Class* NS::Referencing<_Class, _Base>::retain()
 {
     return Object::sendMessage<_Class*>(this, _NS_PRIVATE_SEL(retain));
 }
 
-template <class _Class, class _Base /* = Object */>
+template<class _Class, class _Base/*/= Object */>
 _NS_INLINE void NS::Referencing<_Class, _Base>::release()
 {
     Object::sendMessage<void>(this, _NS_PRIVATE_SEL(release));
 }
 
-template <class _Class, class _Base /* = Object */>
+template<class _Class, class _Base/*/= Object */>
 _NS_INLINE _Class* NS::Referencing<_Class, _Base>::autorelease()
 {
     return Object::sendMessage<_Class*>(this, _NS_PRIVATE_SEL(autorelease));
 }
 
-template <class _Class, class _Base /* = Object */>
+template<class _Class, class _Base/*/= Object */>
 _NS_INLINE NS::UInteger NS::Referencing<_Class, _Base>::retainCount() const
 {
     return Object::sendMessage<UInteger>(this, _NS_PRIVATE_SEL(retainCount));
 }
 
-template <class _Class, class _Base /* = Object */>
+template<class _Class, class _Base/*/= Object */>
 _NS_INLINE _Class* NS::Copying<_Class, _Base>::copy() const
 {
     return Object::sendMessage<_Class*>(this, _NS_PRIVATE_SEL(copy));
 }
 
-template <class _Dst>
+template<class _Dst>
 _NS_INLINE _Dst NS::Object::bridgingCast(const void* pObj)
 {
 #if __OBJC__
@@ -616,7 +616,7 @@ _NS_INLINE _Dst NS::Object::bridgingCast(const void* pObj)
 #endif // __OBJC__
 }
 
-template <typename _Type>
+template<typename _Type>
 _NS_INLINE constexpr bool NS::Object::doesRequireMsgSendStret()
 {
 #if (defined(__i386__) || defined(__x86_64__))
@@ -634,13 +634,13 @@ _NS_INLINE constexpr bool NS::Object::doesRequireMsgSendStret()
 #endif
 }
 
-template <>
-_NS_INLINE constexpr bool NS::Object::doesRequireMsgSendStret<void>()
+template<>
+_NS_INLINE constexpr bool NS::Object::doesRequireMsgSendStret < void>()
 {
     return false;
 }
 
-template <typename _Ret, typename... _Args>
+template<typename _Ret, typename... _Args>
 _NS_INLINE _Ret NS::Object::sendMessage(const void* pObj, SEL selector, _Args... args)
 {
 #if (defined(__i386__) || defined(__x86_64__))
@@ -653,9 +653,9 @@ _NS_INLINE _Ret NS::Object::sendMessage(const void* pObj, SEL selector, _Args...
         return (*pProc)(pObj, selector, args...);
     }
     else
-#endif // ( defined( __i386__ )  || defined( __x86_64__ )  )
+#endif // (defined( __i386__)  || defined(__x86_64__)  )
 #if !defined(__arm64__)
-        if constexpr (doesRequireMsgSendStret<_Ret>())
+        if constexpr (doesRequireMsgSendStret < _Ret>())
     {
         using SendMessageProcStret = void (*)(_Ret*, const void*, SEL, _Args...);
 
@@ -667,7 +667,7 @@ _NS_INLINE _Ret NS::Object::sendMessage(const void* pObj, SEL selector, _Args...
         return ret;
     }
     else
-#endif // !defined( __arm64__ )
+#endif // !defined(__arm64__)
     {
         using SendMessageProc = _Ret (*)(const void*, SEL, _Args...);
 
@@ -687,7 +687,7 @@ _NS_INLINE bool NS::Object::respondsToSelector(const void* pObj, SEL selector)
     return sendMessage<bool>(pObj, _NS_PRIVATE_SEL(respondsToSelector_), selector);
 }
 
-template <typename _Ret, typename... _Args>
+template<typename _Ret, typename... _Args>
 _NS_INLINE _Ret NS::Object::sendMessageSafe(const void* pObj, SEL selector, _Args... args)
 {
     if ((respondsToSelector(pObj, selector)) || (nullptr != methodSignatureForSelector(pObj, selector)))
@@ -701,19 +701,19 @@ _NS_INLINE _Ret NS::Object::sendMessageSafe(const void* pObj, SEL selector, _Arg
     }
 }
 
-template <class _Class>
+template<class _Class>
 _NS_INLINE _Class* NS::Object::alloc(const char* pClassName)
 {
     return sendMessage<_Class*>(objc_lookUpClass(pClassName), _NS_PRIVATE_SEL(alloc));
 }
 
-template <class _Class>
+template<class _Class>
 _NS_INLINE _Class* NS::Object::alloc(const void* pClass)
 {
     return sendMessage<_Class*>(pClass, _NS_PRIVATE_SEL(alloc));
 }
 
-template <class _Class>
+template<class _Class>
 _NS_INLINE _Class* NS::Object::init()
 {
     return sendMessage<_Class*>(this, _NS_PRIVATE_SEL(init));
@@ -754,7 +754,7 @@ public:
     Array*        init(const Object* const* pObjects, UInteger count);
     Array*        init(const class Coder* pCoder);
 
-    template <class _Object = Object>
+    template<class _Object = Object>
     _Object* object(UInteger index) const;
     UInteger count() const;
 };
@@ -800,7 +800,7 @@ _NS_INLINE NS::UInteger NS::Array::count() const
     return Object::sendMessage<UInteger>(this, _NS_PRIVATE_SEL(count));
 }
 
-template <class _Object>
+template<class _Object>
 _NS_INLINE _Object* NS::Array::object(UInteger index) const
 {
     return Object::sendMessage<_Object*>(this, _NS_PRIVATE_SEL(objectAtIndex_), index);
@@ -863,7 +863,7 @@ public:
     NS::UInteger countByEnumerating(FastEnumerationState* pState, Object** pBuffer, NS::UInteger len);
 };
 
-template <class _ObjectType>
+template<class _ObjectType>
 class Enumerator : public Referencing<Enumerator<_ObjectType>, FastEnumeration>
 {
 public:
@@ -877,13 +877,13 @@ _NS_INLINE NS::UInteger NS::FastEnumeration::countByEnumerating(FastEnumerationS
     return Object::sendMessage<UInteger>(this, _NS_PRIVATE_SEL(countByEnumeratingWithState_objects_count_), pState, pBuffer, len);
 }
 
-template <class _ObjectType>
+template<class _ObjectType>
 _NS_INLINE _ObjectType* NS::Enumerator<_ObjectType>::nextObject()
 {
     return Object::sendMessage<_ObjectType*>(this, _NS_PRIVATE_SEL(nextObject));
 }
 
-template <class _ObjectType>
+template<class _ObjectType>
 _NS_INLINE NS::Array* NS::Enumerator<_ObjectType>::allObjects()
 {
     return Object::sendMessage<Array*>(this, _NS_PRIVATE_SEL(allObjects));
@@ -904,10 +904,10 @@ public:
     Dictionary*        init(const Object* const* pObjects, const Object* const* pKeys, UInteger count);
     Dictionary*        init(const class Coder* pCoder);
 
-    template <class _KeyType = Object>
+    template<class _KeyType = Object>
     Enumerator<_KeyType>* keyEnumerator() const;
 
-    template <class _Object = Object>
+    template<class _Object = Object>
     _Object* object(const Object* pKey) const;
     UInteger count() const;
 };
@@ -949,13 +949,13 @@ _NS_INLINE NS::Dictionary* NS::Dictionary::init(const class Coder* pCoder)
     return Object::sendMessage<Dictionary*>(this, _NS_PRIVATE_SEL(initWithCoder_), pCoder);
 }
 
-template <class _KeyType>
+template<class _KeyType>
 _NS_INLINE NS::Enumerator<_KeyType>* NS::Dictionary::keyEnumerator() const
 {
     return Object::sendMessage<Enumerator<_KeyType>*>(this, _NS_PRIVATE_SEL(keyEnumerator));
 }
 
-template <class _Object>
+template<class _Object>
 _NS_INLINE _Object* NS::Dictionary::object(const Object* pKey) const
 {
     return Object::sendMessage<_Object*>(this, _NS_PRIVATE_SEL(objectForKey_), pKey);
@@ -1085,9 +1085,9 @@ public:
 };
 
 template< std::size_t _StringLen >
-constexpr const String* MakeConstantString( const char ( &str )[_StringLen] )
+constexpr const String* MakeConstantString(const char ( &str)[_StringLen] )
 {
-    return reinterpret_cast< const String* >( __CFStringMakeConstantString( str ) );
+    return reinterpret_cast<const String* >(__CFStringMakeConstantString( str) );
 }
 
 }
@@ -1632,7 +1632,7 @@ _NS_INLINE NS::String* NS::Error::localizedFailureReason() const
 namespace NS
 {
 
-template <class _Class, class _Base = class Object>
+template<class _Class, class _Base = class Object>
 class Locking : public _Base
 {
 public:
@@ -1661,7 +1661,7 @@ _NS_INLINE void NS::Locking<_Class, _Base>::lock()
     NS::Object::sendMessage<void>(this, _NS_PRIVATE_SEL(lock));
 }
 
-template<class _Class, class _Base /* = NS::Object */>
+template<class _Class, class _Base/*/= NS::Object */>
 _NS_INLINE void NS::Locking<_Class, _Base>::unlock()
 {
     NS::Object::sendMessage<void>(this, _NS_PRIVATE_SEL(unlock));
@@ -2132,9 +2132,9 @@ public:
     class Object*           beginActivity(ActivityOptions options, const class String* pReason);
     void                    endActivity(class Object* pActivity);
     void                    performActivity(ActivityOptions options, const class String* pReason, void (^block)(void));
-    void                    performActivity(ActivityOptions options, const class String* pReason, const std::function<void()>& func);
+    void                    performActivity(ActivityOptions options, const class String* pReason, const std::function < void()>& func);
     void                    performExpiringActivity(const class String* pReason, void (^block)(bool expired));
-    void                    performExpiringActivity(const class String* pReason, const std::function<void(bool expired)>& func);
+    void                    performExpiringActivity(const class String* pReason, const std::function < void(bool expired)>& func);
 
     ProcessInfoThermalState thermalState() const;
     bool                    isLowPowerModeEnabled() const;
@@ -2282,9 +2282,9 @@ _NS_INLINE void NS::ProcessInfo::performActivity(ActivityOptions options, const 
     Object::sendMessage<void>(this, _NS_PRIVATE_SEL(performActivityWithOptions_reason_usingBlock_), options, pReason, block);
 }
 
-_NS_INLINE void NS::ProcessInfo::performActivity(ActivityOptions options, const String* pReason, const std::function<void()>& function)
+_NS_INLINE void NS::ProcessInfo::performActivity(ActivityOptions options, const String* pReason, const std::function < void()>& function)
 {
-    __block std::function<void()> blockFunction = function;
+    __block std::function < void()> blockFunction = function;
 
     performActivity(options, pReason, ^() { blockFunction(); });
 }
@@ -2294,9 +2294,9 @@ _NS_INLINE void NS::ProcessInfo::performExpiringActivity(const String* pReason, 
     Object::sendMessageSafe<void>(this, _NS_PRIVATE_SEL(performExpiringActivityWithReason_usingBlock_), pReason, block);
 }
 
-_NS_INLINE void NS::ProcessInfo::performExpiringActivity(const String* pReason, const std::function<void(bool expired)>& function)
+_NS_INLINE void NS::ProcessInfo::performExpiringActivity(const String* pReason, const std::function < void(bool expired)>& function)
 {
-    __block std::function<void(bool expired)> blockFunction = function;
+    __block std::function < void(bool expired)> blockFunction = function;
 
     performExpiringActivity(pReason, ^(bool expired) { blockFunction(expired); });
 }
@@ -2418,7 +2418,7 @@ namespace MTL
 namespace Private
 {
 
-    template <typename _Type>
+    template<typename _Type>
     inline _Type const LoadSymbol(const char* pSymbol)
     {
         const _Type* pAddress = static_cast<_Type*>(dlsym(RTLD_DEFAULT, pSymbol));
@@ -2431,7 +2431,7 @@ namespace Private
 
 #define _MTL_PRIVATE_DEF_STR(type, symbol) \
     _MTL_EXTERN type const MTL##symbol;    \
-    type const             MTL::symbol = Private::LoadSymbol<type>("MTL" #symbol);
+    type const             MTL::symbol = Private::LoadSymbol < type>("MTL" #symbol);
 
 #endif // defined(__MAC_10_16) || defined(__MAC_11_0) || defined(__MAC_12_0) || defined(__IPHONE_14_0) || defined(__IPHONE_15_0) || defined(__TVOS_14_0) || defined(__TVOS_15_0)
 
@@ -4513,7 +4513,7 @@ namespace MTL
 {
 using DrawablePresentedHandler = void (^)(class Drawable*);
 
-using DrawablePresentedHandlerFunction = std::function<void(class Drawable*)>;
+using DrawablePresentedHandlerFunction = std::function < void(class Drawable*)>;
 
 class Drawable : public NS::Referencing<Drawable>
 {
@@ -8715,11 +8715,11 @@ _MTL_ENUM(NS::UInteger, LibraryError) {
 class Library : public NS::Referencing<Library>
 {
 public:
-    void             newFunction(const NS::String* pFunctionName, const class FunctionConstantValues* pConstantValues, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler);
+    void             newFunction(const NS::String* pFunctionName, const class FunctionConstantValues* pConstantValues, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler);
 
-    void             newFunction(const class FunctionDescriptor* pDescriptor, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler);
+    void             newFunction(const class FunctionDescriptor* pDescriptor, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler);
 
-    void             newIntersectionFunction(const class IntersectionFunctionDescriptor* pDescriptor, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler);
+    void             newIntersectionFunction(const class IntersectionFunctionDescriptor* pDescriptor, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler);
 
     NS::String*      label() const;
     void             setLabel(const NS::String* label);
@@ -9004,23 +9004,23 @@ _MTL_INLINE void MTL::CompileOptions::setPreserveInvariance(bool preserveInvaria
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPreserveInvariance_), preserveInvariance);
 }
 
-_MTL_INLINE void MTL::Library::newFunction(const NS::String* pFunctionName, const FunctionConstantValues* pConstantValues, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler)
+_MTL_INLINE void MTL::Library::newFunction(const NS::String* pFunctionName, const FunctionConstantValues* pConstantValues, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler)
 {
-    __block std::function<void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
+    __block std::function < void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
 
     newFunction(pFunctionName, pConstantValues, ^(Function* pFunction, NS::Error* pError) { blockCompletionHandler(pFunction, pError); });
 }
 
-_MTL_INLINE void MTL::Library::newFunction(const FunctionDescriptor* pDescriptor, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler)
+_MTL_INLINE void MTL::Library::newFunction(const FunctionDescriptor* pDescriptor, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler)
 {
-    __block std::function<void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
+    __block std::function < void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
 
     newFunction(pDescriptor, ^(Function* pFunction, NS::Error* pError) { blockCompletionHandler(pFunction, pError); });
 }
 
-_MTL_INLINE void MTL::Library::newIntersectionFunction(const IntersectionFunctionDescriptor* pDescriptor, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler)
+_MTL_INLINE void MTL::Library::newIntersectionFunction(const IntersectionFunctionDescriptor* pDescriptor, const std::function < void(Function* pFunction, NS::Error* pError)>& completionHandler)
 {
-    __block std::function<void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
+    __block std::function < void(Function * pFunction, NS::Error * pError)> blockCompletionHandler = completionHandler;
 
     newIntersectionFunction(pDescriptor, ^(Function* pFunction, NS::Error* pError) { blockCompletionHandler(pFunction, pError); });
 }
@@ -13297,7 +13297,7 @@ class CommandBuffer;
 
 using CommandBufferHandler = void (^)(CommandBuffer*);
 
-using HandlerFunction = std::function<void(CommandBuffer*)>;
+using HandlerFunction = std::function < void(CommandBuffer*)>;
 
 class CommandBuffer : public NS::Referencing<CommandBuffer>
 {
@@ -14088,31 +14088,31 @@ _MTL_INLINE MTL::ComputePassSampleBufferAttachmentDescriptorArray* MTL::ComputeP
 namespace MTL
 {
 
-_MTL_CONST( NS::ErrorDomain, CounterErrorDomain );
+_MTL_CONST(NS::ErrorDomain, CounterErrorDomain);
 
 using CommonCounter = NS::String*;
 
-_MTL_CONST( CommonCounter, CommonCounterTimestamp );
-_MTL_CONST( CommonCounter, CommonCounterTessellationInputPatches );
-_MTL_CONST( CommonCounter, CommonCounterVertexInvocations );
-_MTL_CONST( CommonCounter, CommonCounterPostTessellationVertexInvocations );
-_MTL_CONST( CommonCounter, CommonCounterClipperInvocations );
-_MTL_CONST( CommonCounter, CommonCounterClipperPrimitivesOut );
-_MTL_CONST( CommonCounter, CommonCounterFragmentInvocations );
-_MTL_CONST( CommonCounter, CommonCounterFragmentsPassed );
-_MTL_CONST( CommonCounter, CommonCounterComputeKernelInvocations );
-_MTL_CONST( CommonCounter, CommonCounterTotalCycles );
-_MTL_CONST( CommonCounter, CommonCounterVertexCycles );
-_MTL_CONST( CommonCounter, CommonCounterTessellationCycles );
-_MTL_CONST( CommonCounter, CommonCounterPostTessellationVertexCycles );
-_MTL_CONST( CommonCounter, CommonCounterFragmentCycles );
-_MTL_CONST( CommonCounter, CommonCounterRenderTargetWriteCycles );
+_MTL_CONST(CommonCounter, CommonCounterTimestamp);
+_MTL_CONST(CommonCounter, CommonCounterTessellationInputPatches);
+_MTL_CONST(CommonCounter, CommonCounterVertexInvocations);
+_MTL_CONST(CommonCounter, CommonCounterPostTessellationVertexInvocations);
+_MTL_CONST(CommonCounter, CommonCounterClipperInvocations);
+_MTL_CONST(CommonCounter, CommonCounterClipperPrimitivesOut);
+_MTL_CONST(CommonCounter, CommonCounterFragmentInvocations);
+_MTL_CONST(CommonCounter, CommonCounterFragmentsPassed);
+_MTL_CONST(CommonCounter, CommonCounterComputeKernelInvocations);
+_MTL_CONST(CommonCounter, CommonCounterTotalCycles);
+_MTL_CONST(CommonCounter, CommonCounterVertexCycles);
+_MTL_CONST(CommonCounter, CommonCounterTessellationCycles);
+_MTL_CONST(CommonCounter, CommonCounterPostTessellationVertexCycles);
+_MTL_CONST(CommonCounter, CommonCounterFragmentCycles);
+_MTL_CONST(CommonCounter, CommonCounterRenderTargetWriteCycles);
 
 using CommonCounterSet = NS::String*;
 
-_MTL_CONST( CommonCounterSet, CommonCounterSetTimestamp );
-_MTL_CONST( CommonCounterSet, CommonCounterSetStageUtilization );
-_MTL_CONST( CommonCounterSet, CommonCounterSetStatistic );
+_MTL_CONST(CommonCounterSet, CommonCounterSetTimestamp);
+_MTL_CONST(CommonCounterSet, CommonCounterSetStageUtilization);
+_MTL_CONST(CommonCounterSet, CommonCounterSetStatistic);
 
 struct CounterResultTimestamp
 {
@@ -14194,27 +14194,27 @@ _MTL_ENUM(NS::Integer, CounterSampleBufferError) {
 
 }
 
-_MTL_PRIVATE_DEF_STR( NS::ErrorDomain, CounterErrorDomain );
+_MTL_PRIVATE_DEF_STR(NS::ErrorDomain, CounterErrorDomain);
 
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTimestamp );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTessellationInputPatches );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterVertexInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterPostTessellationVertexInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterClipperInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterClipperPrimitivesOut );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentsPassed );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterComputeKernelInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTotalCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterVertexCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTessellationCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterPostTessellationVertexCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterRenderTargetWriteCycles );
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTimestamp);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTessellationInputPatches);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterVertexInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterPostTessellationVertexInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterClipperInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterClipperPrimitivesOut);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentsPassed);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterComputeKernelInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTotalCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterVertexCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTessellationCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterPostTessellationVertexCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterRenderTargetWriteCycles);
 
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetTimestamp );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetStageUtilization );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetStatistic );
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetTimestamp);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetStageUtilization);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetStatistic);
 
 _MTL_INLINE NS::String* MTL::Counter::name() const
 {
@@ -14455,7 +14455,7 @@ _MTL_CONST(DeviceNotificationName, DeviceWasRemovedNotification);
 
 using DeviceNotificationHandlerBlock = void (^)(class Device* pDevice, DeviceNotificationName notifyName);
 
-using DeviceNotificationHandlerFunction = std::function<void(class Device* pDevice, DeviceNotificationName notifyName)>;
+using DeviceNotificationHandlerFunction = std::function < void(class Device* pDevice, DeviceNotificationName notifyName)>;
 
 using AutoreleasedComputePipelineReflection = class ComputePipelineReflection*;
 
@@ -14463,23 +14463,23 @@ using AutoreleasedRenderPipelineReflection = class RenderPipelineReflection*;
 
 using NewLibraryCompletionHandler = void (^)(class Library*, NS::Error*);
 
-using NewLibraryCompletionHandlerFunction = std::function<void(class Library*, NS::Error*)>;
+using NewLibraryCompletionHandlerFunction = std::function < void(class Library*, NS::Error*)>;
 
 using NewRenderPipelineStateCompletionHandler = void (^)(class RenderPipelineState*, NS::Error*);
 
-using NewRenderPipelineStateCompletionHandlerFunction = std::function<void(class RenderPipelineState*, NS::Error*)>;
+using NewRenderPipelineStateCompletionHandlerFunction = std::function < void(class RenderPipelineState*, NS::Error*)>;
 
 using NewRenderPipelineStateWithReflectionCompletionHandler = void (^)(class RenderPipelineState*, class RenderPipelineReflection*, NS::Error*);
 
-using NewRenderPipelineStateWithReflectionCompletionHandlerFunction = std::function<void(class RenderPipelineState*, class RenderPipelineReflection*, NS::Error*)>;
+using NewRenderPipelineStateWithReflectionCompletionHandlerFunction = std::function < void(class RenderPipelineState*, class RenderPipelineReflection*, NS::Error*)>;
 
 using NewComputePipelineStateCompletionHandler = void (^)(class ComputePipelineState*, NS::Error*);
 
-using NewComputePipelineStateCompletionHandlerFunction = std::function<void(class ComputePipelineState*, NS::Error*)>;
+using NewComputePipelineStateCompletionHandlerFunction = std::function < void(class ComputePipelineState*, NS::Error*)>;
 
 using NewComputePipelineStateWithReflectionCompletionHandler = void (^)(class ComputePipelineState*, class ComputePipelineReflection*, NS::Error*);
 
-using NewComputePipelineStateWithReflectionCompletionHandlerFunction = std::function<void(class ComputePipelineState*, class ComputePipelineReflection*, NS::Error*)>;
+using NewComputePipelineStateWithReflectionCompletionHandlerFunction = std::function < void(class ComputePipelineState*, class ComputePipelineReflection*, NS::Error*)>;
 
 using Timestamp = std::uint64_t;
 

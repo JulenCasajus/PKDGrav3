@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -40,7 +40,7 @@
 // NEEDS_WORK: currently stencilExtent returns int(1).  What if the
 // stencil contains calls to math functions, or divisions, etc.?
 // Should at least return a number of the appropriate type.  Probably
-// return a sequence of quasi-random floating point numbers.
+// return a sequence of quasi - random floating point numbers.
 
 /*
  * These macros make it easier for users to declare stencil objects.
@@ -51,17 +51,17 @@
  * BZ_END_STENCIL
  */
 
-#define BZ_DECLARE_STENCIL2(name,A,B)    \
+#define BZ_DECLARE_STENCIL2(name, A, B)    \
   struct name {                          \
-    template<typename T1,typename T2,typename T3,typename T4,typename T5,typename T6, \
-             typename T7,typename T8,typename T9,typename T10,typename T11>         \
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, \
+             typename T7, typename T8, typename T9, typename T10, typename T11>         \
     static inline void apply(T1& A, T2& B, T3, T4, T5, T6, T7, T8, T9, T10, T11) \
     {
 
-#define BZ_END_STENCIL_WITH_SHAPE(MINS,MAXS) } \
+#define BZ_END_STENCIL_WITH_SHAPE(MINS, MAXS) } \
     template<int N> \
-    void getExtent(BZ_BLITZ_SCOPE(TinyVector)<int,N>& minb, \
-                   BZ_BLITZ_SCOPE(TinyVector)<int,N>& maxb) const \
+    void getExtent(BZ_BLITZ_SCOPE(TinyVector)<int, N>& minb, \
+                   BZ_BLITZ_SCOPE(TinyVector)<int, N>& maxb) const \
     { \
         minb = MINS; \
         maxb = MAXS; \
@@ -72,75 +72,75 @@
 #define BZ_END_STENCIL } static const bool hasExtent = false; };
 #define BZ_STENCIL_END BZ_END_STENCIL
 
-#define BZ_DECLARE_STENCIL3(name,A,B,C)         \
+#define BZ_DECLARE_STENCIL3(name, A, B, C)         \
   struct name {                                 \
-    template<typename T1,typename T2,typename T3,typename T4,typename T5,typename T6, \
-             typename T7,typename T8,typename T9,typename T10,typename T11>      \
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, \
+             typename T7, typename T8, typename T9, typename T10, typename T11>      \
     static inline void apply(T1& A, T2& B, T3& C, T4, T5, T6, T7, T8, T9,  \
         T10, T11)      \
     {
 
-#define BZ_DECLARE_STENCIL4(name,A,B,C,D)             \
+#define BZ_DECLARE_STENCIL4(name, A, B, C, D)             \
   struct name {                                       \
-    template<typename T1,typename T2,typename T3,typename T4,typename T5,typename T6,  \
-             typename T7,typename T8,typename T9,typename T10,typename T11>  \
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6,  \
+             typename T7, typename T8, typename T9, typename T10, typename T11>  \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5, T6, T7, \
         T8, T9, T10, T11)     \
     {
 
-#define BZ_DECLARE_STENCIL5(name,A,B,C,D,E) \
+#define BZ_DECLARE_STENCIL5(name, A, B, C, D, E) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4,typename T5,typename T6, \
-             typename T7,typename T8,typename T9,typename T10,typename T11> \
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, \
+             typename T7, typename T8, typename T9, typename T10, typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6, T7, T8, \
         T9, T10, T11) \
     {
 
-#define BZ_DECLARE_STENCIL6(name,A,B,C,D,E,F) \
+#define BZ_DECLARE_STENCIL6(name, A, B, C, D, E, F) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4,typename T5,typename T6, \
-             typename T7,typename T8,typename T9,typename T10,typename T11> \
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, \
+             typename T7, typename T8, typename T9, typename T10, typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, \
         T7, T8, T9, T10, T11) \
     {
 
-#define BZ_DECLARE_STENCIL7(name,A,B,C,D,E,F,G) \
+#define BZ_DECLARE_STENCIL7(name, A, B, C, D, E, F, G) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4, \
-             typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11> \
+    template<typename T1, typename T2, typename T3, typename T4, \
+             typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, T7& G, \
         T8, T9, T10, T11) \
     {
 
-#define BZ_DECLARE_STENCIL8(name,A,B,C,D,E,F,G,H) \
+#define BZ_DECLARE_STENCIL8(name, A, B, C, D, E, F, G, H) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4, \
-             typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11> \
+    template<typename T1, typename T2, typename T3, typename T4, \
+             typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, T7& G, \
       T8& H, T9, T10, T11) \
     {
 
-#define BZ_DECLARE_STENCIL9(name,A,B,C,D,E,F,G,H,I) \
+#define BZ_DECLARE_STENCIL9(name, A, B, C, D, E, F, G, H, I) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4, \
-             typename T5,typename T6,typename T7,typename T8,typename T9,typename T10, \
+    template<typename T1, typename T2, typename T3, typename T4, \
+             typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, \
              typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, T7& G, \
       T8& H, T9& I, T10, T11) \
     {
 
-#define BZ_DECLARE_STENCIL10(name,A,B,C,D,E,F,G,H,I,J) \
+#define BZ_DECLARE_STENCIL10(name, A, B, C, D, E, F, G, H, I, J) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4, \
-             typename T5,typename T6,typename T7,typename T8,typename T9,typename T10,typename T11> \
+    template<typename T1, typename T2, typename T3, typename T4, \
+             typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, T7& G, \
       T8& H, T9& I, T10& J, T11) \
     {
 
-#define BZ_DECLARE_STENCIL11(name,A,B,C,D,E,F,G,H,I,J,K) \
+#define BZ_DECLARE_STENCIL11(name, A, B, C, D, E, F, G, H, I, J, K) \
   struct name { \
-    template<typename T1,typename T2,typename T3,typename T4, \
-             typename T5,typename T6,typename T7,typename T8,typename T9,typename T10, \
+    template<typename T1, typename T2, typename T3, typename T4, \
+             typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, \
              typename T11> \
     static inline void apply(T1& A, T2& B, T3& C, T4& D, T5& E, T6& F, T7& G, \
       T8& H, T9& I, T10& J, T11& K) \
@@ -158,7 +158,7 @@ BZ_NAMESPACE(blitz)
 template<typename T> class dummy;
 
 struct dummyArray {
-    typedef dummy<double> T_iterator;
+    typedef dummy < double> T_iterator;
 
     const dummyArray& shape() const { return *this; }
 };
@@ -191,11 +191,11 @@ public:
 
     void loadStride(int) { }
     void moveTo(int) { }
-    void moveTo(int,int) { }
-    void moveTo(int,int,int) { }
-    void moveTo(int,int,int,int) { }
+    void moveTo(int, int) { }
+    void moveTo(int, int, int) { }
+    void moveTo(int, int, int, int) { }
     void advance() { }
-    T shift(int,int) { return T(); }
+    T shift(int, int) { return T(); }
 
 private:
     T value_;
@@ -209,7 +209,7 @@ private:
  * via operator().
  */
 
-template<int N_rank,typename P_numtype>
+template<int N_rank, typename P_numtype>
 class stencilExtent : public ETBase<stencilExtent<N_rank, P_numtype> > {
 public:
     typedef P_numtype T_numtype;
@@ -219,60 +219,60 @@ public:
         min_ = 0;
         max_ = 0;
     }
-  
-    dummy<T_numtype> operator()(int i) const
+
+    dummy < T_numtype> operator()(int i) const
     {
         update(0, i);
-        return dummy<T_numtype>(1);
+        return dummy < T_numtype>(1);
     }
- 
-    dummy<T_numtype> operator()(int i, int j) const
+
+    dummy < T_numtype> operator()(int i, int j) const
     {
         update(0, i);
         update(1, j);
-        return dummy<T_numtype>(1);
+        return dummy < T_numtype>(1);
     }
 
-    dummy<T_numtype> operator()(int i, int j, int k) const
+    dummy < T_numtype> operator()(int i, int j, int k) const
     {
         update(0, i);
         update(1, j);
         update(2, k);
-        return dummy<T_numtype>(1);
+        return dummy < T_numtype>(1);
     }
 
-    dummy<T_numtype> shift(int offset, int dim) const
+    dummy < T_numtype> shift(int offset, int dim) const
     {
         update(dim, offset);
-        return dummy<T_numtype>(1);
+        return dummy < T_numtype>(1);
     }
-  
-    dummy<T_numtype> shift(int offset1, int dim1, int offset2, int dim2) const
+
+    dummy < T_numtype> shift(int offset1, int dim1, int offset2, int dim2) const
     {
         update(dim1, offset1);
         update(dim2, offset2);
-        return dummy<T_numtype>(1);
+        return dummy < T_numtype>(1);
     }
- 
-    dummy<_bz_typename multicomponent_traits<T_numtype>::T_element> 
+
+    dummy < _bz_typename multicomponent_traits<T_numtype>::T_element>
         operator[](int) const
     {
-        return dummy<_bz_typename multicomponent_traits<T_numtype>::T_element>
+        return dummy < _bz_typename multicomponent_traits<T_numtype>::T_element>
             (1);
     }
- 
+
     void update(int rank, int offset) const
     {
-        if (offset < min_[rank])
+        if (offset<min_[rank])
             min_[rank] = offset;
         if (offset > max_[rank])
             max_[rank] = offset;
     }
 
     template<typename T_numtype2>
-    void combine(const stencilExtent<N_rank,T_numtype2>& x) const
+    void combine(const stencilExtent<N_rank, T_numtype2>& x) const
     {
-        for (int i=0; i < N_rank; ++i)
+        for (int i = 0; i < N_rank; ++i)
         {
             min_[i] = (extrema::min)(min_[i], (x.min)(i));
             max_[i] = (extrema::max)(max_[i], (x.max)(i));
@@ -280,7 +280,7 @@ public:
     }
 
     template<typename T_numtype2>
-    void combine(const dummy<T_numtype2>&) const
+    void combine(const dummy < T_numtype2>&) const
     { }
 
     int (min)(int i) const
@@ -289,10 +289,10 @@ public:
     int (max)(int i) const
     { return max_[i]; }
 
-    const TinyVector<int,N_rank>& (min)() const
+    const TinyVector<int, N_rank>& (min)() const
     { return min_; }
 
-    const TinyVector<int,N_rank>& (max)() const
+    const TinyVector<int, N_rank>& (max)() const
     { return max_; }
 
     template<typename T>
@@ -310,24 +310,24 @@ public:
 
     T_numtype operator*() const
     { return T_numtype(1); }
- 
+
 private:
-    mutable TinyVector<int,N_rank> min_, max_;
+    mutable TinyVector<int, N_rank> min_, max_;
 };
 
 
 /*
- * stencilExtent_traits gives a stencilExtent<N,T> object for arrays,
+ * stencilExtent_traits gives a stencilExtent<N, T> object for arrays,
  * and a dummy object for dummy arrays.
  */
 template<typename T>
 struct stencilExtent_traits {
-    typedef dummy<double> T_stencilExtent;
+    typedef dummy < double> T_stencilExtent;
 };
 
 template<typename T_numtype, int N_rank>
-struct stencilExtent_traits<Array<T_numtype,N_rank> > {
-    typedef stencilExtent<N_rank,T_numtype> T_stencilExtent;
+struct stencilExtent_traits<Array<T_numtype, N_rank> > {
+    typedef stencilExtent<N_rank, T_numtype> T_stencilExtent;
 };
 
 /*

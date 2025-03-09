@@ -19,17 +19,17 @@
 import msr
 import Pyro.core
 
-class remoteMSR(msr.MSR,Pyro.core.ObjBase):
+class remoteMSR(msr.MSR, Pyro.core.ObjBase):
     def __init__(self):
         Pyro.core.ObjBase.__init__(self)
         msr.MSR.__init__(self)
 
 Pyro.core.initServer()
-daemon=Pyro.core.Daemon()
-uri=daemon.connect(remoteMSR(),"msr")
+daemon = Pyro.core.Daemon()
+uri = daemon.connect(remoteMSR(), "msr")
 
-print "The daemon runs on port:",daemon.port
-print "The object's uri is:",uri
+print "The daemon runs on port:", daemon.port
+print "The object's uri is:", uri
 
 daemon.requestLoop()
 

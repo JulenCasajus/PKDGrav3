@@ -18,131 +18,131 @@
 
 static_assert(std::is_void<ServiceCountSelected::input>()  || std::is_standard_layout<ServiceCountSelected::input>());
 static_assert(std::is_void<ServiceCountSelected::output>() || std::is_standard_layout<ServiceCountSelected::output>());
-int ServiceCountSelected::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceCountSelected::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     static_assert(std::is_void<input>());
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nOut==sizeof(output));
+    assert(nOut == sizeof(output));
     *out = pkd->particles.CountSelected();
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelActives::input>()  || std::is_standard_layout<ServiceSelActives::input>());
 static_assert(std::is_void<ServiceSelActives::output>() || std::is_standard_layout<ServiceSelActives::output>());
-int ServiceSelActives::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelActives::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelActive(in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelActive(in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelBlackholes::input>()  || std::is_standard_layout<ServiceSelBlackholes::input>());
 static_assert(std::is_void<ServiceSelBlackholes::output>() || std::is_standard_layout<ServiceSelBlackholes::output>());
-int ServiceSelBlackholes::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelBlackholes::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelBlackholes(in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelBlackholes(in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelSpecies::input>()  || std::is_standard_layout<ServiceSelSpecies::input>());
 static_assert(std::is_void<ServiceSelSpecies::output>() || std::is_standard_layout<ServiceSelSpecies::output>());
-int ServiceSelSpecies::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelSpecies::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelSpecies(in->mSpecies,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelSpecies(in->mSpecies, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelGroup::input>()  || std::is_standard_layout<ServiceSelGroup::input>());
 static_assert(std::is_void<ServiceSelGroup::output>() || std::is_standard_layout<ServiceSelGroup::output>());
-int ServiceSelGroup::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelGroup::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelGroup(in->iGroup,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelGroup(in->iGroup, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelMass::input>()  || std::is_standard_layout<ServiceSelMass::input>());
 static_assert(std::is_void<ServiceSelMass::output>() || std::is_standard_layout<ServiceSelMass::output>());
-int ServiceSelMass::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelMass::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelMass(in->dMinMass,in->dMaxMass,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelMass(in->dMinMass, in->dMaxMass, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelPhaseDensity::input>()  || std::is_standard_layout<ServiceSelPhaseDensity::input>());
 static_assert(std::is_void<ServiceSelPhaseDensity::output>() || std::is_standard_layout<ServiceSelPhaseDensity::output>());
-int ServiceSelPhaseDensity::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelPhaseDensity::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelPhaseDensity(in->dMinDensity,in->dMaxDensity,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelPhaseDensity(in->dMinDensity, in->dMaxDensity, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelById::input>()  || std::is_standard_layout<ServiceSelById::input>());
 static_assert(std::is_void<ServiceSelById::output>() || std::is_standard_layout<ServiceSelById::output>());
-int ServiceSelById::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelById::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelById(in->idStart,in->idEnd,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelById(in->idStart, in->idEnd, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelBox::input>()  || std::is_standard_layout<ServiceSelBox::input>());
 static_assert(std::is_void<ServiceSelBox::output>() || std::is_standard_layout<ServiceSelBox::output>());
-int ServiceSelBox::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelBox::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelBox(in->dCenter,in->dSize,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelBox(in->dCenter, in->dSize, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelSphere::input>()  || std::is_standard_layout<ServiceSelSphere::input>());
 static_assert(std::is_void<ServiceSelSphere::output>() || std::is_standard_layout<ServiceSelSphere::output>());
-int ServiceSelSphere::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelSphere::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelSphere(in->r,in->dRadius,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelSphere(in->r, in->dRadius, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }
 
 static_assert(std::is_void<ServiceSelCylinder::input>()  || std::is_standard_layout<ServiceSelCylinder::input>());
 static_assert(std::is_void<ServiceSelCylinder::output>() || std::is_standard_layout<ServiceSelCylinder::output>());
-int ServiceSelCylinder::Service(PST pst,void *vin,int nIn,void *vout,int nOut) {
+int ServiceSelCylinder::Service(PST pst, void *vin, int nIn, void *vout, int nOut) {
     auto in   = static_cast<input *>(vin);
     auto out  = static_cast<output *>(vout);
     auto pkd = pst->plcl->pkd;
-    assert(nIn==sizeof(input));
-    assert(nOut==sizeof(output));
-    *out = pkd->particles.SelCylinder(in->dP1,in->dP2,in->dRadius,in->setIfTrue,in->clearIfFalse);
+    assert(nIn == sizeof(input));
+    assert(nOut == sizeof(output));
+    *out = pkd->particles.SelCylinder(in->dP1, in->dP2, in->dRadius, in->setIfTrue, in->clearIfFalse);
     return sizeof(output);
 }

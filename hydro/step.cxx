@@ -36,11 +36,11 @@ void MSR::HydroStep(double dTime, double dDelta) {
         in.iRoot = 0; // Not used
         in.dTime = dTime;
         in.dDelta = 0; // Not used
-        pstWakeParticles(pst,&in,sizeof(in),NULL,0);
+        pstWakeParticles(pst, &in, sizeof(in), NULL, 0);
     }
 }
 
-void packHydroStep(void *vpkd,void *dst,const void *src) {
+void packHydroStep(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<hydroStepPack *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -57,7 +57,7 @@ void packHydroStep(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void unpackHydroStep(void *vpkd,void *dst,const void *src) {
+void unpackHydroStep(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const hydroStepPack *>(src);
@@ -74,7 +74,7 @@ void unpackHydroStep(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void initHydroStep(void *vpkd,void *dst) {
+void initHydroStep(void *vpkd, void *dst) {
     PKD pkd = (PKD) vpkd;
     auto p = pkd->particles[static_cast<PARTICLE *>(dst)];
 
@@ -83,7 +83,7 @@ void initHydroStep(void *vpkd,void *dst) {
     }
 }
 
-void flushHydroStep(void *vpkd,void *dst,const void *src) {
+void flushHydroStep(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<hydroStepFlush *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -94,7 +94,7 @@ void flushHydroStep(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void combHydroStep(void *vpkd,void *dst,const void *src) {
+void combHydroStep(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const hydroStepFlush *>(src);
@@ -110,14 +110,14 @@ void combHydroStep(void *vpkd,void *dst,const void *src) {
  *    - Acceleration
  *    - Timestep of the neighouring particles (in a scatter approach)
  */
-void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
+void hydroStep(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     PKD pkd = smf->pkd;
     auto p = pkd->particles[pIn];
     double dtEst;
 
     const auto &pv = p.velocity();
     auto &psph = p.sph();
-    const double ph = 0.5*p.ball();
+    const double ph = 0.5 * p.ball();
 
     dtEst = HUGE_VAL;
 
@@ -130,9 +130,9 @@ void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
 
         const auto &dr = nnList[i].dr;
 
-        const double dvDotdr = dot(dr,pv - qv);
+        const double dvDotdr = dot(dr, pv - qv);
         double vsig_pq = psph.c + qsph.c;
-        if (dvDotdr < 0.) vsig_pq -= dvDotdr/sqrt(nnList[i].fDist2);
+        if (dvDotdr < 0.) vsig_pq -= dvDotdr / sqrt(nnList[i].fDist2);
 
         const double dt2 = smf->dEtaCourant * 2 * ph * smf->a / vsig_pq;
         if (dt2 < dtEst) dtEst = dt2;
@@ -145,8 +145,8 @@ void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
         auto q = pkd->particles[nnList[i].pPart];
         const auto &qv = q.velocity();
 
-        double dv2 = dot(qv - pv,qv - pv);
-        double Ekin = 0.5*p.mass()*dv2;
+        double dv2 = dot(qv - pv, qv - pv);
+        double Ekin = 0.5 * p.mass()*dv2;
 
         psph.maxEkin = (psph.maxEkin < Ekin) ? Ekin : psph.maxEkin;
     }
@@ -155,33 +155,33 @@ void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
 #ifdef EXTERNAL_POTENTIAL
     auto out = external_potential(p.position());
 
-    /* Time-step as a fraction of the circular orbital time */
+    /* Time - step as a fraction of the circular orbital time */
     const double time_step = std::get<POT_DT>(out);
 
     if (time_step < dtEst) dtEst = time_step;
 #endif
 
-    // Timestep criteria based on the hydro+grav accelerations
+    // Timestep criteria based on the hydro + grav accelerations
 
-    const TinyVector<double,3>
+    const TinyVector<double, 3>
     a {p.acceleration() - smf->a *(-p.velocity()*psph.Frho + psph.Fmom)/p.mass()};
 
-    // 1/a^3 from grav2.c:217
+    // 1 / a^3 from grav2.c:217
     // Explanation:
-    // 1/a from different acceleration definition
-    // 1/a in grav source term (ie. kick)
-    // 1/a from the drift
-    // But for the hydro, it is 1/a^2:
-    // 1/a from hydro eqs (included normally in minDt)
-    // 1/a from pkdVel, which is normally incorporated in the drift
+    // 1 / a from different acceleration definition
+    // 1 / a in grav source term (ie. kick)
+    // 1 / a from the drift
+    // But for the hydro, it is 1 / a^2:
+    // 1 / a from hydro eqs (included normally in minDt)
+    // 1 / a from pkdVel, which is normally incorporated in the drift
     const double aFac = 1./(smf->a * smf->a * smf->a);
-    const double acc = sqrt(dot(a,a)) * aFac;
+    const double acc = sqrt(dot(a, a)) * aFac;
 
     const float h = smf->bDoGravity ? std::min(ph, static_cast<double>(p.soft())) : ph;
-    const double dtAcc = smf->dCFLacc * sqrt(2.*h/acc);
+    const double dtAcc = smf->dCFLacc * sqrt(2.*h / acc);
 
     if (dtAcc < dtEst) dtEst = dtAcc;
-    uint8_t uNewRung = pkdDtToRung(dtEst,smf->dDelta,MAX_RUNG);
+    uint8_t uNewRung = pkdDtToRung(dtEst, smf->dDelta, MAX_RUNG);
     if (uNewRung > p.new_rung()) p.set_new_rung(uNewRung);
 
     /* Timestep limiter that imposes that the particle must have a dt
@@ -190,7 +190,7 @@ void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
      * This is implemented as a scatter approach, in which the maximum dt of the
      * neighbours is set given the dt computed from this particle
      */
-    uNewRung = std::max(p.rung(),p.new_rung());
+    uNewRung = std::max(p.rung(), p.new_rung());
     if (smf->dDelta >= 0) {
         for (auto i = 0; i < nSmooth; ++i) {
             auto q = pkd->particles[nnList[i].pPart];
@@ -208,7 +208,7 @@ void hydroStep(PARTICLE *pIn,float fBall,int nSmooth,NN *nnList,SMF *smf) {
  *
  * TODO: clean unused function arguments
  */
-void pkdWakeParticles(PKD pkd,int iRoot, double dTime, double dDelta) {
+void pkdWakeParticles(PKD pkd, int iRoot, double dTime, double dDelta) {
     for (auto &p : pkd->particles) {
         if (p.is_gas()) {
             auto &sph = p.sph();
@@ -232,7 +232,7 @@ void pkdWakeParticles(PKD pkd,int iRoot, double dTime, double dDelta) {
                  *  However, with the hydrodynamics is not that easy.
                  *
                  *
-                 *  Fene/Fmom are unusable at this time because the particle is
+                 *  Fene / Fmom are unusable at this time because the particle is
                  *  not synced. At most, we could use the previous hydro derivatives
                  *  to extrapolate up to this time... but they are also unusable
                  *

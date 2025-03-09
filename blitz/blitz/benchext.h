@@ -9,7 +9,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -19,11 +19,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -66,10 +66,10 @@ public:
     ~BenchmarkExt();
 
     void setNumParameters(int numParameters);
-  void setParameterVector(Array<T_parameter,1> parms);
+  void setParameterVector(Array<T_parameter, 1> parms);
     void setParameterDescription(const char* string);
-  void setIterations(Array<long,1> iters);
-  void setOpsPerIteration(Array<double,1> flopsPerIteration);
+  void setIterations(Array<long, 1> iters);
+  void setOpsPerIteration(Array<double, 1> flopsPerIteration);
   void setDependentVariable(const char* string);
 
     void beginBenchmarking();
@@ -103,7 +103,7 @@ protected:
     BenchmarkExt(const BenchmarkExt<P_parameter>&) { }
     void operator=(const BenchmarkExt<P_parameter>&) { }
 
-    enum { initializing, benchmarking, benchmarkingImplementation, 
+    enum { initializing, benchmarking, benchmarkingImplementation,
        running, runningOverhead, done } state_;
 
     unsigned numImplementations_;
@@ -112,13 +112,13 @@ protected:
   std::string description_;
   std::vector<std::string> implementationDescriptions_;
 
-  Array<double,2> times_;       // Elapsed time
-  Array<long long,2> instr_;       // instructions according to timer
-  Array<long long,2> flops_;       // flops according to timer
+  Array<double, 2> times_;       // Elapsed time
+  Array<long long, 2> instr_;       // instructions according to timer
+  Array<long long, 2> flops_;       // flops according to timer
 
-  Array<T_parameter,1> parameters_;
-  Array<long,1> iterations_;
-  Array<double,1> flopsPerIteration_;
+  Array<T_parameter, 1> parameters_;
+  Array<long, 1> iterations_;
+  Array<double, 1> flopsPerIteration_;
 
     Timer timer_;
 
@@ -132,6 +132,6 @@ protected:
 
 BZ_NAMESPACE_END
 
-#include <blitz/benchext.cc>  
+#include <blitz/benchext.cc>
 
 #endif // BZ_BENCHEXT_H

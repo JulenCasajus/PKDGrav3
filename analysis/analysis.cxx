@@ -342,7 +342,7 @@ double ell_distance2(const double *r, SHAPESBIN *pShape, double ba, double ca) {
 
 /*
 ** NB: We assume that shells do NOT cross. If a particle is part
-**     of bin n, then it is always part of bin n+1, n+2... In principle
+**     of bin n, then it is always part of bin n + 1, n + 2... In principle
 **     this is not necessarily true, but it would be extremely odd for the centers
 **     to be off by that much.  This assumption greatly improves the performance,
 **     taking the algorithm from Nbin * Npart down to Npart.
@@ -397,7 +397,7 @@ static void CalculateInertia(PKD pkd, int nBins, const double *dRadii, SHAPESBIN
         int ia, ib, ic;
         for (i = iBin = 0; iBin < nBins; iBin++) {
             pShape = &shapesBins[iBin];
-    
+
             for (j = 0; j < 3; j++) {
                 for (k = 0; k < 3; k++) {
                     if (k <= j) {
@@ -437,10 +437,10 @@ static void CalculateInertia(PKD pkd, int nBins, const double *dRadii, SHAPESBIN
                     ic = 1;
                 }
             }
-    
+
             /* Check if Eigenvectors are right-handed in 3D:
             ev[ib] x ev[ic] = ev[ia] */
-    
+
             VecProd[1] = evectors[2][ib] * evectors[3][ic] - evectors[3][ib] * evectors[2][ic];
             VecProd[2] = -evectors[1][ib] * evectors[3][ic] + evectors[3][ib] * evectors[1][ic];
             VecProd[3] = evectors[1][ib] * evectors[2][ic] - evectors[2][ib] * evectors[1][ic];
@@ -450,29 +450,29 @@ static void CalculateInertia(PKD pkd, int nBins, const double *dRadii, SHAPESBIN
                     evectors[i + 1][ia] = -evectors[i + 1][ia];
                 }
             }
-        
+
             //double ba = sqrt((double)(evalues[ib]/evalues[ia])) ;
             //double ca = sqrt((double)(evalues[ic]/evalues[ia])) ;
-    
+
             /* Euler angles for a zyz rotation */
             //double theta = 180. / M_PI * acos((double) evectors[3][ic]);
             double phi = 180.0 / M_PI * acos((double) evectors[1][ic] / sqrt(evectors[1][ic] * evectors[1][ic] + evectors[2][ic] * evectors[2][ic]));
             double psi = 180.0 / M_PI * acos((double) (-evectors[2][ic] * evectors[1][ib] + evectors[1][ic] * evectors[2][ib]) / sqrt(evectors[1][ic] * evectors[1][ic] + evectors[2][ic] * evectors[2][ic]));
-    
-            /* Inverse acos is only defined between 0 and pi, therefore we must deal with pi to 2*pi */
+
+            /* Inverse acos is only defined between 0 and pi, therefore we must deal with pi to 2 * pi */
             if (evectors[2][ic] < 0.0) {
                 phi = 360.0 - phi; /* phi always positive */
             }
             if (evectors[3][ib] < 0.0) {
                 psi = 360.0 - psi; /* psi always positive */
             }
-    
+
             /*
-            for(i = 0; i<3; i++){
+            for (i = 0; i < 3; i++){
                 ell_center[i] = pShape->com[i] / pShape->dMassEnclosed;
             }
             */
-        
+
             for (i = 0; i < 3; i++) {
                 ell_matrix_inv[i][0] = evectors[i + 1][ia];
                 ell_matrix_inv[i][1] = evectors[i + 1][ib];

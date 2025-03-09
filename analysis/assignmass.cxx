@@ -38,7 +38,7 @@ typedef blitz::TinyVector <int, 3> shape_t;
 typedef blitz::TinyVector <double, 3> position_t;
 typedef blitz::TinyVector <float, 3> float3_t;
 
-template <int Order, typename F>
+template<int Order, typename F>
 static void assign(mass_array_t &masses, const F r[3], F mass) {
     AssignmentWeights <Order, F> Hx(r[0]), Hy(r[1]), Hz(r[2]);
 
@@ -51,7 +51,7 @@ static void assign(mass_array_t &masses, const F r[3], F mass) {
     }
 }
 
-template <typename F>
+template<typename F>
 static void assign_mass(mass_array_t &masses, const F r[3], F mass, int iAssignment = 4) {
     switch (iAssignment) {
         case 1: assign <1, F> (masses, r, mass); break;
@@ -147,7 +147,7 @@ void pkdAssignMass(PKD pkd, uint32_t iLocalRoot, int iAssignment, int iGrid, flo
                     size = blitz::product(ishape);
                     r = r - flower; // Scale and shift to fit in subcube
                     data.resize(size); // Hold the right number of masses
-                    mass_array_t masses(data.data(),ishape,blitz::neverDeleteData,RegularArray());
+                    mass_array_t masses(data.data(), ishape, blitz::neverDeleteData, RegularArray());
                     masses = 0.0f;
                     assign_mass(masses, r.data(), p.mass(), iAssignment);
                     flush_masses(pkd, nGrid, masses, ilower);
@@ -213,7 +213,7 @@ void pkdWindowCorrection(PKD pkd, int iAssignment, int iGrid) {
 
     for (auto index = K1.begin(); index != K1.end(); index++) {
         auto pos = index.position();
-        auto i = pos[0]; // i,j,k are all positive (absolute value)
+        auto i = pos[0]; // i, j, k are all positive (absolute value)
         auto j = (pos[1] > iNyquist) ? nGrid - pos[1] : pos[1];
         auto k = (pos[2] > iNyquist) ? nGrid - pos[2] : pos[2];
         *index *=  W[i] * W[j] * W[k]; // Correction for mass assignment

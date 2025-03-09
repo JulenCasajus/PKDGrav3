@@ -76,16 +76,16 @@ struct inStellarEvolutionInit {
 };
 
 struct stevPack {
-    blitz::TinyVector<double,3> position;
+    blitz::TinyVector<double, 3> position;
     float fDensity;
     uint8_t iClass;
 };
 
 struct stevFlush {
-    blitz::TinyVector<float,3> ReceivedMom;
+    blitz::TinyVector<float, 3> ReceivedMom;
     float fReceivedMass;
     float fReceivedE;
-    blitz::TinyVector<float,ELEMENT_COUNT> ElemMass;
+    blitz::TinyVector<float, ELEMENT_COUNT> ElemMass;
     float fMetalMass;
 };
 
@@ -340,7 +340,7 @@ static inline void stevInterpToIMFSampling(STEV_DATA *const Data, STEV_RAWDATA *
 }
 
 /* Function to interpolate nSize numbers from the array pfTable along its rows (first or
-   X- axis). The argument iOffset is assumed to represent iX * nY + oY, where iX is the
+   X-axis). The argument iOffset is assumed to represent iX * nY + oY, where iX is the
    lower X-axis index for the interpolation and oY is the Y-axis' offset. When this is
    multiplied by nZ, it gives the displacement necessary to move from the beginning
    of the array pfTable to the first value of the lower X-axis needed for the

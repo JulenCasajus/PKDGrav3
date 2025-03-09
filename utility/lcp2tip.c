@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
     tipsyHdr h;
     tipsyDark d;
 
-    if (argc!=3) {
-        fprintf(stderr,"Usage: cat files | %s outfile mass\n", argv[0]);
+    if (argc != 3) {
+        fprintf(stderr, "Usage: cat files | %s outfile mass\n", argv[0]);
         return EINVAL;
     }
 
@@ -69,26 +69,26 @@ int main(int argc, char *argv[]) {
     d.eps = 0.0;
     d.phi = 0.0;
 
-    fp = fopen(argv[1],"wb");
-    if (fp==NULL) {
+    fp = fopen(argv[1], "wb");
+    if (fp == NULL) {
         perror(argv[1]);
         abort();
     }
 
-    fseek(fp,sizeof(tipsyHdr),SEEK_SET);
-    while (fread(&p,sizeof(p),1,stdin)) {
-        for (j=0; j<3; ++j) {
+    fseek(fp, sizeof(tipsyHdr), SEEK_SET);
+    while (fread(&p, sizeof(p), 1, stdin)) {
+        for (j = 0; j < 3; ++j) {
             d.pos[j] = p.pos[j];
             d.vel[j] = p.vel[j];
         }
         d.phi = p.pot;
-        fwrite(&d,sizeof(d),1,fp);
+        fwrite(&d, sizeof(d), 1, fp);
         ++h.nBodies;
     }
     h.nDark = h.nBodies;
 
-    fseek(fp,0,SEEK_SET);
-    fwrite(&h,sizeof(h),1,fp);
+    fseek(fp, 0, SEEK_SET);
+    fwrite(&h, sizeof(h), 1, fp);
 
     fclose(fp);
 

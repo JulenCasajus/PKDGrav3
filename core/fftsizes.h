@@ -19,7 +19,7 @@
 class ServiceFftSizes : public TraverseCombinePST {
 public:
     struct input {
-        int nx,ny,nz;
+        int nx, ny, nz;
     };
     struct output {
         uint64_t nMaxLocal;
@@ -27,8 +27,8 @@ public:
         int nMaxY;
     };
     explicit ServiceFftSizes(PST pst)
-        : TraverseCombinePST(pst,PST_GETFFTMAXSIZES,sizeof(input),sizeof(output),"FftSizes") {}
+        : TraverseCombinePST(pst, PST_GETFFTMAXSIZES, sizeof(input), sizeof(output), "FftSizes") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
-    virtual int Combine(void *vout,void *vout2);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
+    virtual int Combine(void *vout, void *vout2);
 };

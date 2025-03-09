@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/tuning.h      Platform-specific code tuning
+ * blitz/tuning.h      Platform - specific code tuning
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -37,7 +37,7 @@
 #define BZ_L1_CACHE_ESTIMATED_SIZE    32768
 #define BZ_L2_CACHE_ESTIMATED_SIZE    6291456
 // This will work for 32, 16 also
-#define BZ_L1_CACHE_LINE_SIZE         64 
+#define BZ_L1_CACHE_LINE_SIZE         64
 #define BZ_CACHE_LINES_TO_ALIGN       16
 
 #undef  BZ_PARTIAL_LOOP_UNROLL
@@ -81,7 +81,7 @@
 
 
 /*
- * Platform-specific tuning
+ * Platform - specific tuning
  */
 
 #ifdef _CRAYT3E
@@ -93,7 +93,7 @@
 #endif
 
 #ifdef __INTEL_COMPILER
- // icpc does not vectorize the unrolled loop so this is def. bad 
+ // icpc does not vectorize the unrolled loop so this is def. bad
  #define BZ_TV_EVALUATE_UNROLL_LENGTH 0
 
  // defines for inlining
@@ -105,7 +105,7 @@
 #else // need this since icpc also defines __GNUC__
 #ifdef __GNUC__
  // The egcs compiler does a good job of loop unrolling, if
- // -funroll-loops is used.
+ // -funroll - loops is used.
  #undef BZ_PARTIAL_LOOP_UNROLL
  #undef BZ_ARRAY_FAST_TRAVERSAL_UNROLL
  #undef BZ_ARRAY_STACK_TRAVERSAL_UNROLL
@@ -131,7 +131,7 @@
 // override definitions above
 #ifdef  BZ_NO_INLINE_ET
  #undef _bz_inline_et
- #define _bz_inline_et 
+ #define _bz_inline_et
 #endif
 
 #ifdef  BZ_ETPARMS_CONSTREF
@@ -142,7 +142,7 @@
 
 #ifdef __DECCXX
  // The DEC cxx compiler has problems with loop unrolling
- // because of aliasing.  Loop unrolling and anti-aliasing
+ // because of aliasing.  Loop unrolling and anti - aliasing
  // is done by Blitz++.
 
   #define  BZ_PARTIAL_LOOP_UNROLL
@@ -164,7 +164,7 @@
     extern "C" int __kai_apply(const char*, ...);
 
     #undef  BZ_NO_PROPAGATE(X)
-    #define BZ_NO_PROPAGATE(X)  __kai_apply("(%a)",&X)
+    #define BZ_NO_PROPAGATE(X)  __kai_apply("(%a)", &X)
 #endif
 #endif
 

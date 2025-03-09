@@ -231,8 +231,8 @@
    extended precision. For example, the following code should ensure
    exact equality, even when extended precision registers are in use,
 
-      double q = GSL_COERCE_DBL(3.0/7.0) ;
-      if (q == GSL_COERCE_DBL(3.0/7.0)) { ... } ;
+      double q = GSL_COERCE_DBL(3.0 / 7.0) ;
+      if (q == GSL_COERCE_DBL(3.0 / 7.0)) { ... } ;
 
    It carries a penalty even when the program is running in double
    precision mode unless you compile a separate version of the
@@ -295,7 +295,7 @@
 #endif
 
 #ifdef __GNUC__
-#define DISCARD_POINTER(p) do { ; } while(p ? 0 : 0);
+#define DISCARD_POINTER(p) do { ; } while (p ? 0 : 0);
 #else
 #define DISCARD_POINTER(p) /* ignoring discarded pointer */
 #endif

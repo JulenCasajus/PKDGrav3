@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -64,7 +64,7 @@ BZ_NAMESPACE(blitz)
 /*
  * This traits class provides zero and one values for numeric
  * types.  This was previously a template function with specializations,
- * but the specializations were causing multiply-defined symbols
+ * but the specializations were causing multiply - defined symbols
  * at link time.  TV 980226
  */
 
@@ -78,23 +78,23 @@ struct _bz_OneZeroTraits {
 
 template<>
 struct _bz_OneZeroTraits<complex<float> > {
-    static inline complex<float> zero() { return complex<float>(0.0f,0.0f); }
-    static inline complex<float> one()  { return complex<float>(1.0f,0.0f); }
+    static inline complex<float> zero() { return complex<float>(0.0f, 0.0f); }
+    static inline complex<float> one()  { return complex<float>(1.0f, 0.0f); }
 };
 
 template<>
 struct _bz_OneZeroTraits<complex<double> > {
-    static inline complex<double> zero() { return complex<double>(0.0,0.0); }
-    static inline complex<double> one()  { return complex<double>(1.0,0.0); }
+    static inline complex<double> zero() { return complex<double>(0.0, 0.0); }
+    static inline complex<double> one()  { return complex<double>(1.0, 0.0); }
 };
 
 template<>
 struct _bz_OneZeroTraits<complex<long double> > {
-    static inline complex<long double> zero() 
-    { return complex<long double>(0.0,0.0); }
+    static inline complex<long double> zero()
+    { return complex<long double>(0.0, 0.0); }
 
-    static inline complex<long double> one()  
-    { return complex<long double>(1.0,0.0); }
+    static inline complex<long double> one()
+    { return complex<long double>(1.0, 0.0); }
 };
 
 #endif // BZ_HAVE_COMPLEX
@@ -189,7 +189,7 @@ inline int radix(T)
 template<typename T>
 inline Range range(T)
 {
-    return Range(numeric_limits<T>::min_exponent10, 
+    return Range(numeric_limits<T>::min_exponent10,
         numeric_limits<T>::max_exponent10);
 }
 

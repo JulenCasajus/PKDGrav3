@@ -72,7 +72,7 @@ The particle output is also a binary format. Note that files may be empty if the
 output any particles during the step. This is normal. Each output particle is 40 bytes as follows.
 
 .. tabularcolumns:: |r|l|l|
-.. csv-table::    
+.. csv-table::
    :header: Offset, Type, Field
 
    0,  64-bit integer, particle ID

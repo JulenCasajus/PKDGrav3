@@ -64,7 +64,7 @@ void MSR::StellarEvolutionInit(double dTime) {
     /* NOTE: The lowest value of the initial mass array is set to the corresponding value
        of the Lifetime table that is being used, while its highest value to the maximum
        stellar mass for a CCSN to occur, as set in dCCSNMaxMass. The IMF is still
-       normalized in the range [dIMFMinMass,dIMFMaxMass] */
+       normalized in the range [dIMFMinMass, dIMFMaxMass] */
     const double dMinMass = LifetimeData->pfInitialMass[0];
     const double dMaxMass = parameters.get_dCCSNMaxMass();
     double adInitialMass[STEV_INTERP_N_MASS], adIMF[STEV_INTERP_N_MASS];
@@ -325,12 +325,12 @@ void smChemEnrich(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf)
     star.fLastEnrichMass = fFinalMass;
     star.iLastEnrichMass = iFinalMass + 1;
 
-    /* Note: The parameter star.[AGB,CCSN,Lifetime].oZ contains the index of the
+    /* Note: The parameter star.[AGB, CCSN, Lifetime].oZ contains the index of the
        interpolation's lower metallicity array multiplied by the number of mass bins.
        Since this multiplication must always be made, it is done once and for all in
        the function stevStarParticleInit. */
 
-    TinyVector<float,ELEMENT_COUNT> ElemMass{0.0f};
+    TinyVector<float, ELEMENT_COUNT> ElemMass{0.0f};
     float fMetalMass{0.0f};
 
     const float fTransMass = smf->dCCSNMinMass;
@@ -408,7 +408,7 @@ void smChemEnrich(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf)
     const double dScaleFactorInvSq = dScaleFactorInv * dScaleFactorInv;
     const auto &StarVel = p.velocity();
 
-    const double dStarDeltaEkin = 0.5 * dTotalMass * blitz::dot(StarVel,StarVel);
+    const double dStarDeltaEkin = 0.5 * dTotalMass * blitz::dot(StarVel, StarVel);
     const double dWindEkin = smf->dWindSpecificEkin * dTotalMass;
     const double dStarEjEnergy = dStarDeltaEkin * dScaleFactorInvSq + dWindEkin;
 

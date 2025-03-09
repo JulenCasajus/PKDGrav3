@@ -1,4 +1,4 @@
-/* $Id: qsort.h,v 1.5 2008-01-28 18:16:49 mjt Exp $
+/* $Id: qsort.h, v 1.5 2008-01-28 18:16:49 mjt Exp $
  * Adopted from GNU glibc by Mjt.
  * See stdlib/qsort.c in glibc */
 
@@ -28,26 +28,26 @@
  *
  * Usage:
  *  #include "iqsort.h"
- *  #define islt(a,b) (strcmp((*a),(*b))<0)
+ *  #define islt(a, b) (strcmp((*a), (*b))<0)
  *  char *arr[];
  *  int n;
  *  QSORT(char*, arr, n, islt);
  *
  * The "prototype" and 4 arguments are:
- *  QSORT(TYPE,BASE,NELT,ISLT)
+ *  QSORT(TYPE, BASE, NELT, ISLT)
  *  1) type of each element, TYPE,
  *  2) address of the beginning of the array, of type TYPE*,
  *  3) number of elements in the array, and
  *  4) comparision routine.
  * Array pointer and number of elements are referenced only once.
  * This is similar to a call
- *  qsort(BASE,NELT,sizeof(TYPE),ISLT)
+ *  qsort(BASE, NELT, sizeof(TYPE), ISLT)
  * with the difference in last parameter.
- * Note the islt macro/routine (it receives pointers to two elements):
+ * Note the islt macro / routine (it receives pointers to two elements):
  * the only condition of interest is whenever one element is less than
  * another, no other conditions (greather than, equal to etc) are tested.
  * So, for example, to define integer sort, use:
- *  #define islt(a,b) ((*a)<(*b))
+ *  #define islt(a, b) ((*a)<(*b))
  *  QSORT(int, arr, n, islt)
  *
  * The macro could be used to implement a sorting function (see examples
@@ -65,13 +65,13 @@
  *
  * Sorting array of integers:
  * void int_qsort(int *arr, unsigned n) {
- * #define int_lt(a,b) ((*a)<(*b))
+ * #define int_lt(a, b) ((*a)<(*b))
  *   QSORT(int, arr, n, int_lt);
  * }
  *
  * Sorting array of string pointers:
  * void str_qsort(char *arr[], unsigned n) {
- * #define str_lt(a,b) (strcmp((*a),(*b)) < 0)
+ * #define str_lt(a, b) (strcmp((*a), (*b)) < 0)
  *   QSORT(char*, arr, n, str_lt);
  * }
  *
@@ -82,7 +82,7 @@
  *   ...
  * };
  * void elt_qsort(struct elt *arr, unsigned n) {
- * #define elt_lt(a,b) ((a)->key < (b)->key)
+ * #define elt_lt(a, b) ((a)->key < (b)->key)
  *  QSORT(struct elt, arr, n, elt_lt);
  * }
  *
@@ -90,11 +90,11 @@
  */
 
 /* Swap two items pointed to by A and B using temporary buffer t. */
-#define _QSORT_COPY(a,b,s) (memcpy(&a,&b,s))
-#define _QSORT_SWAP(a,b,t,s) ((void)(_QSORT_COPY(t,*a,s), _QSORT_COPY(*a,*b,s), _QSORT_COPY(*b,t,s)))
+#define _QSORT_COPY(a, b, s) (memcpy(&a, &b, s))
+#define _QSORT_SWAP(a, b, t, s) ((void)(_QSORT_COPY(t, *a, s), _QSORT_COPY(*a, *b, s), _QSORT_COPY(*b, t, s)))
 
 /* Discontinue quicksort algorithm when partition gets below this size.
-   This particular magic number was chosen to work best on a Sun 4/260. */
+   This particular magic number was chosen to work best on a Sun 4 / 260. */
 #define _QSORT_MAX_THRESH 4
 
 /* Stack node declarations used to store unfulfilled partition obligations
@@ -143,7 +143,7 @@ typedef struct {
 
 /* The main code starts here... */
 #define QSORT_TYPE char
-#define QSORT(QSORT_SIZE,QSORT_BASE,QSORT_NELT,QSORT_LT)        \
+#define QSORT(QSORT_SIZE, QSORT_BASE, QSORT_NELT, QSORT_LT)        \
 {                                   \
 QSORT_TYPE *const _base = (char *)(QSORT_BASE);             \
   const unsigned _elems = (QSORT_NELT);                 \
@@ -215,15 +215,15 @@ QSORT_TYPE *const _base = (char *)(QSORT_BASE);             \
         ignore one or both.  Otherwise, push the larger partition's \
         bounds on the stack and continue sorting the smaller one. */    \
                                     \
-      if (_right_ptr - _lo <= _QSORT_MAX_THRESH*_size) {        \
-        if (_hi - _left_ptr <= _QSORT_MAX_THRESH*_size)         \
+      if (_right_ptr - _lo <= _QSORT_MAX_THRESH * _size) {        \
+        if (_hi - _left_ptr <= _QSORT_MAX_THRESH * _size)         \
           /* Ignore both small partitions. */               \
           _QSORT_POP (_lo, _hi, _top);                  \
         else                                \
           /* Ignore small left partition. */                \
           _lo = _left_ptr;                      \
       }                                 \
-      else if (_hi - _left_ptr <= _QSORT_MAX_THRESH*_size)      \
+      else if (_hi - _left_ptr <= _QSORT_MAX_THRESH * _size)      \
         /* Ignore small right partition. */             \
         _hi = _right_ptr;                       \
       else if (_right_ptr - _lo > _hi - _left_ptr) {            \
@@ -251,7 +251,7 @@ QSORT_TYPE *const _base = (char *)(QSORT_BASE);             \
     QSORT_TYPE *_run_ptr;                   \
     QSORT_TYPE *_thresh;                        \
                                     \
-    _thresh = _base + _QSORT_MAX_THRESH*_size;              \
+    _thresh = _base + _QSORT_MAX_THRESH * _size;              \
     if (_thresh > _end_ptr)                     \
       _thresh = _end_ptr;                       \
                                     \
@@ -270,7 +270,7 @@ QSORT_TYPE *const _base = (char *)(QSORT_BASE);             \
      * up to right-hand-side.  */                   \
                                     \
     _run_ptr = _base + _size;                       \
-    while ((_run_ptr+=_size) <= _end_ptr) {             \
+    while ((_run_ptr += _size) <= _end_ptr) {             \
     _tmp_ptr = _run_ptr - _size;                    \
       while (QSORT_LT (_run_ptr, _tmp_ptr))             \
       _tmp_ptr -= _size;                        \
@@ -278,13 +278,13 @@ QSORT_TYPE *const _base = (char *)(QSORT_BASE);             \
       _tmp_ptr += _size;                        \
       if (_tmp_ptr != _run_ptr) {                   \
         QSORT_TYPE *_trav = _run_ptr + _size;               \
-        while ((_trav-=_size) >= _run_ptr) {                \
+        while ((_trav -= _size) >= _run_ptr) {                \
           QSORT_TYPE *_hi; QSORT_TYPE *_lo;             \
-          _QSORT_COPY(_hold,*_trav,_size);              \
+          _QSORT_COPY(_hold, *_trav, _size);              \
                                     \
-          for (_hi = _lo = _trav; (_lo-=_size) >= _tmp_ptr; _hi = _lo)  \
-          _QSORT_COPY(*_hi,*_lo,_size);             \
-          _QSORT_COPY(*_hi,_hold,_size);                \
+          for (_hi = _lo = _trav; (_lo -= _size) >= _tmp_ptr; _hi = _lo)  \
+          _QSORT_COPY(*_hi, *_lo, _size);             \
+          _QSORT_COPY(*_hi, _hold, _size);                \
         }                               \
       }                                 \
     }                                   \

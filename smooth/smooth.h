@@ -42,11 +42,11 @@ struct smExtraArray {
 typedef struct smContext {
     PKD pkd;
     PARTICLE *pSentinel;
-    void (*fcnSmooth)(PARTICLE *,float,int,NN *,SMF *);
+    void (*fcnSmooth)(PARTICLE *, float, int, NN *, SMF *);
     void (*fcnSmoothNode)(PARTICLE *, float, int, int, double *, double *, SMF *);
     void (*fcnSmoothGetBufferInfo)(int *, int *);
     void (*fcnSmoothFillBuffer)(double *, PARTICLE *, int, int,
-                                double, blitz::TinyVector<double,3>, SMF *);
+                                double, blitz::TinyVector<double, 3>, SMF *);
     void (*fcnSmoothUpdate)(double *, double *, PARTICLE *, PARTICLE *, int, int, SMF *);
     int nSmooth;
     int nQueue;
@@ -55,7 +55,7 @@ typedef struct smContext {
     int bSymmetric;
     int iSmoothType;
     int bSearchGasOnly;
-    blitz::TinyVector<double,3> rLast; /* For the snake */
+    blitz::TinyVector<double, 3> rLast; /* For the snake */
     PQ *pq;
     /*
     ** Flags to mark local particles which are inactive either because they
@@ -106,23 +106,23 @@ typedef struct smContext {
 #ifdef __cplusplus
 extern "C" {
 #endif
-int smInitialize(SMX *psmx,PKD pkd,SMF *smf,int nSmooth,
-                 int bPeriodic,int bSymmetric,int iSmoothType);
-int smInitializeRO(SMX *psmx,PKD pkd,SMF *smf,int nSmooth,
-                   int bPeriodic,int iSmoothType);
-void smFinish(SMX,SMF *);
+int smInitialize(SMX *psmx, PKD pkd, SMF *smf, int nSmooth,
+                 int bPeriodic, int bSymmetric, int iSmoothType);
+int smInitializeRO(SMX *psmx, PKD pkd, SMF *smf, int nSmooth,
+                   int bPeriodic, int iSmoothType);
+void smFinish(SMX, SMF *);
 void smSmoothInitialize(SMX smx);
 void smSmoothFinish(SMX smx);
-float smSmoothSingle(SMX smx,SMF *smf,particleStore::ParticleReference &p,int iRoot1, int iRoot2);
-void smSmooth(SMX,SMF *);
-void smReSmoothSingle(SMX smx,SMF *smf,particleStore::ParticleReference &p,double fBall);
-int  smReSmooth(SMX,SMF *, int);
+float smSmoothSingle(SMX smx, SMF *smf, particleStore::ParticleReference &p, int iRoot1, int iRoot2);
+void smSmooth(SMX, SMF *);
+void smReSmoothSingle(SMX smx, SMF *smf, particleStore::ParticleReference &p, double fBall);
+int  smReSmooth(SMX, SMF *, int);
 #ifdef OPTIM_SMOOTH_NODE
-int  smReSmoothNode(SMX,SMF *, int);
-void buildInteractionList(SMX smx, SMF *smf, KDN *node, Bound bnd_node, int *nCnt, blitz::TinyVector<double,3> r, int ix, int iy, int iz);
+int  smReSmoothNode(SMX, SMF *, int);
+void buildInteractionList(SMX smx, SMF *smf, KDN *node, Bound bnd_node, int *nCnt, blitz::TinyVector<double, 3> r, int ix, int iy, int iz);
 #endif
 
-void smGather(SMX smx,double fBall2,blitz::TinyVector<double,3> r);
+void smGather(SMX smx, double fBall2, blitz::TinyVector<double, 3> r);
 
 inline void smSwapNN(NN *nnList, int i, int j) {
     NN temp;

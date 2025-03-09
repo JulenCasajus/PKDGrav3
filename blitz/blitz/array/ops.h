@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -36,16 +36,16 @@
 #include <blitz/array/newet-macros.h>
 
 BZ_NAMESPACE(blitz)
-    
+
 // unary operators
-    
+
 BZ_DECLARE_ARRAY_ET_UNARY(operator~, BitwiseNot)
 BZ_DECLARE_ARRAY_ET_UNARY(operator!, LogicalNot)
 BZ_DECLARE_ARRAY_ET_UNARY(operator+, UnaryPlus)
 BZ_DECLARE_ARRAY_ET_UNARY(operator-, UnaryMinus)
 
 // binary operators
-    
+
 BZ_DECLARE_ARRAY_ET_BINARY(operator+,  Add)
 BZ_DECLARE_ARRAY_ET_BINARY(operator-,  Subtract)
 BZ_DECLARE_ARRAY_ET_BINARY(operator*,  Multiply)
@@ -65,9 +65,9 @@ BZ_DECLARE_ARRAY_ET_BINARY(operator!=, NotEqual)
 BZ_DECLARE_ARRAY_ET_BINARY(operator&&, LogicalAnd)
 BZ_DECLARE_ARRAY_ET_BINARY(operator||, LogicalOr)
 
-// \todo are these for Arrays of TinyVectors? How do we distinguish these from element-wise operations? they must now be done using the scalar() function
+// \todo are these for Arrays of TinyVectors? How do we distinguish these from element - wise operations? they must now be done using the scalar() function
 /*
-// Declare binary ops between Array and "scalar-like" TinyVector 
+// Declare binary ops between Array and "scalar-like" TinyVector
 BZ_DECLARE_ARRAY_ET_BINARY_TINYVEC(operator+,  Add)
 BZ_DECLARE_ARRAY_ET_BINARY_TINYVEC(operator-,  Subtract)
 BZ_DECLARE_ARRAY_ET_BINARY_TINYVEC(operator*,  Multiply)

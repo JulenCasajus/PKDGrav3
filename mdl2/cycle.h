@@ -23,7 +23,7 @@
  *
  */
 
-/* Original: Id: cycle.h,v 1.52 2006-02-08 02:36:47 athena Exp */
+/* Original: Id: cycle.h, v 1.52 2006-02-08 02:36:47 athena Exp */
 /* $Id$ */
 
 /* machine-dependent cycle counters code. Needs to be inlined. */
@@ -61,7 +61,7 @@
    AC_HEADER_TIME
    AC_CHECK_HEADERS([sys/time.h c_asm.h intrinsics.h mach/mach_time.h])
 
-   AC_CHECK_TYPE([hrtime_t],[AC_DEFINE(HAVE_HRTIME_T, 1, [Define to 1 if hrtime_t is defined in <sys/time.h>])],,[#if HAVE_SYS_TIME_H
+   AC_CHECK_TYPE([hrtime_t], [AC_DEFINE(HAVE_HRTIME_T, 1, [Define to 1 if hrtime_t is defined in <sys/time.h>])], , [#if HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif])
 
@@ -69,10 +69,10 @@
 
    dnl Cray UNICOS _rtc() (real-time clock) intrinsic
    AC_MSG_CHECKING([for _rtc intrinsic])
-   rtc_ok=yes
+   rtc_ok = yes
    AC_TRY_LINK([#ifdef HAVE_INTRINSICS_H
 #include <intrinsics.h>
-#endif], [_rtc()], [AC_DEFINE(HAVE__RTC,1,[Define if you have the UNICOS _rtc() intrinsic.])], [rtc_ok=no])
+#endif], [_rtc()], [AC_DEFINE(HAVE__RTC, 1, [Define if you have the UNICOS _rtc() intrinsic.])], [rtc_ok = no])
    AC_MSG_RESULT($rtc_ok)
 
    dnl ---------------------------------------------------------------------
@@ -109,7 +109,7 @@
 #endif
 
 /*----------------------------------------------------------------*/
-/* AIX v. 4+ routines to read the real-time clock or time-base register */
+/* AIX v. 4+ routines to read the real-time clock or time - base register */
 #if defined(HAVE_READ_REAL_TIME) && defined(HAVE_TIME_BASE_TO_TIME) && !defined(HAVE_TICK_COUNTER)
 typedef timebasestruct_t ticks;
 
@@ -152,7 +152,7 @@ INLINE_ELAPSED(__inline__)
 #define HAVE_TICK_COUNTER
 #endif
 
-/* MacOS/Mach (Darwin) time-base register interface (unlike UpTime,
+/* MacOS / Mach (Darwin) time - base register interface (unlike UpTime,
    from Carbon, requires no additional libraries to be linked). */
 #if defined(HAVE_MACH_ABSOLUTE_TIME) && defined(HAVE_MACH_MACH_TIME_H) && !defined(HAVE_TICK_COUNTER)
     #include <mach/mach_time.h>
@@ -235,7 +235,7 @@ INLINE_ELAPSED(__inline__)
 #if defined(__PGI) && defined(__x86_64__) && !defined(HAVE_TICK_COUNTER)
 typedef unsigned long long ticks;
 static ticks getticks(void) {
-    asm(" rdtsc; shl    $0x20,%rdx; mov    %eax,%eax; or     %rdx,%rax;    ");
+    asm(" rdtsc; shl    $0x20, %rdx; mov    %eax, %eax; or     %rdx, %rax;    ");
 }
 INLINE_ELAPSED(__inline__)
 #define HAVE_TICK_COUNTER
@@ -257,7 +257,7 @@ INLINE_ELAPSED(__inline__)
  * IA64 cycle counter
  */
 
-/* intel's icc/ecc compiler */
+/* intel's icc / ecc compiler */
 #if (defined(__EDG_VERSION) || defined(__ECC)) && defined(__ia64__) && !defined(HAVE_TICK_COUNTER)
 typedef unsigned long ticks;
 #include <ia64intrin.h>
@@ -278,7 +278,7 @@ typedef unsigned long ticks;
 static __inline__ ticks getticks(void) {
     ticks ret;
 
-    __asm__ __volatile__ ("mov %0=ar.itc" : "=r"(ret));
+    __asm__ __volatile__ ("mov %0 = ar.itc" : "=r"(ret));
     return ret;
 }
 
@@ -287,7 +287,7 @@ INLINE_ELAPSED(__inline__)
 #define HAVE_TICK_COUNTER
 #endif
 
-/* HP/UX IA64 compiler, courtesy Teresa L. Johnson: */
+/* HP / UX IA64 compiler, courtesy Teresa L. Johnson: */
 #if defined(__hpux) && defined(__ia64) && !defined(HAVE_TICK_COUNTER)
 #include <machine/sys/inline.h>
 typedef unsigned long ticks;
@@ -325,7 +325,7 @@ static __inline ticks getticks(void) {
 
 /*----------------------------------------------------------------*/
 /*
- * PA-RISC cycle counter
+ * PA - RISC cycle counter
  */
 #if defined(__hppa__) || defined(__hppa) && !defined(HAVE_TICK_COUNTER)
 typedef unsigned long ticks;
@@ -417,7 +417,7 @@ INLINE_ELAPSED(__inline)
 #define HAVE_TICK_COUNTER
 #endif
 /*----------------------------------------------------------------*/
-/* SGI/Irix */
+/* SGI / Irix */
 #if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_SGI_CYCLE) && !defined(HAVE_TICK_COUNTER)
 typedef struct timespec ticks;
 

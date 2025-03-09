@@ -54,10 +54,10 @@ struct classDataPerturbationsStruct {
     size_t size_k;
     double a[CLASS_PERTURBATIONS_A_SIZE];
     double k[CLASS_PERTURBATIONS_K_SIZE];
-    double delta_m  [CLASS_PERTURBATIONS_A_SIZE*CLASS_PERTURBATIONS_K_SIZE];
-    double theta_m  [CLASS_PERTURBATIONS_A_SIZE*CLASS_PERTURBATIONS_K_SIZE];
-    double delta_lin[CLASS_PERTURBATIONS_A_SIZE*CLASS_PERTURBATIONS_K_SIZE];
-    double delta_pk [CLASS_PERTURBATIONS_A_SIZE*CLASS_PERTURBATIONS_K_SIZE];
+    double delta_m  [CLASS_PERTURBATIONS_A_SIZE * CLASS_PERTURBATIONS_K_SIZE];
+    double theta_m  [CLASS_PERTURBATIONS_A_SIZE * CLASS_PERTURBATIONS_K_SIZE];
+    double delta_lin[CLASS_PERTURBATIONS_A_SIZE * CLASS_PERTURBATIONS_K_SIZE];
+    double delta_pk [CLASS_PERTURBATIONS_A_SIZE * CLASS_PERTURBATIONS_K_SIZE];
 };
 struct classDataStruct {
     int bClass;
@@ -129,7 +129,7 @@ struct csmVariables {
     double w0;
     double wa;
     double dSigma8;
-    double dNormalization;  /* either sigma8 or normalization must be non-zero */
+    double dNormalization;  /* either sigma8 or normalization must be non-zero  */
     double dSpectral;
     double dRunning;
     double dPivot;
@@ -152,12 +152,12 @@ extern "C" {
 
 /* This is the same as gsl_spline_eval, except that it will extrapolate beyond the end. */
 inline double csm_spline_eval(gsl_spline *spline, double v, gsl_interp_accel *accel) {
-    if (v>spline->x[spline->size-1]) {
-        double m = (spline->y[spline->size-1] - spline->y[spline->size-2])
-                   / (spline->x[spline->size-1] - spline->x[spline->size-2]);
-        return spline->y[spline->size-1] + m*(v-spline->x[spline->size-1]);
+    if (v > spline->x[spline->size - 1]) {
+        double m = (spline->y[spline->size - 1] - spline->y[spline->size - 2])
+                   / (spline->x[spline->size - 1] - spline->x[spline->size - 2]);
+        return spline->y[spline->size - 1] + m*(v - spline->x[spline->size - 1]);
     }
-    else return gsl_spline_eval(spline,v,accel);
+    else return gsl_spline_eval(spline, v, accel);
 }
 
 void csmClassRead(CSM csm, const char *achFilename, double dBoxSize, double h,
@@ -201,11 +201,11 @@ static inline double csmExp2Hub(CSM csm, double dExp) {
 
     assert(dExp > 0.0);
     return csm->val.dHubble0
-           *sqrt(csm->val.dOmega0*dExp
-                 + dOmegaCurve*dExp*dExp
+           *sqrt(csm->val.dOmega0 * dExp
+                 + dOmegaCurve * dExp * dExp
                  + csm->val.dOmegaRad
-                 + csm->val.dOmegaDE*pow(dExp,1.0 - 3.0*(csm->val.w0 + csm->val.wa))*exp(-3.0*csm->val.wa*(1.0 - dExp))
-                 + csm->val.dLambda*dExp*dExp*dExp*dExp)/(dExp*dExp);
+                 + csm->val.dOmegaDE * pow(dExp, 1.0 - 3.0*(csm->val.w0 + csm->val.wa))*exp(-3.0 * csm->val.wa*(1.0 - dExp))
+                 + csm->val.dLambda * dExp * dExp * dExp * dExp)/(dExp * dExp);
 }
 
 double csmTime2Hub(CSM csm, double dTime);
@@ -229,25 +229,25 @@ static inline double dLightSpeedSim(double dMpcUnit) {
     /*
     ** Find the speed of light in simulation units.
     **
-    ** c[Mpc/Gyr] = c[cm/s] * Julian Year[s] / pc[cm] * 1000
-    ** c_sim = c[Mpc/Gyr] * (x Gyrs/ 1 sim time) * ( 1 sim length/Boxsize (Mpc))
-    ** x = 1/sqrt(4.498*h*h*2.776e-4)
+    ** c[Mpc / Gyr] = c[cm / s] * Julian Year[s] / pc[cm] * 1000
+    ** c_sim = c[Mpc / Gyr] * (x Gyrs/ 1 sim time) * ( 1 sim length / Boxsize (Mpc))
+    ** x = 1 / sqrt(4.498 * h * h * 2.776e-4)
     */
-    /*return(8676.85/dMpcUnit);*/
+    /*return (8676.85 / dMpcUnit);*/
 
     /*
     ** Doug's version:
     **
     ** Cosmological coordinates
-    ** G     = 4.30172e-9 Mpc/M. (km/s)^2
+    ** G     = 4.30172e-9 Mpc / M. (km / s)^2
     ** rho_c = 3 H^2 / (8 pi G)
-    ** c     = 299792.458 km/s
+    ** c     = 299792.458 km / s
     **
-    ** c_sim = c[km/s] * sqrt(Lbox / (G * rho_c * Lbox^3))
-    **       = c[km/s] * sqrt(8 pi / (3 H^2 Lbox^2) )
-    **       = c[km/s] * sqrt(8 pi / 3) / Lbox / H
-    **       = c[km/s] * sqrt(8 pi / 3) / Lbox / h / 100
-    ** dMpcUnit given in Mpc/h gives:
+    ** c_sim = c[km / s] * sqrt(Lbox / (G * rho_c * Lbox^3))
+    **       = c[km / s] * sqrt(8 pi / (3 H^2 Lbox^2) )
+    **       = c[km / s] * sqrt(8 pi / 3) / Lbox / H
+    **       = c[km / s] * sqrt(8 pi / 3) / Lbox / h / 100
+    ** dMpcUnit given in Mpc / h gives:
     **       = 299792.458 * sqrt(8 pi / 3) / 100 / dMpcUnit
     **       = 8677.2079486362706 / dMpcUnit
     */

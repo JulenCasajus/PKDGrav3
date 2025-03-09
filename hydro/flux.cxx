@@ -6,7 +6,7 @@
 using blitz::TinyVector;
 using blitz::dot;
 
-void MSR::MeshlessFluxes(double dTime,double dDelta) {
+void MSR::MeshlessFluxes(double dTime, double dDelta) {
     double dsec;
     printf("Computing fluxes... ");
     TimerStart(TIMER_FLUXES);
@@ -15,12 +15,12 @@ void MSR::MeshlessFluxes(double dTime,double dDelta) {
     SelActives();
 #endif
 #ifdef OPTIM_FLUX_VEC
-    ReSmoothNode(dTime, dDelta, SMX_HYDRO_FLUX_VEC,1);
+    ReSmoothNode(dTime, dDelta, SMX_HYDRO_FLUX_VEC, 1);
 #else
-    ReSmoothNode(dTime, dDelta, SMX_HYDRO_FLUX,1);
+    ReSmoothNode(dTime, dDelta, SMX_HYDRO_FLUX, 1);
 #endif
 #else // no OPTIM_SMOOTH_NODE
-    ReSmooth(dTime, dDelta, SMX_HYDRO_FLUX,1);
+    ReSmooth(dTime, dDelta, SMX_HYDRO_FLUX, 1);
 #endif
 
     TimerStop(TIMER_FLUXES);
@@ -28,7 +28,7 @@ void MSR::MeshlessFluxes(double dTime,double dDelta) {
     printf("took %.5f seconds\n", dsec);
 }
 
-void packHydroFluxes(void *vpkd,void *dst,const void *src) {
+void packHydroFluxes(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<hydroFluxesPack *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -59,7 +59,7 @@ void packHydroFluxes(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void unpackHydroFluxes(void *vpkd,void *dst,const void *src) {
+void unpackHydroFluxes(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const hydroFluxesPack *>(src);
@@ -90,18 +90,18 @@ void unpackHydroFluxes(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void initHydroFluxes(void *vpkd,void *dst) {
+void initHydroFluxes(void *vpkd, void *dst) {
 }
 
 /* Zero all the conserved quantities in cached copies, which will be updated
  * during the hydro loop. They will be merged with the actual particle
  * information in combHydroFluxes
  */
-void initHydroFluxesCached(void *vpkd,void *dst) {
+void initHydroFluxesCached(void *vpkd, void *dst) {
     PKD pkd = (PKD) vpkd;
     auto p = pkd->particles[static_cast<PARTICLE *>(dst)];
     assert(!pkd->bNoParticleOrder);
-    // For the init*Cached and comb functions we still have to explicitly
+    // For the init * Cached and comb functions we still have to explicitly
     // check if we are handling gas particles even ifdef OPTIM_REORDER_IN_NODES
     // because these operations are done in a cache-line basis, and a line may
     // contain other particles that are not of interest!
@@ -125,7 +125,7 @@ void initHydroFluxesCached(void *vpkd,void *dst) {
     }
 }
 
-void flushHydroFluxes(void *vpkd,void *dst,const void *src) {
+void flushHydroFluxes(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = static_cast<hydroFluxesFlush *>(dst);
     auto p2 = pkd->particles[static_cast<const PARTICLE *>(src)];
@@ -150,7 +150,7 @@ void flushHydroFluxes(void *vpkd,void *dst,const void *src) {
     }
 }
 
-void combHydroFluxes(void *vpkd,void *dst,const void *src) {
+void combHydroFluxes(void *vpkd, void *dst, const void *src) {
     PKD pkd = (PKD) vpkd;
     auto p1 = pkd->particles[static_cast<PARTICLE *>(dst)];
     auto p2 = static_cast<const hydroFluxesFlush *>(src);
@@ -208,7 +208,7 @@ enum q_data {
 enum FLUX_OUT {
     out_minDt,
     out_Frho,
-    out_FmomX,out_FmomY,out_FmomZ,
+    out_FmomX, out_FmomY, out_FmomZ,
     out_Fene,
 #ifdef ENTROPY_SWITCH
     out_FS,
@@ -216,29 +216,29 @@ enum FLUX_OUT {
     out_last
 };
 
-template <typename dtype=dvec, typename mtype=dmask>
+template<typename dtype = dvec, typename mtype = dmask>
 class MeshlessHydroSolver {
 
 private:
 
     inline void extrapolateDensityInTime(dtype &rho, dtype rho0, dtype vx, dtype vy, dtype vz,
                                          dtype dt, dtype gradRhoX, dtype gradRhoY, dtype gradRhoZ, dtype divv) {
-        rho -= dt*(vx*gradRhoX + vy*gradRhoY + vz*gradRhoZ + rho0*divv);
+        rho -= dt*(vx * gradRhoX + vy * gradRhoY + vz * gradRhoZ + rho0 * divv);
     }
 
     inline void extrapolateVelocityInTime(dtype &v, dtype &vFrame, dtype divv, dtype v0, dtype dt, dtype acc,
                                           dtype gradP, dtype rho0,
                                           dtype a) {
         dtype temp;
-        temp = -(v0*divv + gradP/rho0)*dt;
-        temp += acc*dt*a;
+        temp = -(v0 * divv + gradP / rho0)*dt;
+        temp += acc * dt * a;
         v += temp;
-        vFrame += 0.5*temp;
+        vFrame += 0.5 * temp;
     }
 
     inline void extrapolatePressureInTime(dtype &p, dtype dt, dtype gradPx, dtype gradPy, dtype gradPz,
                                           dtype p0, dtype vx0, dtype vy0, dtype vz0, dtype divv, dtype dConstGamma) {
-        p -= dt*( vx0*gradPx + vy0*gradPy + vz0*gradPz  + dConstGamma*p0*divv);
+        p -= dt*( vx0 * gradPx + vy0 * gradPy + vz0 * gradPz  + dConstGamma * p0 * divv);
     }
 
     inline void extrapolateStateInTime(
@@ -262,15 +262,15 @@ private:
                                    p0, vx0, vy0, vz0, divv, dConstGamma);
     }
 
-    inline void extrapolateVariableInSpace(dtype &var, dtype dx,dtype dy, dtype dz,
+    inline void extrapolateVariableInSpace(dtype &var, dtype dx, dtype dy, dtype dz,
                                            dtype gradx, dtype grady, dtype gradz) {
-        var += dx*gradx + dy*grady + dz*gradz;
+        var += dx * gradx + dy * grady + dz * gradz;
     }
 
     inline void extrapolateVelocityCosmology(dtype &v, dtype &vFrame, dtype v0, dtype dt, dtype H, dtype a) {
         dtype temp = H * dt * a * v;
         v -= temp;
-        vFrame -= 0.5*temp;
+        vFrame -= 0.5 * temp;
     }
 
     inline void extrapolateCosmology(dtype &vx, dtype &vy, dtype &vz,
@@ -284,7 +284,7 @@ private:
         p -= 3. * H * dt * a * (dConstGamma - 1.) * p0;
     }
 
-    inline void computeFace(dtype &modApq, std::array<dtype,3> &unit,
+    inline void computeFace(dtype &modApq, std::array<dtype, 3> &unit,
                             dtype rpq,  dtype dx, dtype dy, dtype dz,
                             dtype pH, dtype qH, dtype p_omega, dtype q_omega,
                             dtype pBxx, dtype pBxy, dtype pBxz,
@@ -293,49 +293,49 @@ private:
                             dtype qByy, dtype qByz, dtype qBzz) {
         dtype psi;
         dtype psiTilde[3];
-        dtype Apq[3] = {0.,0.,0.};
+        dtype Apq[3] = {0., 0., 0.};
 
         // \tilde{\psi}_j (x_i)
         psi  = -cubicSplineKernel(rpq, pH)/p_omega;
-        psiTilde[0] = (pBxx*dx + pBxy*dy + pBxz*dz)*psi;
-        psiTilde[1] = (pBxy*dx + pByy*dy + pByz*dz)*psi;
-        psiTilde[2] = (pBxz*dx + pByz*dy + pBzz*dz)*psi;
-        for (auto j=0; j<3; j++) {
+        psiTilde[0] = (pBxx * dx + pBxy * dy + pBxz * dz)*psi;
+        psiTilde[1] = (pBxy * dx + pByy * dy + pByz * dz)*psi;
+        psiTilde[2] = (pBxz * dx + pByz * dy + pBzz * dz)*psi;
+        for (auto j = 0; j < 3; j++) {
             Apq[j] += psiTilde[j]/p_omega;
         }
 
         // \tilde{\psi}_i (x_j)
         psi = cubicSplineKernel(rpq, qH)/q_omega;
-        psiTilde[0] = (qBxx*dx + qBxy*dy + qBxz*dz)*psi;
-        psiTilde[1] = (qBxy*dx + qByy*dy + qByz*dz)*psi;
-        psiTilde[2] = (qBxz*dx + qByz*dy + qBzz*dz)*psi;
-        for (auto j=0; j<3; j++) {
+        psiTilde[0] = (qBxx * dx + qBxy * dy + qBxz * dz)*psi;
+        psiTilde[1] = (qBxy * dx + qByy * dy + qByz * dz)*psi;
+        psiTilde[2] = (qBxz * dx + qByz * dy + qBzz * dz)*psi;
+        for (auto j = 0; j < 3; j++) {
             Apq[j] -= psiTilde[j]/q_omega;
         }
 
         modApq = 0.0;
-        for (auto j=0; j<3; j++) {
+        for (auto j = 0; j < 3; j++) {
             modApq += Apq[j]*Apq[j];
         }
         modApq = sqrt(modApq);
-        for (auto j=0; j<3; j++) {
+        for (auto j = 0; j < 3; j++) {
             unit[j] = Apq[j]/modApq;
         }
         // Avoid NaNs when the face has zero area
         dtype zero = 0.;
-        mtype cond = modApq==zero;
+        mtype cond = modApq == zero;
         if (movemask(cond)) {
-            for (auto j=0; j<3; j++)
+            for (auto j = 0; j < 3; j++)
                 unit[j] = mask_mov(unit[j], cond, zero);
         }
     }
 
     inline void low_limit(dtype &var, dtype def, dtype min) {
-        mtype cond = var<min;
+        mtype cond = var < min;
         var = mask_mov(var, cond, def);
     }
 
-    inline void doSinglePPFlux(const mtype mask, dtype &F_rho, std::array<dtype,3> &F_v, dtype &F_p, dtype &F_S, dtype &minDt,
+    inline void doSinglePPFlux(const mtype mask, dtype &F_rho, std::array<dtype, 3> &F_v, dtype &F_p, dtype &F_S, dtype &minDt,
                                bool bComove, dtype dTime, dtype dDelta, dtype a, dtype H, dtype dConstGamma,
                                dtype rpq, dtype dx, dtype dy, dtype dz,
                                dtype pBall, dtype pLastUpdateTime, dtype pDt,
@@ -363,11 +363,11 @@ private:
                                struct eEOSparam &eEOS) {
 
 #ifdef FORCE_1D
-        if (dz!=0) continue;
-        if (dy!=0) continue;
+        if (dz != 0) continue;
+        if (dy != 0) continue;
 #endif
 #ifdef FORCE_2D
-        if (dz!=0) continue;
+        if (dz != 0) continue;
 #endif
 
         /* We update the conservatives variables taking the minimum timestep
@@ -376,9 +376,9 @@ private:
         minDt = min(pDt, qDt);
         minDt /=  a;
 
-        dtype qDeltaHalf=0.0, pDeltaHalf=0.0;
-        pDeltaHalf = (dTime - pLastUpdateTime + 0.5*pDt)/a;
-        qDeltaHalf = (dTime - qLastUpdateTime + 0.5*qDt)/a;
+        dtype qDeltaHalf = 0.0, pDeltaHalf = 0.0;
+        pDeltaHalf = (dTime - pLastUpdateTime + 0.5 * pDt)/a;
+        qDeltaHalf = (dTime - qLastUpdateTime + 0.5 * qDt)/a;
 
         // DEBUG: Avoid temporal extrapolation
         //pDeltaHalf = 0.;
@@ -394,14 +394,14 @@ private:
                     qBxx, qBxy, qBxz,
                     qByy, qByz, qBzz);
 
-        // Velocity of the quadrature mid-point
+        // Velocity of the quadrature mid - point
         dtype vFrame[3];
-        vFrame[0] = 0.5*(pVpredx+qVpredx);
-        vFrame[1] = 0.5*(pVpredy+qVpredy);
-        vFrame[2] = 0.5*(pVpredz+qVpredz);
+        vFrame[0] = 0.5*(pVpredx + qVpredx);
+        vFrame[1] = 0.5*(pVpredy + qVpredy);
+        vFrame[2] = 0.5*(pVpredz + qVpredz);
 
         dtype pv[3], qv[3];
-        // We boost to the reference of the p-q 'face'
+        // We boost to the reference of the p - q 'face'
         pv[0] = pVpredx - vFrame[0];
         qv[0] = qVpredx - vFrame[0];
         pv[1] = pVpredy - vFrame[1];
@@ -409,10 +409,10 @@ private:
         pv[2] = pVpredz - vFrame[2];
         qv[2] = qVpredz - vFrame[2];
 
-        // Mid-point rule
-        dx  = -0.5*dx;
-        dy  = -0.5*dy;
-        dz  = -0.5*dz;
+        // Mid - point rule
+        dx  = -0.5 * dx;
+        dy  = -0.5 * dy;
+        dz  = -0.5 * dz;
 
         // DEBUG: Avoid spatial extrapolation
         //dx = 0.0;
@@ -447,15 +447,15 @@ private:
             pLastAccX, pLastAccY, pLastAccZ, pdivv,
             dConstGamma, a);
 
-        extrapolateVariableInSpace( L_rho, dx,dy, dz,
+        extrapolateVariableInSpace( L_rho, dx, dy, dz,
                                     pGradRhoX, pGradRhoY, pGradRhoZ);
-        extrapolateVariableInSpace( L_p, dx,dy, dz,
+        extrapolateVariableInSpace( L_p, dx, dy, dz,
                                     pGradPX, pGradPY, pGradPZ);
-        extrapolateVariableInSpace( L_v[0], dx,dy, dz,
+        extrapolateVariableInSpace( L_v[0], dx, dy, dz,
                                     pGradVxX, pGradVxY, pGradVxZ);
-        extrapolateVariableInSpace( L_v[1], dx,dy, dz,
+        extrapolateVariableInSpace( L_v[1], dx, dy, dz,
                                     pGradVyX, pGradVyY, pGradVyZ);
-        extrapolateVariableInSpace( L_v[2], dx,dy, dz,
+        extrapolateVariableInSpace( L_v[2], dx, dy, dz,
                                     pGradVzX, pGradVzY, pGradVzZ);
 
         dx = -dx;
@@ -474,15 +474,15 @@ private:
             qLastAccX, qLastAccY, qLastAccZ, qdivv,
             dConstGamma, a);
 
-        extrapolateVariableInSpace( R_rho, dx,dy, dz,
+        extrapolateVariableInSpace( R_rho, dx, dy, dz,
                                     qGradRhoX, qGradRhoY, qGradRhoZ);
-        extrapolateVariableInSpace( R_p, dx,dy, dz,
+        extrapolateVariableInSpace( R_p, dx, dy, dz,
                                     qGradPX, qGradPY, qGradPZ);
-        extrapolateVariableInSpace( R_v[0], dx,dy, dz,
+        extrapolateVariableInSpace( R_v[0], dx, dy, dz,
                                     qGradVxX, qGradVxY, qGradVxZ);
-        extrapolateVariableInSpace( R_v[1], dx,dy, dz,
+        extrapolateVariableInSpace( R_v[1], dx, dy, dz,
                                     qGradVyX, qGradVyY, qGradVyZ);
-        extrapolateVariableInSpace( R_v[2], dx,dy, dz,
+        extrapolateVariableInSpace( R_v[2], dx, dy, dz,
                                     qGradVzX, qGradVzY, qGradVzZ);
 
         genericPairwiseLimiter(pDensity, qDensity, L_rho, R_rho);
@@ -516,11 +516,11 @@ private:
         low_limit(R_p, qP, zero);
 
 #ifdef EEOS_POLYTROPE
-        dtype a_inv3 = 1.0/(a*a*a);
+        dtype a_inv3 = 1.0/(a * a * a);
         const dtype pLpoly =
-            polytropicPressureFloor<dtype,mtype>(a_inv3, L_rho, dConstGamma,eEOS);
+            polytropicPressureFloor < dtype, mtype>(a_inv3, L_rho, dConstGamma, eEOS);
         const dtype pRpoly =
-            polytropicPressureFloor<dtype,mtype>(a_inv3, R_rho, dConstGamma,eEOS);
+            polytropicPressureFloor < dtype, mtype>(a_inv3, R_rho, dConstGamma, eEOS);
         L_p = max(L_p, pLpoly);
         R_p = max(R_p, pRpoly);
 #endif
@@ -537,7 +537,7 @@ private:
 
         dtype P_M, S_M;
 
-        RiemannSolverExact<dtype,mtype> riemann(dConstGamma, mask);
+        RiemannSolverExact < dtype, mtype> riemann(dConstGamma, mask);
         int niter = riemann.solve(
                         R_rho, R_p, R_v,
                         L_rho, L_p, L_v,
@@ -547,7 +547,7 @@ private:
 
         /*
         int nan;
-        // Only works if compiling with -fno-finite-math-only !!
+        // Only works if compiling with -fno - finite - math - only !!
         auto aa = maskz_mov(mask, P_M);
         auto bb = maskz_mov(mask, S_M);
         auto cc = maskz_mov(mask, modApq);
@@ -578,19 +578,19 @@ private:
 #ifdef USE_MFM
         // As we are in a truly lagrangian configuration,
         // there is no adtypetion of entropy among particles.
-        F_S=0.;
+        F_S = 0.;
 #else
         /*
-        for (auto j=0; j<3; j++) F_S += F_v[j]*face_unit[j];
+        for (auto j = 0; j < 3; j++) F_S += F_v[j]*face_unit[j];
         if (F_S > 0) {
             // Maybe this values should be properly extrapolated to the faces..
             // but this is expensive!
-            F_S *= pS*pOmega;
+            F_S *= pS * pOmega;
         }
         else {
-            F_S *= qS*qOmega;
+            F_S *= qS * qOmega;
         }
-        F_S *= F_rho*modApq;
+        F_S *= F_rho * modApq;
         */
         F_S = 0.;
 
@@ -600,7 +600,7 @@ private:
 #ifdef USE_MFM
         F_rho = 0.;
         F_p = P_M * S_M;
-        for (auto j=0; j<3; j++)
+        for (auto j = 0; j < 3; j++)
             F_v[j] = P_M * face_unit[j];
 #endif
         // End MFM
@@ -614,29 +614,29 @@ private:
         F_v[2] = 0.;
 #endif
 
-        // Now we de-boost the fluxes following Eq. A8 Hopkins 2015
-        for (auto j=0; j<3; j++) {
+        // Now we de - boost the fluxes following Eq. A8 Hopkins 2015
+        for (auto j = 0; j < 3; j++) {
             F_p += vFrame[j] * F_v[j];
-            F_p += (0.5*vFrame[j]*vFrame[j])*F_rho;
+            F_p += (0.5 * vFrame[j]*vFrame[j])*F_rho;
         }
 
         // Now we just multiply by the face area
         F_p *= modApq;
         F_rho *= modApq;
-        for (auto j=0; j<3; j++) {
+        for (auto j = 0; j < 3; j++) {
             F_v[j] *= modApq;
             F_v[j] += vFrame[j]*F_rho;
         }
 
 #if defined(USE_MFM) && defined(MFM_FLUX_CORRECTION)
-        const dtype cs_p{sqrt(dConstGamma*pP/pDensity)};
-        const dtype cs_q{sqrt(dConstGamma*qP/qDensity)};
-        mtype cond{abs(S_M/min(cs_p,cs_q)) < 0.6};
+        const dtype cs_p{sqrt(dConstGamma * pP / pDensity)};
+        const dtype cs_q{sqrt(dConstGamma * qP / qDensity)};
+        mtype cond{abs(S_M / min(cs_p, cs_q)) < 0.6};
         if (movemask(cond)) {
-            const dtype dU_mfm_p = pVpredx*F_v[0] + pVpredy*F_v[1] + pVpredz*F_v[2] - F_p;
-            const dtype dU_mfm_q = F_p - qVpredx*F_v[0] - qVpredy*F_v[1] - qVpredz*F_v[2];
+            const dtype dU_mfm_p = pVpredx * F_v[0] + pVpredy * F_v[1] + pVpredz * F_v[2] - F_p;
+            const dtype dU_mfm_q = F_p - qVpredx * F_v[0] - qVpredy * F_v[1] - qVpredz * F_v[2];
 
-            const dtype dU_sph_fac = 2. * P_M * ((qVpredx-pVpredx)*dx + (qVpredy-pVpredy)*dy + (qVpredz-pVpredz)*dz) / rpq;
+            const dtype dU_sph_fac = 2. * P_M * ((qVpredx - pVpredx)*dx + (qVpredy - pVpredy)*dy + (qVpredz - pVpredz)*dz) / rpq;
             const dtype dU_sph_p = dU_sph_fac * pSPHEoM * cubicSplineKernelDeriv(rpq, pBall) / pOmega;
             const dtype dU_sph_q = dU_sph_fac * qSPHEoM * cubicSplineKernelDeriv(rpq, qBall) / qOmega;
 
@@ -679,7 +679,7 @@ public:
 // Simple macro to improve readability
 #define q(X)    input_buffer[q_##X * nBuff + i]
 #define qout(X) output_buffer[out_##X * nBuff + i]
-    void hydroRiemann(PARTICLE *pIn,float fBall,int nSmooth, int nBuff,
+    void hydroRiemann(PARTICLE *pIn, float fBall, int nSmooth, int nBuff,
                       meshless::myreal *restrict input_buffer,
                       meshless::myreal *restrict output_buffer, SMF *smf) {
         PKD pkd = smf->pkd;
@@ -775,16 +775,16 @@ public:
         dtype qlastAccz;
 
         double index[dtype::width()];
-        for (auto i=0; i<dtype::width(); i++)
+        for (auto i = 0; i < dtype::width(); i++)
             index[i] = i;
         dtype index_v;
         index_v.load(index);
 
 #pragma forceinline
-        assert(nBuff>(nSmooth+dtype::width()-1));
-        for (auto i=0; i<nSmooth; i+=dtype::width()) {
+        assert(nBuff>(nSmooth + dtype::width()-1));
+        for (auto i = 0; i < nSmooth; i += dtype::width()) {
             dtype F_rho;
-            std::array<dtype,3> F_v;
+            std::array<dtype, 3> F_v;
             dtype F_P;
             dtype F_S;
             dtype minDt;
@@ -888,7 +888,7 @@ public:
 };
 
 void hydroFluxFillBuffer(meshless::myreal *input_buffer, PARTICLE *qIn, int i, int nBuff,
-                         double dr2, blitz::TinyVector<double,3> dr, SMF *smf) {
+                         double dr2, blitz::TinyVector<double, 3> dr, SMF *smf) {
     PKD pkd = smf->pkd;
     auto Q = pkd->particles[qIn];
     double dDelta = smf->dDelta;
@@ -954,7 +954,7 @@ void hydroFluxUpdateFromBuffer(meshless::myreal *output_buffer, meshless::myreal
     auto &qsph = Q.sph();
     const auto &dDelta = smf->dDelta;
     const auto &aFac = smf->a;
-    if (dDelta>0) {
+    if (dDelta > 0) {
 #ifndef USE_MFM
         P.set_mass(P.mass() - qout(minDt) * qout(Frho));
 #endif
@@ -969,7 +969,7 @@ void hydroFluxUpdateFromBuffer(meshless::myreal *output_buffer, meshless::myreal
                                      - qout(FmomX)*pv[0]
                                      - qout(FmomY)*pv[1]
                                      - qout(FmomZ)*pv[2]
-                                     + 0.5*dot(pv,pv)*qout(Frho) );
+                                     + 0.5 * dot(pv, pv)*qout(Frho) );
 
 #ifdef ENTROPY_SWITCH
         psph.S -= qout(minDt)* qout(FS);
@@ -1005,7 +1005,7 @@ void hydroFluxUpdateFromBuffer(meshless::myreal *output_buffer, meshless::myreal
 
         // If this is not the case, something VERY odd must have happened
         assert( qsph.P == q(P) );
-        if (dDelta>0) {
+        if (dDelta > 0) {
 #ifndef USE_MFM
             Q.set_mass(Q.mass() + qout(minDt) * qout(Frho));
 #endif
@@ -1020,7 +1020,7 @@ void hydroFluxUpdateFromBuffer(meshless::myreal *output_buffer, meshless::myreal
                                          - qout(FmomX)*qv[0]
                                          - qout(FmomY)*qv[1]
                                          - qout(FmomZ)*qv[2]
-                                         + 0.5*dot(qv,qv)*qout(Frho) );
+                                         + 0.5 * dot(qv, qv)*qout(Frho) );
 #ifdef ENTROPY_SWITCH
             qsph.S += qout(minDt) * qout(FS);
 #endif
@@ -1044,7 +1044,7 @@ void hydroFluxUpdateFromBuffer(meshless::myreal *output_buffer, meshless::myreal
             qsph.Fmom[2] -= qout(FmomZ);
         }
 
-    } // q marked/active
+    } // q marked / active
 
 }
 
@@ -1055,16 +1055,16 @@ void hydroFluxGetBufferInfo(int *in, int *out) {
 
 #endif // OPTIM_FLUX_VEC
 
-void hydroRiemann_wrapper(PARTICLE *p,float fBall,int nSmooth, int nBuff,
+void hydroRiemann_wrapper(PARTICLE *p, float fBall, int nSmooth, int nBuff,
                           meshless::myreal *restrict input_buffer,
                           meshless::myreal *restrict output_buffer, SMF *smf) {
 
 #if defined(USE_SIMD_FLUX)
-    MeshlessHydroSolver<dvec,dmask> solver;
+    MeshlessHydroSolver < dvec, dmask> solver;
 #else
-    MeshlessHydroSolver<vec<double,double>,mmask<bool>> solver;
+    MeshlessHydroSolver < vec < double, double>, mmask < bool>> solver;
 #endif
-    solver.hydroRiemann(p,fBall,nSmooth, nBuff,
+    solver.hydroRiemann(p, fBall, nSmooth, nBuff,
                         input_buffer,
                         output_buffer, smf) ;
 }

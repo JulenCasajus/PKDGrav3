@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -46,17 +46,17 @@ struct _tv_evaluator {
 
   /** The select_evaluation function redirects expressions that do not
       contains solely TinyVector operands to the general evaluation
-      function. The generic template (for unroll=false, note that
+      function. The generic template (for unroll = false, note that
       "unroll" us the wrong name for this function, the template
       parameter in this context really means "use_full_eval") uses the
-      TinyVector-only evaluation. Since TinyVectors can't have funny
+      TinyVector - only evaluation. Since TinyVectors can't have funny
       storage, ordering, stride, or anything, it's now just a matter
       of evaluating it like in the old vecassign. */
   template<typename T, typename T_expr, typename T_update>
   static _bz_forceinline void
-  select_evaluation(TinyVector<T, N_length>& dest, 
+  select_evaluation(TinyVector<T, N_length>& dest,
 		    const T_expr& expr, T_update) {
-    
+
     // since we can't resize tinyvectors, there are two options: all
     // vectors have our size or the expression is malformed.
     // Check that all operands have the same shape
@@ -81,7 +81,7 @@ struct _tv_evaluator {
 
   BZPRECONDITION(expr.isUnitStride(0));
   BZPRECONDITION(T_expr::rank_<=1);
-  BZPRECONDITION(T_expr::numIndexPlaceholders==0);
+  BZPRECONDITION(T_expr::numIndexPlaceholders == 0);
 
   // now call the aligned (unrolled or not) evaluation function
   const bool do_unroll = N_length < BZ_TV_EVALUATE_UNROLL_LENGTH;
@@ -101,7 +101,7 @@ struct _tv_evaluator {
 #pragma ivdep
 #pragma vector aligned
 #endif
-    for (int i=0; i < N_length; ++i)
+    for (int i = 0; i < N_length; ++i)
       T_update::update(data[i], expr.fastRead(i));
   }
 
@@ -116,11 +116,11 @@ struct _tv_evaluator {
 #pragma ivdep
 #pragma vector unaligned
 #endif
-  for (int i=0; i < N_length; ++i)
+  for (int i = 0; i < N_length; ++i)
     T_update::update(data[i], expr.fastRead(i));
   }
 };
-  
+
 /** Specialization of the _tv_evaluator class for false template arguments. */
 template<int N_length>
 struct _tv_evaluator<true, N_length> {
@@ -130,7 +130,7 @@ struct _tv_evaluator<true, N_length> {
       to the general evaluation function. */
   template<typename T, typename T_expr, typename T_update>
   static _bz_forceinline void
-  select_evaluation(TinyVector<T, N_length>& dest, 
+  select_evaluation(TinyVector<T, N_length>& dest,
 		    const T_expr& expr, T_update) {
     _bz_evaluate(dest, expr, T_update());
   }
@@ -170,12 +170,12 @@ template<typename P_numtype, int N_length>
 template<typename T_expr, typename T_update>
 _bz_forceinline
 void
-TinyVector<P_numtype,N_length>::_tv_evaluate(const T_expr& expr, T_update)
+TinyVector<P_numtype, N_length>::_tv_evaluate(const T_expr& expr, T_update)
 {
   const bool mixed_expr =
-    (T_expr::numArrayOperands>0) || 
-    (T_expr::numTMOperands>0) ||
-    (T_expr::numIndexPlaceholders>0);
+    (T_expr::numArrayOperands > 0) ||
+    (T_expr::numTMOperands > 0) ||
+    (T_expr::numIndexPlaceholders > 0);
   _tv_evaluator<mixed_expr, N_length>::select_evaluation(*this, expr, T_update());
 }
 

@@ -30,7 +30,7 @@
 
 
 /**
- * @brief Returns the 1d index of element with 2d indices x,y
+ * @brief Returns the 1d index of element with 2d indices x, y
  * from a flattened 2d array in row major order
  *
  * @param x, y Indices of element of interest
@@ -48,7 +48,7 @@ INLINE int row_major_index_2d(const int x,
 }
 
 /**
- * @brief Returns the 1d index of element with 3d indices x,y,z
+ * @brief Returns the 1d index of element with 3d indices x, y, z
  * from a flattened 3d array in row major order
  *
  * @param x, y, z Indices of element of interest
@@ -66,7 +66,7 @@ INLINE int row_major_index_3d(
 }
 
 /**
- * @brief Returns the 1d index of element with 4d indices x,y,z,w
+ * @brief Returns the 1d index of element with 4d indices x, y, z, w
  * from a flattened 4d array in row major order
  *
  * @param x, y, z, w Indices of element of interest
@@ -92,7 +92,7 @@ INLINE int row_major_index_4d(
  * difference between adjacent values.
  *
  * The returned difference is expressed in units of the table separation. This
- * means dx = (x - table[i]) / (table[i+1] - table[i]). It is always between
+ * means dx = (x - table[i]) / (table[i + 1] - table[i]). It is always between
  * 0 and 1.
  *
  * We use a small epsilon of 1e-4 to avoid out-of-range accesses due to
@@ -177,7 +177,7 @@ INLINE float interpolation_2d(
     /* Indicate that the whole array is aligned on boundaries */
     swift_align_information(float, table, SWIFT_STRUCT_ALIGNMENT);
 
-    /* Linear interpolation along each axis. We read the table 2^2=4 times */
+    /* Linear interpolation along each axis. We read the table 2^2 = 4 times */
     float result = tx * ty * table[row_major_index_2d(xi + 0, yi + 0, Nx, Ny)];
 
     result += tx * dy * table[row_major_index_2d(xi + 0, yi + 1, Nx, Ny)];
@@ -218,7 +218,7 @@ INLINE float interpolation_3d(
     /* Indicate that the whole array is aligned on page boundaries */
     swift_align_information(float, table, SWIFT_STRUCT_ALIGNMENT);
 
-    /* Linear interpolation along each axis. We read the table 2^3=8 times */
+    /* Linear interpolation along each axis. We read the table 2^3 = 8 times */
     float result = tx * ty * tz *
                    table[row_major_index_3d(xi + 0, yi + 0, zi + 0, Nx, Ny, Nz)];
 
@@ -244,7 +244,7 @@ INLINE float interpolation_3d(
 
 /**
  * @brief Interpolate a flattened 3D table at a given position but avoid the
- * x-dimension.
+ * x - dimension.
  *
  * This function uses linear interpolation along each axis.
  * We look at the xi coordoniate but do not interpolate around it. We just
@@ -276,7 +276,7 @@ INLINE float interpolation_3d_no_x(
     /* Indicate that the whole array is aligned on page boundaries */
     swift_align_information(float, table, SWIFT_STRUCT_ALIGNMENT);
 
-    /* Linear interpolation along each axis. We read the table 2^2=4 times */
+    /* Linear interpolation along each axis. We read the table 2^2 = 4 times */
     /* Note that we intentionally kept the table access along the axis where */
     /* we do not interpolate as comments in the code to allow readers to */
     /* understand what is going on. */
@@ -335,7 +335,7 @@ INLINE float interpolation_4d(
     /* Indicate that the whole array is aligned on page boundaries */
     swift_align_information(float, table, SWIFT_STRUCT_ALIGNMENT);
 
-    /* Linear interpolation along each axis. We read the table 2^4=16 times */
+    /* Linear interpolation along each axis. We read the table 2^4 = 16 times */
     float result =
         tx * ty * tz * tw *
         table[row_major_index_4d(xi + 0, yi + 0, zi + 0, wi + 0, Nx, Ny, Nz, Nw)];
@@ -394,7 +394,7 @@ INLINE float interpolation_4d(
 
 /**
  * @brief Interpolate a flattened 4D table at a given position but avoid the
- * x-dimension.
+ * x - dimension.
  *
  * This function uses linear interpolation along each axis.
  * We look at the xi coordoniate but do not interpolate around it. We just
@@ -428,7 +428,7 @@ INLINE float interpolation_4d_no_x(
     /* Indicate that the whole array is aligned on boundaries */
     swift_align_information(float, table, SWIFT_STRUCT_ALIGNMENT);
 
-    /* Linear interpolation along each axis. We read the table 2^3=8 times */
+    /* Linear interpolation along each axis. We read the table 2^3 = 8 times */
     /* Note that we intentionally kept the table access along the axis where */
     /* we do not interpolate as comments in the code to allow readers to */
     /* understand what is going on. */

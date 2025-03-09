@@ -7,7 +7,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -17,11 +17,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -35,20 +35,20 @@
 BZ_NAMESPACE(blitz)
 
 // NEEDS_WORK???
-// This version of operator<< is updated on August 2005 
-// by Sergei Mingaleev <mingaleev@gmail.com>. The output 
-// format for 2D TinyVector is the same as for complex 
-// numbers - so that one can read Array of complex numbers 
-// into Array of TinyVectors for speed-up of calculations. 
-// Also, the corresponding operator>> is updated. 
+// This version of operator<< is updated on August 2005
+// by Sergei Mingaleev <mingaleev@gmail.com>. The output
+// format for 2D TinyVector is the same as for complex
+// numbers - so that one can read Array of complex numbers
+// into Array of TinyVectors for speed - up of calculations.
+// Also, the corresponding operator>> is updated.
 
 template<typename P_numtype, int N_length>
 ostream& operator<<(ostream& os, const TinyVector<P_numtype, N_length>& x)
 {
     os << "(" << x[0];
-    for (int i=1; i < N_length; ++i)
+    for (int i = 1; i < N_length; ++i)
     {
-        os << "," << x[i];
+        os << ", " << x[i];
     }
     os << ")";
     return os;
@@ -56,11 +56,11 @@ ostream& operator<<(ostream& os, const TinyVector<P_numtype, N_length>& x)
 
 // Input of tinyvec contribute by Adam Levar <adaml@mcneilhouse.com>
 // and updated by Sergei Mingaleev <mingaleev@gmail.com>
-template <typename T_numtype, int N_length>
+template<typename T_numtype, int N_length>
 istream& operator>>(istream& is, TinyVector<T_numtype, N_length>& x)
 {
     char sep;
-             
+
     is >> sep;
     BZPRECHECK(sep == '(', "Format error while scanning input TinyVector"
         << endl << " (expected '(' opening TinyVector)");
@@ -69,15 +69,15 @@ istream& operator>>(istream& is, TinyVector<T_numtype, N_length>& x)
     for (int i = 1; i < N_length; ++i)
     {
         is >> sep;
-        BZPRECHECK(sep == ',', "Format error while scanning input TinyVector"
-             << endl << " (expected ',' between TinyVector components)");
+        BZPRECHECK(sep == ', ', "Format error while scanning input TinyVector"
+             << endl << " (expected ', ' between TinyVector components)");
         BZPRECHECK(!is.bad(), "Premature end of input while scanning TinyVector");
         is >> x(i);
     }
     is >> sep;
     BZPRECHECK(sep == ')', "Format error while scanning input TinyVector"
        << endl << " (expected ')' closing TinyVector)");
-    
+
     return is;
 }
 

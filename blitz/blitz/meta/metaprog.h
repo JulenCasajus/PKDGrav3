@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/meta/metaprog.h   Useful metaprogram declarations
+ * blitz/meta / metaprog.h   Useful metaprogram declarations
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -62,6 +62,6 @@ public:
     static const int min = (N1 < N2) ? N1 : N2;
 };
 
-BZ_NAMESPACE_END 
+BZ_NAMESPACE_END
 
 #endif // BZ_META_METAPROG_H

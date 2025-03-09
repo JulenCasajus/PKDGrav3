@@ -24,7 +24,7 @@ protected:
     }
 
     void set_inputs() {
-        for (auto k=0; k<dvec::width(); k++) {
+        for (auto k = 0; k < dvec::width(); k++) {
             Lst[k] = get_rand();
             Rst[k] = get_rand();
             Lstf[k] = get_rand();
@@ -39,17 +39,17 @@ protected:
 
 TEST_F(LimiterTest, PairwiseLimiterTest) {
 
-    for (auto i=0; i<Ntests; i++) {
+    for (auto i = 0; i < Ntests; i++) {
         set_inputs();
 
         // reference
         std::array<double, dvec::width()> Lstf0 = Lstf;
         std::array<double, dvec::width()> Rstf0 = Rstf;
-        for (auto k=0; k<dvec::width(); k++) {
+        for (auto k = 0; k < dvec::width(); k++) {
             // Extra copy to pass the correct reference to limiter function
-            vec<double,double> Rtmp = Rstf0[k];
-            vec<double,double> Ltmp = Lstf0[k];
-            genericPairwiseLimiter<vec<double,double>>(Lst[k], Rst[k], Ltmp, Rtmp);
+            vec < double, double> Rtmp = Rstf0[k];
+            vec < double, double> Ltmp = Lstf0[k];
+            genericPairwiseLimiter < vec < double, double>>(Lst[k], Rst[k], Ltmp, Rtmp);
             Rstf0[k] = Rtmp;
             Lstf0[k] = Ltmp;
         }
@@ -63,7 +63,7 @@ TEST_F(LimiterTest, PairwiseLimiterTest) {
         genericPairwiseLimiter(Lstv, Rstv, Lstfv, Rstfv);
 
         // compare them
-        for (auto k=0; k<dvec::width(); k++) {
+        for (auto k = 0; k < dvec::width(); k++) {
             //printf("%d %e %e %e\n", k, Lstf[k], Lstf0[k], Lstfv[k]);
             EXPECT_NEAR(Lstfv[k], Lstf0[k], 1e-9);
             EXPECT_NEAR(Rstfv[k], Rstf0[k], 1e-9);

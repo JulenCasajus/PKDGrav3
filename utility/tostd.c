@@ -26,7 +26,7 @@
 #include <errno.h>
 #include "io/fio.h"
 
-#define BUFFER_SIZE (8*1024*1024)
+#define BUFFER_SIZE (8 * 1024 * 1024)
 
 #define OPT_DOUBLE    'd'
 #define OPT_NATIVE    'n'
@@ -42,18 +42,18 @@
 
 #define OPT_PERIOD    'P'
 
-static inline void wrap(double *r,double dPeriod) {
+static inline void wrap(double *r, double dPeriod) {
     if (dPeriod > 0.0) {
         double dBound = dPeriod * 0.5;
         int i;
-        for (i=0; i<3; ++i) {
+        for (i = 0; i < 3; ++i) {
             if (r[i] >= dBound) r[i] -= dPeriod;
             else if (r[i] < -dBound) r[i] += dPeriod;
         }
     }
 }
 
-int main( int argc, char *argv[] ) {
+int main(int argc, char *argv[]) {
     int bError = 0;
     int bDouble = 0;
     int bNative = 0;
@@ -61,9 +61,9 @@ int main( int argc, char *argv[] ) {
     int bGADGET2 = 0;
     int bPotential = 0;
     int bDensity = 0;
-    double Omega0 = 0.0, OmegaLambda = 0.0, HubbleParam = 0.0, Lbox=0.0;
+    double Omega0 = 0.0, OmegaLambda = 0.0, HubbleParam = 0.0, Lbox = 0.0;
     double dPeriod = 0.0;
-    int bSetOmega0=0, bSetOmegaLambda=0, bSetHubbleParam=0;
+    int bSetOmega0 = 0, bSetOmegaLambda = 0, bSetHubbleParam = 0;
     uint64_t N, nSph, nDark, nStar, i;
     double dTime;
     uint64_t iOrder;
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] ) {
 
     //! Parse command line arguments (flags).
     for (;;) {
-        int c, option_index=0;
+        int c, option_index = 0;
 
         static struct option long_options[] = {
             { "double",       0, 0, OPT_DOUBLE},
@@ -89,19 +89,19 @@ int main( int argc, char *argv[] ) {
             { "gadget2",      0, 0, OPT_GADGET2},
             { "potential",    0, 0, OPT_POTENTIAL},
             { "density",    0, 0, OPT_DENSITY},
-            { "omega-matter", 1, 0, OPT_OMEGA0 },
+            { "omega - matter", 1, 0, OPT_OMEGA0 },
             { "omega0",       1, 0, OPT_OMEGA0 },
-            { "omega-lambda", 1, 0, OPT_LAMBDA },
+            { "omega - lambda", 1, 0, OPT_LAMBDA },
             { "hubble0",      1, 0, OPT_H0 },
             { "H0",           1, 0, OPT_H0 },
-            { "box-width",    1, 0, OPT_LBOX },
+            { "box - width",    1, 0, OPT_LBOX },
             { "period",       1, 0, OPT_PERIOD },
             { NULL,   0, 0, 0 },
         };
 
         c = getopt_long( argc, argv, "dn5gprm:^:H:L:P:",
                          long_options, &option_index );
-        if ( c == -1 ) break;
+        if (c == -1) break;
 
         switch (c) {
         case OPT_DOUBLE:
@@ -123,26 +123,26 @@ int main( int argc, char *argv[] ) {
             bDensity = 1;
             break;
         case OPT_OMEGA0:
-            assert( optarg != 0 );
+            assert(optarg != 0);
             bSetOmega0 = 1;
             Omega0 = atof(optarg);
             break;
         case OPT_LAMBDA:
-            assert( optarg != 0 );
-            bSetOmegaLambda=1;
+            assert(optarg != 0);
+            bSetOmegaLambda = 1;
             OmegaLambda = atof(optarg);
             break;
         case OPT_H0:
-            assert( optarg != 0 );
+            assert(optarg != 0);
             bSetHubbleParam = 1;
             HubbleParam = atof(optarg);
             break;
         case OPT_LBOX:
-            assert( optarg != 0 );
+            assert(optarg != 0);
             Lbox = atof(optarg);
             break;
         case OPT_PERIOD:
-            assert( optarg != 0 );
+            assert(optarg != 0);
             dPeriod = atof(optarg);
             break;
         default:
@@ -166,7 +166,7 @@ int main( int argc, char *argv[] ) {
     }
 #endif
 
-    if ( optind < argc ) {
+    if (optind < argc) {
         inNameIndex = optind++;
         inNameCount = argc - optind;
     }
@@ -175,41 +175,41 @@ int main( int argc, char *argv[] ) {
         bError = 1;
     }
 
-    if ( optind < argc )
-        outName = argv[argc-1];
+    if (optind < argc)
+        outName = argv[argc - 1];
     else {
         fprintf(stderr, "Missing Tipsy output file\n" );
         bError = 1;
     }
 
-    if ( bError ) {
+    if (bError) {
         fprintf(stderr, "Usage: %s [-p] <input...> <outtipsy>\n"
-                "  -d,--double    Output double precision positions\n"
-                "  -n,--native    Output a native tipsy binary\n"
-                "  -g,--gadget2   Output a GADGET2 binary\n"
-                "  -m,--omega0=<omega-matter>\n"
-                "  -v,--omega-lambda=<omega-lambda>\n"
-                "  -H,--H0=<hubble-parameter>\n"
+                "  -d, --double    Output double precision positions\n"
+                "  -n, --native    Output a native tipsy binary\n"
+                "  -g, --gadget2   Output a GADGET2 binary\n"
+                "  -m, --omega0=<omega - matter>\n"
+                "  -v, --omega - lambda=<omega - lambda>\n"
+                "  -H, --H0=<hubble - parameter>\n"
 #ifdef USE_HDF5
-                "  -5,--hdf5      Output in HDF5 format\n"
-                "  -p,--potential Included potentials in HDF5 output\n"
+                "  -5, --hdf5      Output in HDF5 format\n"
+                "  -p, --potential Included potentials in HDF5 output\n"
 #endif
-                ,argv[0] );
+                , argv[0] );
         exit(1);
     }
 
-    fioIn = fioOpenMany(inNameCount,(const char *const *)&argv[inNameIndex],0.0,0.0);
-    if (fioIn==NULL) {
+    fioIn = fioOpenMany(inNameCount, (const char *const *)&argv[inNameIndex], 0.0, 0.0);
+    if (fioIn == NULL) {
         perror(argv[inNameIndex]);
         exit(errno);
     }
-    N     = fioGetN(fioIn,FIO_SPECIES_ALL);
-    nSph  = fioGetN(fioIn,FIO_SPECIES_SPH);
-    nDark = fioGetN(fioIn,FIO_SPECIES_DARK);
-    nStar = fioGetN(fioIn,FIO_SPECIES_STAR);
-    if (!fioGetAttr(fioIn,0,"dTime",FIO_TYPE_DOUBLE,&dTime)) dTime = 0.0;
+    N     = fioGetN(fioIn, FIO_SPECIES_ALL);
+    nSph  = fioGetN(fioIn, FIO_SPECIES_SPH);
+    nDark = fioGetN(fioIn, FIO_SPECIES_DARK);
+    nStar = fioGetN(fioIn, FIO_SPECIES_STAR);
+    if (!fioGetAttr(fioIn, 0, "dTime", FIO_TYPE_DOUBLE, &dTime)) dTime = 0.0;
 
-    printf("dTime=%g\n",dTime);
+    printf("dTime=%g\n", dTime);
 
 #ifdef USE_HDF5
     if (bHDF5) {
@@ -217,7 +217,7 @@ int main( int argc, char *argv[] ) {
         if (bDouble) mFlag |= FIO_FLAG_DOUBLE_POS | FIO_FLAG_DOUBLE_VEL;
         if (bPotential) mFlag |= FIO_FLAG_POTENTIAL;
         if (bDensity) mFlag |= FIO_FLAG_DENSITY;
-        fioOut = fioHDF5Create(outName,mFlag);
+        fioOut = fioHDF5Create(outName, mFlag);
     }
 #else
     if (0) {}
@@ -232,41 +232,41 @@ int main( int argc, char *argv[] ) {
         nPart[4] = nStar;
         nPart[5] = 0;
         dMass[0] = dMass[1] = dMass[2] = dMass[3] = dMass[4] = dMass[5] = 0.0;
-        fioOut = fioGadgetCreate(outName,mFlag,dTime,Lbox,
+        fioOut = fioGadgetCreate(outName, mFlag, dTime, Lbox,
                                  Omega0, OmegaLambda, HubbleParam,
                                  6, nPart, 1, nPart, dMass );
     }
     else {
-        fioOut = fioTipsyCreate(outName,bDouble,!bNative,dTime,nSph,nDark,nStar);
+        fioOut = fioTipsyCreate(outName, bDouble, !bNative, dTime, nSph, nDark, nStar);
     }
 
-    if (fioOut==NULL) {
+    if (fioOut == NULL) {
         perror(outName);
         exit(errno);
     }
-    fioSetAttr(fioOut,0,"dTime",FIO_TYPE_DOUBLE,1,&dTime);
+    fioSetAttr(fioOut, 0, "dTime", FIO_TYPE_DOUBLE, 1, &dTime);
 
-    for ( i=0; i<N; i++ ) {
+    for (i = 0; i < N; i++) {
         eSpecies = fioSpecies(fioIn);
         /* IA: TODO: to be adapted to extended sph/star output (although this is just to convert between file types)
-        switch(eSpecies) {
+        switch (eSpecies) {
         case FIO_SPECIES_SPH:
-         fioReadSph(fioIn,&iOrder,r,v,&fMass,&fSoft,&fPot,&fRho,&u,&fMetals);
-        wrap(r,dPeriod);
-        fioWriteSph(fioOut,iOrder,r,v,fMass,fSoft,fPot,fRho,u,fMetals);
+         fioReadSph(fioIn, &iOrder, r, v, &fMass, &fSoft, &fPot, &fRho, &u, &fMetals);
+        wrap(r, dPeriod);
+        fioWriteSph(fioOut, iOrder, r, v, fMass, fSoft, fPot, fRho, u, fMetals);
          break;
         case FIO_SPECIES_DARK:
-         fioReadDark(fioIn,&iOrder,r,v,&fMass,&fSoft,&fPot,&fRho);
-        wrap(r,dPeriod);
-         fioWriteDark(fioOut,iOrder,r,v,fMass,fSoft,fPot,fRho);
+         fioReadDark(fioIn, &iOrder, r, v, &fMass, &fSoft, &fPot, &fRho);
+        wrap(r, dPeriod);
+         fioWriteDark(fioOut, iOrder, r, v, fMass, fSoft, fPot, fRho);
          break;
         case FIO_SPECIES_STAR:
-         fioReadStar(fioIn,&iOrder,r,v,&fMass,&fSoft,&fPot,&fRho,&fMetals,&fTimer);
-        wrap(r,dPeriod);
-         fioWriteStar(fioOut,iOrder,r,v,fMass,fSoft,fPot,fRho,fMetals,fTimer);
+         fioReadStar(fioIn, &iOrder, r, v, &fMass, &fSoft, &fPot, &fRho, &fMetals, &fTimer);
+        wrap(r, dPeriod);
+         fioWriteStar(fioOut, iOrder, r, v, fMass, fSoft, fPot, fRho, fMetals, fTimer);
          break;
         default:
-         fprintf(stderr,"Unsupported particle type: %d\n",eSpecies);
+         fprintf(stderr, "Unsupported particle type: %d\n", eSpecies);
          abort();
          }
          */

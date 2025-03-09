@@ -18,6 +18,6 @@ struct eEOSparam {
 
     eEOSparam() = default;
     eEOSparam(eEOSparam const &) = default;
-    eEOSparam(class pkd_parameters &parameters,struct CALC &calc);
+    eEOSparam(class pkd_parameters &parameters, struct CALC &calc);
 };
 #endif

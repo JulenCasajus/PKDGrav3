@@ -31,5 +31,5 @@ public:
         : BasicService(PST_SETADD, sizeof(input), "SetAdd"), node_pst(node_pst) {}
 protected:
     virtual int operator()(int nIn, void *pIn, void *pOut) override;
-    void SetAdd(PST pst,input *in);
+    void SetAdd(PST pst, input *in);
 };

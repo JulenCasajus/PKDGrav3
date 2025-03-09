@@ -22,11 +22,11 @@ public:
         int iRung;
         int bGreater;
         input() = default;
-        input(int iRung, int bGreater) : iRung(iRung),bGreater(bGreater) {}
+        input(int iRung, int bGreater) : iRung(iRung), bGreater(bGreater) {}
     };
     typedef void output;
     explicit ServiceActiveRung(PST pst)
-        : TraversePST(pst,PST_ACTIVERUNG,sizeof(input),"ActiveRung") {}
+        : TraversePST(pst, PST_ACTIVERUNG, sizeof(input), "ActiveRung") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

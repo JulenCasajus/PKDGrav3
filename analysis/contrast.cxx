@@ -27,7 +27,7 @@ static void pkdDensityContrast(PKD pkd, double dTotalMass, int iGrid, bool k = f
     auto data = reinterpret_cast <real_t *> (mdlSetArray(pkd->mdl, 0, 0, pkd->pLite)) + fft->rgrid->nLocal * iGrid;
     real_array_t R;
     G.setupArray(data, R);
-    
+
     if (k) { // Delta(k): same as Delta(r) below, but apply normalization for the FFT (divide by nGrid^3)
         real_t diTotalMass = 1.0 / dTotalMass;
         real_t fftNormalize = 1.0 / (1.0 * nGrid * nGrid * nGrid);
@@ -43,7 +43,7 @@ int pstDensityContrast(PST pst, void *vin, int nIn, void *vout, int nOut) {
     LCL *plcl = pst->plcl;
     struct inDensityContrast *in = reinterpret_cast <struct inDensityContrast *> (vin);
     assert(nIn == sizeof(struct inDensityContrast));
-    
+
     if (pstNotCore(pst)) {
         int rID = mdlReqService(pst->mdl, pst->idUpper, PST_DENSITY_CONTRAST, vin, nIn);
         pstDensityContrast(pst->pstLower, vin, nIn, NULL, 0);

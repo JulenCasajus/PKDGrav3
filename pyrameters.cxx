@@ -18,7 +18,7 @@
 
 bool pyrameters::has(const char *name) const {
     bool bSpecified = false;
-    if (auto f = PyObject_GetAttrString(specified_,name)) {
+    if (auto f = PyObject_GetAttrString(specified_, name)) {
         bSpecified = PyObject_IsTrue(f)>0;
         Py_DECREF(f);
     }
@@ -26,18 +26,18 @@ bool pyrameters::has(const char *name) const {
 }
 
 void pyrameters::merge(PyObject *o1, PyObject *o2) {
-    auto d1 = PyObject_GenericGetDict(o1,nullptr);
-    auto d2 = PyObject_GenericGetDict(o2,nullptr);
+    auto d1 = PyObject_GenericGetDict(o1, nullptr);
+    auto d2 = PyObject_GenericGetDict(o2, nullptr);
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     while (PyDict_Next(d2, &pos, &key, &value)) {
-        PyDict_SetItem(d1,key,value);
+        PyDict_SetItem(d1, key, value);
     }
 }
 
 void pyrameters::merge(const pyrameters &other) {
-    merge(this->arguments_,other.arguments_);
-    merge(this->specified_,other.specified_);
+    merge(this->arguments_, other.arguments_);
+    merge(this->specified_, other.specified_);
 }
 
 bool pyrameters::verify(PyObject *kwobj) {
@@ -54,26 +54,26 @@ bool pyrameters::verify(PyObject *kwobj) {
         }
         // If this key is not a valid argument, then print an error,
         // unless it is a module, or a callable imported from another module.
-        if (!PyObject_HasAttr(arguments_,key) && !PyModule_Check(value)) {
+        if (!PyObject_HasAttr(arguments_, key) && !PyModule_Check(value)) {
             if (PyCallable_Check(value)) {
-                auto module = PyObject_GetAttrString(value,"__module__");
+                auto module = PyObject_GetAttrString(value, "__module__");
                 if (module && PyUnicode_Check(module)) {
                     auto ascii = PyUnicode_AsASCIIString(module);
                     auto result = PyBytes_AsString(ascii);
                     Py_DECREF(ascii);
                     Py_DECREF(module);
-                    if (result && strcmp(result,"__main__")!=0) continue;
+                    if (result && strcmp(result, "__main__")!=0) continue;
                 }
             }
-            PyErr_Format(PyExc_AttributeError,"invalid parameter %A",key);
+            PyErr_Format(PyExc_AttributeError, "invalid parameter %A", key);
             PyErr_Print();
-            bSuccess=false;
+            bSuccess = false;
         }
     }
     return bSuccess;
 }
 
-bool pyrameters::update(PyObject *kwobj,bool bIgnoreUnknown) {
+bool pyrameters::update(PyObject *kwobj, bool bIgnoreUnknown) {
     bool bSuccess = true;
     PyObject *key, *value;
     Py_ssize_t pos = 0;
@@ -85,14 +85,14 @@ bool pyrameters::update(PyObject *kwobj,bool bIgnoreUnknown) {
             Py_DECREF(ascii);
             if (keyString[0]=='_') continue;
         }
-        if (PyObject_HasAttr(arguments_,key)) {
-            PyObject_SetAttr(arguments_,key,value);
-            PyObject_SetAttr(specified_,key,Py_True);
+        if (PyObject_HasAttr(arguments_, key)) {
+            PyObject_SetAttr(arguments_, key, value);
+            PyObject_SetAttr(specified_, key, Py_True);
         }
         else if (!bIgnoreUnknown) {
-            PyErr_Format(PyExc_AttributeError,"invalid parameter %A",key);
+            PyErr_Format(PyExc_AttributeError, "invalid parameter %A", key);
             PyErr_Print();
-            bSuccess=false;
+            bSuccess = false;
         }
     }
     return bSuccess;
@@ -104,7 +104,7 @@ template<> PyObject *pyrameters::get<PyObject *>(const char *name) const {
     if (PyCallable_Check(v)) {
         auto callback = v;
         auto call_args = PyTuple_New(0);
-        v = PyObject_Call(callback,call_args,dynamic_);
+        v = PyObject_Call(callback, call_args, dynamic_);
         Py_DECREF(call_args);
         Py_DECREF(callback);
     }
@@ -115,7 +115,7 @@ template<> PyObject *pyrameters::get<PyObject *>(const char *name) const {
 template<> void pyrameters::set_dynamic(const char *name, double value) {
     auto o = PyFloat_FromDouble(value);
     if (o) {
-        PyDict_SetItemString(dynamic_,name,o);
+        PyDict_SetItemString(dynamic_, name, o);
         Py_DECREF(o);
     }
     if (PyErr_Occurred()) {
@@ -127,7 +127,7 @@ template<> void pyrameters::set_dynamic(const char *name, double value) {
 template<> void pyrameters::set_dynamic(const char *name, std::int64_t value) {
     auto o = PyLong_FromSsize_t(value);
     if (o) {
-        PyDict_SetItemString(dynamic_,name,o);
+        PyDict_SetItemString(dynamic_, name, o);
         Py_DECREF(o);
     }
     if (PyErr_Occurred()) {
@@ -139,7 +139,7 @@ template<> void pyrameters::set_dynamic(const char *name, std::int64_t value) {
 template<> void pyrameters::set_dynamic(const char *name, std::uint64_t value) {
     auto o = PyLong_FromSize_t(value);
     if (o) {
-        PyDict_SetItemString(dynamic_,name,o);
+        PyDict_SetItemString(dynamic_, name, o);
         Py_DECREF(o);
     }
     if (PyErr_Occurred()) {
@@ -149,13 +149,13 @@ template<> void pyrameters::set_dynamic(const char *name, std::uint64_t value) {
 }
 
 template<> void pyrameters::set_dynamic(const char *name, float value) {
-    set_dynamic<double>(name,value);
+    set_dynamic < double>(name, value);
 }
 
 template<> void pyrameters::set_dynamic(const char *name, std::int32_t value) {
-    set_dynamic<std::int64_t>(name,value);
+    set_dynamic < std::int64_t>(name, value);
 }
 
 template<> void pyrameters::set_dynamic(const char *name, std::uint32_t value) {
-    set_dynamic<std::uint64_t>(name,value);
+    set_dynamic < std::uint64_t>(name, value);
 }

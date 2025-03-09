@@ -1,6 +1,6 @@
 // -*- C++ -*-
 /***************************************************************************
- * blitz/meta/matmat.h   TinyMatrix matrix-matrix product metaprogram
+ * blitz/meta / matmat.h   TinyMatrix matrix - matrix product metaprogram
  *
  * $Id$
  *
@@ -8,7 +8,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -18,11 +18,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -56,13 +56,13 @@ public:
             * matrix2[K * N_rowStride2 + j * N_colStride2]
             + _bz_meta_matrixMatrixProduct<N_rows1 * go, N_columns * go,
                 N_columns2 * go, N_rowStride1 * go, N_colStride1 * go,
-                N_rowStride2 * go, N_colStride2 * go, (K+1) * go>
+                N_rowStride2 * go, N_colStride2 * go, (K + 1) * go>
               ::f(matrix1, matrix2, i, j);
     }
 };
 
 template<>
-class _bz_meta_matrixMatrixProduct<0,0,0,0,0,0,0,0> {
+class _bz_meta_matrixMatrixProduct<0, 0, 0, 0, 0, 0, 0, 0> {
 public:
     static inline _bz_meta_nullOperand f(const void*, const void*, int, int)
     { return _bz_meta_nullOperand(); }
@@ -106,13 +106,13 @@ public:
 
 protected:
     const T_numtype1* matrix1_;
-    const T_numtype2* matrix2_;    
+    const T_numtype2* matrix2_;
 };
 
 template<typename T_numtype1, typename T_numtype2, int N_rows1, int N_columns1,
     int N_columns2>
 inline
-_bz_tinyMatExpr<_bz_tinyMatrixMatrixProduct<T_numtype1, T_numtype2, N_rows1, 
+_bz_tinyMatExpr<_bz_tinyMatrixMatrixProduct<T_numtype1, T_numtype2, N_rows1,
     N_columns1, N_columns2, N_columns1, 1, N_columns2, 1> >
 product(const TinyMatrix<T_numtype1, N_rows1, N_columns1>& a,
     const TinyMatrix<T_numtype2, N_columns1, N_columns2>& b)

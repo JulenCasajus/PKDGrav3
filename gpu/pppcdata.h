@@ -24,15 +24,15 @@
 
 namespace gpu {
 
-template <int n,class BTILE> struct Blk;
-template <int n> struct Blk<n,ilpTile> : ppBlk<n> {};
-template <int n> struct Blk<n,ilcTile> : pcBlk<n> {};
+template<int n, class BTILE> struct Blk;
+template<int n> struct Blk<n, ilpTile> : ppBlk<n> {};
+template<int n> struct Blk<n, ilcTile> : pcBlk<n> {};
 
-inline double getFlops(workParticle *wp,ilpTile &tile) {
-    return COST_FLOP_PP*wp->nP*tile.count();
+inline double getFlops(workParticle *wp, ilpTile &tile) {
+    return COST_FLOP_PP * wp->nP * tile.count();
 }
-inline double getFlops(workParticle *wp,ilcTile &tile) {
-    return COST_FLOP_PC*wp->nP*tile.count();
+inline double getFlops(workParticle *wp, ilcTile &tile) {
+    return COST_FLOP_PC * wp->nP * tile.count();
 }
 
 // The interaction list blocks may contain more information than is necessary
@@ -40,13 +40,13 @@ inline double getFlops(workParticle *wp,ilcTile &tile) {
 inline int copyBLKs(ppInteract *out, ilpTile &in) {
     auto n = in.width;
     auto nIlp = in.count();
-    int i, nBlk = (nIlp+n-1) / n;
-    for (i=0; i<nBlk; ++i) {
+    int i, nBlk = (nIlp + n - 1) / n;
+    for (i = 0; i < nBlk; ++i) {
         memcpy(&out[i].dx,    &in[i].dx,    sizeof(out[i].dx));
         memcpy(&out[i].dy,    &in[i].dy,    sizeof(out[i].dy));
         memcpy(&out[i].dz,    &in[i].dz,    sizeof(out[i].dz));
         memcpy(&out[i].m,     &in[i].m,     sizeof(out[i].m));
-        memcpy(&out[i].fourh2,&in[i].fourh2,sizeof(out[i].fourh2));
+        memcpy(&out[i].fourh2, &in[i].fourh2, sizeof(out[i].fourh2));
     }
     return nBlk;
 }
@@ -54,20 +54,20 @@ inline int copyBLKs(ppInteract *out, ilpTile &in) {
 inline int copyBLKs(pcInteract *out, ilcTile &in) {
     auto n = in.width;
     auto nIlp = in.count();
-    int i, nBlk = (nIlp+n-1) / n;
-    for (i=0; i<nBlk; ++i) {
+    int i, nBlk = (nIlp + n - 1) / n;
+    for (i = 0; i < nBlk; ++i) {
         memcpy(&out[i].dx,  &in[i].dx,  sizeof(out[i].dx));
         memcpy(&out[i].dy,  &in[i].dy,  sizeof(out[i].dy));
         memcpy(&out[i].dz,  &in[i].dz,  sizeof(out[i].dz));
-        memcpy(&out[i].xxxx,&in[i].xxxx,sizeof(out[i].xxxx));
-        memcpy(&out[i].xxxy,&in[i].xxxy,sizeof(out[i].xxxy));
-        memcpy(&out[i].xxxz,&in[i].xxxz,sizeof(out[i].xxxz));
-        memcpy(&out[i].xxyz,&in[i].xxyz,sizeof(out[i].xxyz));
-        memcpy(&out[i].xxyy,&in[i].xxyy,sizeof(out[i].xxyy));
-        memcpy(&out[i].yyyz,&in[i].yyyz,sizeof(out[i].yyyz));
-        memcpy(&out[i].xyyz,&in[i].xyyz,sizeof(out[i].xyyz));
-        memcpy(&out[i].xyyy,&in[i].xyyy,sizeof(out[i].xyyy));
-        memcpy(&out[i].yyyy,&in[i].yyyy,sizeof(out[i].yyyy));
+        memcpy(&out[i].xxxx, &in[i].xxxx, sizeof(out[i].xxxx));
+        memcpy(&out[i].xxxy, &in[i].xxxy, sizeof(out[i].xxxy));
+        memcpy(&out[i].xxxz, &in[i].xxxz, sizeof(out[i].xxxz));
+        memcpy(&out[i].xxyz, &in[i].xxyz, sizeof(out[i].xxyz));
+        memcpy(&out[i].xxyy, &in[i].xxyy, sizeof(out[i].xxyy));
+        memcpy(&out[i].yyyz, &in[i].yyyz, sizeof(out[i].yyyz));
+        memcpy(&out[i].xyyz, &in[i].xyyz, sizeof(out[i].xyyz));
+        memcpy(&out[i].xyyy, &in[i].xyyy, sizeof(out[i].xyyy));
+        memcpy(&out[i].yyyy, &in[i].yyyy, sizeof(out[i].yyyy));
         memcpy(&out[i].xxx, &in[i].xxx, sizeof(out[i].xxx));
         memcpy(&out[i].xyy, &in[i].xyy, sizeof(out[i].xyy));
         memcpy(&out[i].xxy, &in[i].xxy, sizeof(out[i].xxy));
@@ -93,7 +93,7 @@ inline int copyBLKs(pcInteract *out, ilcTile &in) {
 
 /// Extend hostData to keeps track of interaction lists and work packages.
 /// We are still GPU agnostic.
-template<class TILE,int WIDTH=32>
+template<class TILE, int WIDTH = 32>
 class pppcData : public hostData {
 protected:
     bool bGravStep;
@@ -119,25 +119,25 @@ public:
         nTotalInteractionBlocks = nTotalParticles = 0;
     }
     bool queue(workParticle *wp, TILE &tile, bool bGravStep) {
-        typedef Blk<WIDTH,TILE> BLK;
+        typedef Blk<WIDTH, TILE> BLK;
         if (work.size() == wp_max_buffer) return false;  // Too many work packages so send the work
         this->bGravStep = bGravStep;
         const auto nP = wp->nP;                                 // Queue this many particles
         const auto nI = tile.count();                           // ... operating on this many interactions
 
-        if (inputSize<BLK>(nP,nI) > requestBufferSize - 1024) return false;     // Refuse if this tile won't fit in this buffer
-        if (outputSize<BLK>(nP,nI) > requestBufferSize) return false;           // Refuse if this response won't fit
-        auto blk = reinterpret_cast<Blk<WIDTH,TILE> *>(pHostBufIn);             // Copy the blocks to the input buffer
-        nTotalInteractionBlocks += copyBLKs(blk+nTotalInteractionBlocks,tile); // (the ILP tile can now be freed/reused)
+        if (inputSize<BLK>(nP, nI) > requestBufferSize - 1024) return false;     // Refuse if this tile won't fit in this buffer
+        if (outputSize<BLK>(nP, nI) > requestBufferSize) return false;           // Refuse if this response won't fit
+        auto blk = reinterpret_cast<Blk<WIDTH, TILE> *>(pHostBufIn);             // Copy the blocks to the input buffer
+        nTotalInteractionBlocks += copyBLKs(blk + nTotalInteractionBlocks, tile); // (the ILP tile can now be freed / reused)
         nTotalParticles += align_nP(nP);
 
         ++wp->nRefs;
-        work.emplace_back(wp,tile.count());
-        wp->dFlopSingleGPU += getFlops(wp,tile);
+        work.emplace_back(wp, tile.count());
+        wp->dFlopSingleGPU += getFlops(wp, tile);
         return true;
     }
     void prepare() {
-        typedef Blk<WIDTH,TILE> BLK;
+        typedef Blk<WIDTH, TILE> BLK;
         // The interation blocks -- already copied to the host memory
         auto *__restrict__ blkHost = reinterpret_cast<BLK *>(pHostBufIn);
         // The particle information
@@ -145,14 +145,14 @@ public:
         // The interaction block descriptors
         auto *__restrict__ wuHost = reinterpret_cast<ppWorkUnit *>(partHost + nTotalParticles);
         uint32_t iP = 0;
-        for ( auto &w : work ) {
+        for (auto &w : work) {
             int nI = w.nInteractions;
             auto nP = w.wp->nP;
             auto *pInfoIn = w.wp->pInfoIn;
             auto nBlocks = (nI + WIDTH - 1) / WIDTH;
 
             // Generate a interaction block descriptor for each block
-            for (auto j=0; j<nBlocks; ++j) {
+            for (auto j = 0; j < nBlocks; ++j) {
                 wuHost->nP = nP;
                 wuHost->iP = iP;
                 wuHost->nI = nI > WIDTH ? WIDTH : nI;
@@ -161,7 +161,7 @@ public:
             }
 
             // Copy in nP particles
-            for (auto j=0; j<nP; ++j) {
+            for (auto j = 0; j < nP; ++j) {
                 partHost[j].dx =  pInfoIn[j].r[0];
                 partHost[j].dy =  pInfoIn[j].r[1];
                 partHost[j].dz =  pInfoIn[j].r[2];
@@ -176,7 +176,7 @@ public:
             iP += nP;
         }
         // Pad the work unit
-        for (auto i=nTotalInteractionBlocks; i&wp_unit_mask; ++i) {
+        for (auto i = nTotalInteractionBlocks; i & wp_unit_mask; ++i) {
             wuHost->nP = 0;
             wuHost->iP = 0;
             wuHost->nI = 0;
@@ -191,21 +191,21 @@ public:
 
     auto align_nP(int nP) {
         constexpr int mask = 32 * sizeof(float) / sizeof(ppInput) - 1;
-        static_assert(32 * sizeof(float) == (mask+1)*sizeof(ppInput));
+        static_assert(32 * sizeof(float) == (mask + 1)*sizeof(ppInput));
         return (nP + mask) & ~mask;
     }
 
     template<class BLK>
-    int inputSize(int nP=0, int nI=0) {
-        const auto nBlocks = (nI+WIDTH-1) / WIDTH; // number of interaction blocks needed
+    int inputSize(int nP = 0, int nI = 0) {
+        const auto nBlocks = (nI + WIDTH - 1) / WIDTH; // number of interaction blocks needed
         return (nBlocks + nTotalInteractionBlocks) * (sizeof(BLK) + sizeof(ppWorkUnit))
                + (align_nP(nP) + nTotalParticles) * sizeof(ppInput)
                + wp_unit_mask * sizeof(ppWorkUnit);
     }
 
     template<class BLK>
-    int outputSize(int nP=0, int nI=0) {
-        //const auto nBlocks = (nI+BLK::width-1) / BLK::width; // number of interaction blocks needed
+    int outputSize(int nP = 0, int nI = 0) {
+        //const auto nBlocks = (nI + BLK::width - 1) / BLK::width; // number of interaction blocks needed
         return (align_nP(nP) + nTotalParticles) * sizeof(ppResult);
     }
 };

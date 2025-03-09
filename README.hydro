@@ -1,7 +1,7 @@
 New compile-time flags for hydrodynamics
 -------
 
-These flags are designed to avoid plenty of if/else statements in critical parts of the code, 
+These flags are designed to avoid plenty of if/else statements in critical parts of the code,
 as well as activating some parts of the code which, in general, will be disabled.
 
 To turn them on/off:
@@ -13,7 +13,7 @@ CAUTION! If you first do `cmake -D<FLAG>=on ..` and then `cmake ..`, the `<FLAG>
 ### Numerical method
 
   * `USE_MFM` (default=on):
-      Use the Meshless finite mass method for the hydrodynamics. As today, this does not, for example, avoid the storage of the 
+      Use the Meshless finite mass method for the hydrodynamics. As today, this does not, for example, avoid the storage of the
       mass flux (which is always zero), thus can be further optimized. [TODO]
 
   * `ENTROPY_SWITCH` (default=off)
@@ -26,7 +26,7 @@ CAUTION! If you first do `cmake -D<FLAG>=on ..` and then `cmake ..`, the `<FLAG>
       Apply the Barth-Jespersen limiter to spatial gradients. This is quite a restrictive limiter.
 
   * `LIMITER_CONDBARTH` (default=on)
-      Apply the conditioned Barth-Jespersen limiter to the spatial gradients (Hopkins 2016, eq B3). 
+      Apply the conditioned Barth-Jespersen limiter to the spatial gradients (Hopkins 2016, eq B3).
       It is less restrictive as it takes into account the local ordering of the particle to relax the max/min allowed values.
 
 
@@ -51,7 +51,7 @@ In the case the condition number is higher than a certain value, the number of n
 Furthermore, there are two other ways to compute the smoothing lenght:
   * `FIXED_NSMOOTH_STRICT` (default=off):
     Computes the distance to the N-th closest neighbours and set the smoothing length such that that particle is the further in the compact support.
-      
+
   * `FIXED_NSMOOTH_RELAXED` (default=off):
     This is similar to the default approach but instead of estimating the number of neighbours, it takes the actual quantity of neighbours for computing the smoothing length.
 
@@ -72,7 +72,7 @@ Furthermore, there are two other ways to compute the smoothing lenght:
 
 ### Blackholes
   * `BLACKHOLES` (default=off)
-      Particles residing in dense regions can be converted into a BH, which then can accrete mass and inject energy in the 
+      Particles residing in dense regions can be converted into a BH, which then can accrete mass and inject energy in the
       surrounding particles.
 
 #### Others (may not be well tested!)

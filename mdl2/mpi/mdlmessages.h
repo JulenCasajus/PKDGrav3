@@ -41,7 +41,7 @@ protected:
     uint32_t iRankTo;
 public:
     uint32_t getRankTo() {return iRankTo;}
-    void setRankTo(uint32_t iRank) { iRankTo=iRank; }
+    void setRankTo(uint32_t iRank) { iRankTo = iRank; }
 };
 
 class FlushBuffer {
@@ -51,16 +51,16 @@ protected:
     std::vector<char> Buffer;
     uint32_t mContains; // Bitmask of which CacheMessageType are contained
 public:
-    explicit FlushBuffer(uint32_t nSize=MDL_FLUSH_DATA_SIZE,CacheMessageType mid=CacheMessageType::FLUSH);
+    explicit FlushBuffer(uint32_t nSize = MDL_FLUSH_DATA_SIZE, CacheMessageType mid = CacheMessageType::FLUSH);
     char *getBuffer() {return &Buffer.front();}
     uint32_t getCount() {return nBuffer;}
-    bool isEmpty() {return nBuffer==0;}
-    void emptyBuffer() {nBuffer=0; mContains=0;}
-    bool canBuffer(int nSize) { return nBuffer+nSize+sizeof(ServiceHeader) <= Buffer.size(); }
+    bool isEmpty() {return nBuffer == 0;}
+    void emptyBuffer() {nBuffer = 0; mContains = 0;}
+    bool canBuffer(int nSize) { return nBuffer + nSize + sizeof(ServiceHeader) <= Buffer.size(); }
     void *getBuffer(int nSize);
     bool addBuffer(int nSize, const void *pData);
-    bool addBuffer(uint8_t cid, int32_t idFrom, int32_t idTo, int32_t iLine, int nItems=1, int nSize=0, const void *pData=0);
-    bool addBuffer(CacheMessageType mid,uint8_t cid, int32_t idFrom, int32_t idTo, int32_t iLine, int nItems=1, int nSize=0, const void *pData=0);
+    bool addBuffer(uint8_t cid, int32_t idFrom, int32_t idTo, int32_t iLine, int nItems = 1, int nSize = 0, const void *pData = 0);
+    bool addBuffer(CacheMessageType mid, uint8_t cid, int32_t idFrom, int32_t idTo, int32_t iLine, int nItems = 1, int nSize = 0, const void *pData = 0);
     bool addBuffer(int nSize, const CacheHeader *pData);
     bool contains(CacheMessageType mid) {return (mContains & (1<<static_cast<int>(mid))) != 0; }
 };
@@ -78,9 +78,9 @@ struct mdlMessageQueue : public messageQueue<mdlMessage> {
 class mdlMessageVote : public mdlMessage {
     int iVote;
 public:
-    explicit mdlMessageVote(int iVote=0) : iVote(iVote) {}
+    explicit mdlMessageVote(int iVote = 0) : iVote(iVote) {}
     int vote() {return iVote;}
-    int vote(int i) { return (iVote=i); }
+    int vote(int i) { return (iVote = i); }
 };
 
 // Used to hold a sequence of cache lines to send to the MPI thread for processing
@@ -108,7 +108,7 @@ public:
     virtual void action(class mpiClass *mpi);
     int datasize()             { return nDataSize; }
     bool is_finished()         { return bFinished; }
-    void finished(bool b=true) { bFinished = b; }
+    void finished(bool b = true) { bFinished = b; }
 };
 
 class mdlMessageCacheOpen : public mdlMessage {
@@ -170,7 +170,7 @@ class mdlMessageFFT_Sizes : public mdlMessage {
     friend class mdlClass;
     friend class mpiClass;
 protected: // Input fields
-    int n1,n2,n3;
+    int n1, n2, n3;
 protected: // Output fields
     ptrdiff_t nz, sz, ny, sy, nLocal;
 public:
@@ -188,7 +188,7 @@ protected: // Output fields
     FFTW3(plan) fplan, iplan;
 public:
     virtual void action(class mpiClass *mdl);
-    explicit mdlMessageFFT_Plans(int n1, int n2, int n3,FFTW3(real) *data=0,FFTW3(complex) *kdata=0);
+    explicit mdlMessageFFT_Plans(int n1, int n2, int n3, FFTW3(real) *data = 0, FFTW3(complex) *kdata = 0);
 };
 #endif
 

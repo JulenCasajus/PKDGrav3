@@ -9,7 +9,7 @@
  *
  * This file is a part of Blitz.
  *
- * Blitz is free software: you can redistribute it and/or modify 
+ * Blitz is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
@@ -19,11 +19,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with Blitz.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Suggestions:          blitz-devel@lists.sourceforge.net
- * Bugs:                 blitz-support@lists.sourceforge.net    
+ * Bugs:                 blitz-support@lists.sourceforge.net
  *
  * For more information, please see the Blitz++ Home Page:
  *    https://sourceforge.net/projects/blitz/
@@ -57,17 +57,17 @@ public:
 
     ReduceSum() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const { 
-        sum_ += x; 
+    bool operator()(const T_sourcetype& x, const int = 0) const {
+        sum_ += x;
         return true;
     }
 
     T_resulttype result(const int) const { return sum_; }
 
     void reset() const { sum_ = zero(T_resulttype()); }
- 
+
     static const char* name() { return "sum"; }
- 
+
 protected:
 
     mutable T_resulttype sum_;
@@ -85,8 +85,8 @@ public:
 
     ReduceMean() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const { 
-        sum_ += x; 
+    bool operator()(const T_sourcetype& x, const int = 0) const {
+        sum_ += x;
         return true;
     }
 
@@ -113,7 +113,7 @@ public:
 
     ReduceMin() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const {
+    bool operator()(const T_sourcetype& x, const int = 0) const {
         if (x < min_)
             min_ = x;
         return true;
@@ -142,7 +142,7 @@ public:
 
     ReduceMax() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const {
+    bool operator()(const T_sourcetype& x, const int = 0) const {
         if (x > max_)
             max_ = x;
         return true;
@@ -159,7 +159,7 @@ protected:
     mutable T_resulttype max_;
 };
 
-template <typename T>
+template<typename T>
 struct MinMaxValue {
     void operator=(const T& val) { min = max = val; }
     T min;
@@ -171,14 +171,14 @@ class ReduceMinMax {
 public:
 
     typedef P_sourcetype              T_sourcetype;
-    typedef MinMaxValue<P_sourcetype> T_resulttype;
+    typedef MinMaxValue < P_sourcetype> T_resulttype;
     typedef T_resulttype              T_numtype;
 
     static const bool needIndex = false, needInit = true;
 
     ReduceMinMax() { }
 
-    bool operator()(T_sourcetype x,const int=0) const {
+    bool operator()(T_sourcetype x, const int = 0) const {
         if (x > minmax_.max)
             minmax_.max = x;
         else if (x < minmax_.min)
@@ -209,7 +209,7 @@ public:
 
     ReduceMinIndex() { }
 
-    bool operator()(const T_sourcetype& x,const T_resulttype& index) const {
+    bool operator()(const T_sourcetype& x, const T_resulttype& index) const {
         if (x < min_) {
             min_ = x;
             index_ = index;
@@ -219,9 +219,9 @@ public:
 
     T_resulttype result(const int) const { return index_; }
 
-    void reset(const T_resulttype& index) const { 
+    void reset(const T_resulttype& index) const {
         min_ = huge(T_sourcetype());
-        index_ = index;        
+        index_ = index;
     }
 
     static const char* name() { return "minIndex"; }
@@ -237,7 +237,7 @@ class ReduceMinIndexVector {
 public:
 
     typedef P_sourcetype T_sourcetype;
-    typedef TinyVector<int,N> T_resulttype;
+    typedef TinyVector<int, N> T_resulttype;
     typedef T_resulttype T_numtype;
 
     static const bool needIndex = true, needInit = false;
@@ -279,7 +279,7 @@ public:
 
     ReduceMaxIndex() { }
 
-    bool operator()(const T_sourcetype& x,const T_resulttype& index) const {
+    bool operator()(const T_sourcetype& x, const T_resulttype& index) const {
         if (x > max_) {
             max_ = x;
             index_ = index;
@@ -307,7 +307,7 @@ class ReduceMaxIndexVector {
 public:
 
     typedef P_sourcetype T_sourcetype;
-    typedef TinyVector<int,N_rank> T_resulttype;
+    typedef TinyVector<int, N_rank> T_resulttype;
     typedef T_resulttype T_numtype;
 
     static const bool needIndex = true, needInit = false;
@@ -349,7 +349,7 @@ public:
 
     ReduceFirst() { }
 
-    bool operator()(const T_sourcetype& x,const T_resulttype& index) const {
+    bool operator()(const T_sourcetype& x, const T_resulttype& index) const {
         if (x) {
             index_ = index;
             return false;
@@ -380,7 +380,7 @@ public:
 
     ReduceLast() { }
 
-    bool operator()(const T_sourcetype& x,const T_resulttype& index) const {
+    bool operator()(const T_sourcetype& x, const T_resulttype& index) const {
         if (x) {
             index_ = index;
             return true;
@@ -411,8 +411,8 @@ public:
 
     ReduceProduct() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const { 
-        product_ *= x; 
+    bool operator()(const T_sourcetype& x, const int = 0) const {
+        product_ *= x;
         return true;
     }
 
@@ -439,7 +439,7 @@ public:
 
     ReduceCount() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const {
+    bool operator()(const T_sourcetype& x, const int = 0) const {
         if (bool(x))
             ++count_;
         return true;
@@ -468,7 +468,7 @@ public:
 
     ReduceAny() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const {
+    bool operator()(const T_sourcetype& x, const int = 0) const {
         if (bool(x)) {
             any_ = true;
             return false;
@@ -500,7 +500,7 @@ public:
 
     ReduceAll() { }
 
-    bool operator()(const T_sourcetype& x,const int=0) const {
+    bool operator()(const T_sourcetype& x, const int = 0) const {
         if (!bool(x)) {
             all_ = false;
             return false;
@@ -517,7 +517,7 @@ public:
 protected:
 
     mutable T_resulttype all_;
-}; 
+};
 
 BZ_NAMESPACE_END
 

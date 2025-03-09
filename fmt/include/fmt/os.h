@@ -92,14 +92,14 @@ FMT_BEGIN_NAMESPACE
   This class is most useful as a parameter type to allow passing
   different types of strings to a function, for example::
 
-    template <typename... Args>
+    template<typename... Args>
     std::string format(cstring_view format_str, const Args & ... args);
 
     format("{}", 42);
     format(std::string("{}"), 42);
   \endrst
  */
-template <typename Char> class basic_cstring_view {
+template<typename Char> class basic_cstring_view {
  private:
   const Char* data_;
 
@@ -192,7 +192,7 @@ class windows_error : public system_error {
      }
    \endrst
   */
-  template <typename... Args>
+  template<typename... Args>
   windows_error(int error_code, string_view message, const Args&... args) {
     init(error_code, message, make_format_args(args...));
   }
@@ -252,7 +252,7 @@ class buffered_file {
     fmt::vprint(file_, format_str, args);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void print(string_view format_str, const Args&... args) {
     vprint(format_str, make_format_args(args...));
   }

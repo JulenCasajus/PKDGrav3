@@ -74,12 +74,12 @@ int bGlobalOutput = 0;
 
 #ifndef _MSC_VER
 static inline void USR1_handler(int signo) {
-    signal(SIGUSR1,USR1_handler);
+    signal(SIGUSR1, USR1_handler);
     timeGlobalSignalTime = time(0);
 }
 
 static inline void USR2_handler(int signo) {
-    signal(SIGUSR2,USR2_handler);
+    signal(SIGUSR2, USR2_handler);
     bGlobalOutput = 1;
 }
 #endif
@@ -93,8 +93,8 @@ void *worker_init(MDL vmdl) {
     PST pst;
     LCL *plcl = new LCL;
     plcl->pkd = NULL;
-    pstInitialize(&pst,mdl,plcl);
-    pstAddServices(pst,vmdl);
+    pstInitialize(&pst, mdl, plcl);
+    pstAddServices(pst, vmdl);
     mdl->AddService(std::make_unique<ServiceSetAdd>(pst));
     mdl->AddService(std::make_unique<ServiceSwapAll>(pst));
     mdl->AddService(std::make_unique<ServiceHostname>(pst));
@@ -165,7 +165,7 @@ void worker_done(MDL mdl, void *ctx) {
 /*
 ** This is invoked for the "master" process after the worker has been setup.
 */
-int master(MDL mdl,void *vpst) {
+int master(MDL mdl, void *vpst) {
     auto pst = reinterpret_cast<PST>(vpst);
     int argc = mdlGetArgc(mdl);
     char **argv = mdlGetArgv(mdl);
@@ -173,17 +173,17 @@ int master(MDL mdl,void *vpst) {
     /* a USR1 signal indicates that the queue wants us to exit */
 #ifndef _MSC_VER
     timeGlobalSignalTime = 0;
-    signal(SIGUSR1,NULL);
-    signal(SIGUSR1,USR1_handler);
+    signal(SIGUSR1, NULL);
+    signal(SIGUSR1, USR1_handler);
 
     /* a USR2 signal indicates that we should write an output when convenient */
     bGlobalOutput = 0;
-    signal(SIGUSR2,NULL);
-    signal(SIGUSR2,USR2_handler);
+    signal(SIGUSR2, NULL);
+    signal(SIGUSR2, USR2_handler);
 #endif
 
-    MSR msr(mdl,pst);
-    auto rc = msr.Python(argc,argv);
+    MSR msr(mdl, pst);
+    auto rc = msr.Python(argc, argv);
     if (rc < 0) {
         printf("%s using Python %d.%d.%d\n", PACKAGE_STRING, PY_MAJOR_VERSION, PY_MINOR_VERSION, PY_MICRO_VERSION );
         if (!msr.ValidateParameters())
@@ -203,14 +203,14 @@ int master(MDL mdl,void *vpst) {
     return rc;
 }
 
-int main(int argc,char **argv) {
+int main(int argc, char **argv) {
 #ifdef ENABLE_FE
-    feenableexcept(FE_INVALID|FE_DIVBYZERO|FE_OVERFLOW);
+    feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
 #endif
 #ifndef CCC
     /* no stdout buffering */
-    setbuf(stdout,(char *) NULL);
+    setbuf(stdout, (char *) NULL);
 #endif
 
-    return mdlLaunch(argc,argv,master,worker_init,worker_done);
+    return mdlLaunch(argc, argv, master, worker_init, worker_done);
 }

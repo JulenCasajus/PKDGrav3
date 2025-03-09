@@ -28,7 +28,7 @@ public:
     };
     typedef void output;
     explicit ServiceZeroNewRung(PST pst)
-        : TraversePST(pst,PST_ZERONEWRUNG,sizeof(input),"ZeroNewRung") {}
+        : TraversePST(pst, PST_ZERONEWRUNG, sizeof(input), "ZeroNewRung") {}
 protected:
-    virtual int Service(PST pst,void *vin,int nIn,void *vout,int nOut);
+    virtual int Service(PST pst, void *vin, int nIn, void *vout, int nOut);
 };

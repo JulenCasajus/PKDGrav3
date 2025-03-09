@@ -1,12 +1,12 @@
 import PKDGRAV
-from sys import argv,exit
+from sys import argv, exit
 from dill import load
 
 if len(argv) != 2:
     print(f"Usage: {argv[0]} <checkpoint.pkl>")
     exit(1)
 
-with open(argv[1],'rb') as fp:
+with open(argv[1], 'rb') as fp:
     version = load(fp)
     if version != 1:
         print("Invalid checkpoint version")
@@ -24,5 +24,5 @@ with open(argv[1],'rb') as fp:
     s = load(fp)
     print(f"{'Parameters (explicitly set only):':<20}")
     for k in vars(a):
-    	if (getattr(s,k,False)):
-    		print("  ",f"{k:<20}",getattr(a,k))
+    	if (getattr(s, k, False)):
+    		print("  ", f"{k:<20}", getattr(a, k))

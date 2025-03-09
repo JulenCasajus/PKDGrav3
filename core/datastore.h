@@ -25,8 +25,8 @@
 //! The length of the elements is choosen at run-time before the
 //! container is created. This class provides a way to access the
 //! individual fields
-template<typename DATA,typename FIELD>
-class dataStore : public dataFields<DATA,FIELD> {
+template<typename DATA, typename FIELD>
+class dataStore : public dataFields<DATA, FIELD> {
 protected:
     DATA *pStore = nullptr;         //!< Pointer to the first element
     int nStore = 0;                 //!< Maximum number of element that can be stored
@@ -36,18 +36,18 @@ public:
     //! Set the size and location of the storage.
     //! \param p Pointer to the block of storage
     //! \param n Maximum number of element
-    void setStore(void *p,int n) {
+    void setStore(void *p, int n) {
         pStore = static_cast<DATA *>(p);
         nStore = n;
     }
 protected:
     DATA *Base() const { return pStore; }
 public:
-    using dataFields<DATA,FIELD>::Element;
-    DATA *Element(int i) const { return this->Element(Base(),i); }
+    using dataFields<DATA, FIELD>::Element;
+    DATA *Element(int i) const { return this->Element(Base(), i); }
     int FreeStore() const { return nStore; }
     int Local() const { return nLocal; }
-    int SetLocal(int n) { return (nLocal=n);}
+    int SetLocal(int n) { return (nLocal = n);}
     DATA *operator[](int i) {return Element(i);}
     operator void *() {return Base();}
 };

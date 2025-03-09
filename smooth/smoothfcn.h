@@ -89,7 +89,7 @@ typedef struct pqNode {
     struct pqNode *pqWinner;    /* Only used when building initial tree */
     PARTICLE *pPart;
     double fDist2;
-    blitz::TinyVector<double,3> dr;
+    blitz::TinyVector<double, 3> dr;
     float fBall;
     int bMarked;
     int iIndex;
@@ -98,7 +98,7 @@ typedef struct pqNode {
 
 typedef PQ NN;
 
-#define PQ_INIT(pq,n)\
+#define PQ_INIT(pq, n)\
 {\
     int j;\
     if ((n) == 1) {\
@@ -106,7 +106,7 @@ typedef PQ NN;
         (pq)[0].pqFromExt = NULL;\
         }\
     else {\
-        for (j=0;j<(n);++j) {\
+        for (j = 0;j<(n);++j) {\
             if (j < 2) (pq)[j].pqFromInt = NULL;\
             else (pq)[j].pqFromInt = &(pq)[j>>1];\
             (pq)[j].pqFromExt = &(pq)[(j+(n))>>1];\
@@ -114,11 +114,11 @@ typedef PQ NN;
         }\
     }
 
-#define PQ_BUILD(pq,n,q)\
+#define PQ_BUILD(pq, n, q)\
 {\
-    int i,j;\
-    PQ *t,*lt;\
-    for (j=(n)-1;j>0;--j) {\
+    int i, j;\
+    PQ *t, *lt;\
+    for (j=(n)-1;j > 0;--j) {\
         i = (j<<1);\
         if (i < (n)) t = (pq)[i].pqWinner;\
         else t = &(pq)[i-(n)];\
@@ -140,7 +140,7 @@ typedef PQ NN;
 
 #define PQ_REPLACE(q)\
 {\
-    PQ *t,*lt;\
+    PQ *t, *lt;\
     t = (q)->pqFromExt;\
     while (t) {\
         if (t->pqLoser->fDist2 > (q)->fDist2) {\
@@ -176,28 +176,28 @@ enum SMOOTH_TYPE {
 };
 
 //#define SMX_NULL                            0
-void NullSmooth(PARTICLE *,float fBall,int,NN *,SMF *);
+void NullSmooth(PARTICLE *, float fBall, int, NN *, SMF *);
 
 //#define SMX_DENSITY             1
-void initDensity(void *,void *);
-void combDensity(void *,void *,const void *);
-void Density(PARTICLE *,float fBall,int,NN *,SMF *);
-void DensitySym(PARTICLE *,float fBall,int,NN *,SMF *);
+void initDensity(void *, void *);
+void combDensity(void *, void *, const void *);
+void Density(PARTICLE *, float fBall, int, NN *, SMF *);
+void DensitySym(PARTICLE *, float fBall, int, NN *, SMF *);
 
 //#define SMX_PRINTNN                            9
-void PrintNN(PARTICLE *,float fBall,int,NN *,SMF *);
+void PrintNN(PARTICLE *, float fBall, int, NN *, SMF *);
 
 //#define SMX_DENSITY_F1          28
-void DensityF1(PARTICLE *,float fBall,int,NN *,SMF *);
+void DensityF1(PARTICLE *, float fBall, int, NN *, SMF *);
 
 //#define SMX_DENSITY_M3          29
-void DensityM3(PARTICLE *,float fBall,int,NN *,SMF *);
+void DensityM3(PARTICLE *, float fBall, int, NN *, SMF *);
 //#define SMX_GRADIENT_M3         30
-void LinkGradientM3(PARTICLE *,float fBall,int,NN *,SMF *);
+void LinkGradientM3(PARTICLE *, float fBall, int, NN *, SMF *);
 //#define SMX_HOP_LINK            31
-void LinkHopChains(PARTICLE *,float fBall,int,NN *,SMF *);
+void LinkHopChains(PARTICLE *, float fBall, int, NN *, SMF *);
 
 //#define SMX_BALL                33
-void initBall(void *,void *);
-void BallSmooth(PARTICLE *,float fBall,int,NN *,SMF *);
+void initBall(void *, void *);
+void BallSmooth(PARTICLE *, float fBall, int, NN *, SMF *);
 #endif

@@ -39,7 +39,7 @@ float getDtPredDrift(struct pkdKickParameters *kick, int bMarked, int uRungLo, i
 
 void SPHpredictOnTheFly(PKD pkd, particleStore::ParticleReference &p, struct pkdKickParameters *kick, int uRungLo, float *vpred, float *P, float *cs, float *T, SPHOptions *SPHoptions) {
     auto &NewSph = p.newsph();
-    float dtPredDrift = getDtPredDrift(kick,p.marked(),uRungLo,p.rung());
+    float dtPredDrift = getDtPredDrift(kick, p.marked(), uRungLo, p.rung());
     const auto &ap = p.acceleration();
     const auto &v = p.velocity();
     if (SPHoptions->doConsistentPrediction) {
@@ -71,7 +71,7 @@ void SPHpredictOnTheFly(PKD pkd, particleStore::ParticleReference &p, struct pkd
                     // new opening kick
                     uPred += kick->dtPredISPHOpen[p.rung()] * NewSph.uDot;
                     // isentropic evolution
-                    uPred = SPHEOSIsentropic(pkd,NewSph.oldRho,uPred,p.density(),p.imaterial(),SPHoptions);
+                    uPred = SPHEOSIsentropic(pkd, NewSph.oldRho, uPred, p.density(), p.imaterial(), SPHoptions);
                     // new closing kick
                     uPred += kick->dtPredISPHClose[p.rung()] * NewSph.uDot;
                 }
@@ -79,7 +79,7 @@ void SPHpredictOnTheFly(PKD pkd, particleStore::ParticleReference &p, struct pkd
             else {
                 uPred = NewSph.u + dtPredDrift * NewSph.uDot;
             }
-            *P = SPHEOSPCTofRhoU(pkd,p.density(),uPred,cs,T,p.imaterial(),SPHoptions);
+            *P = SPHEOSPCTofRhoU(pkd, p.density(), uPred, cs, T, p.imaterial(), SPHoptions);
         }
         else {
             *P = NewSph.P;
@@ -97,7 +97,7 @@ void SPHpredictInDensity(PKD pkd, particleStore::ParticleReference &p, struct pk
         *P = SPHEOSPofRhoT(pkd, p.density(), NewSph.u, p.imaterial(), SPHoptions);
     }
     else {
-        float dtPredDrift = getDtPredDrift(kick,0,uRungLo,p.rung());
+        float dtPredDrift = getDtPredDrift(kick, 0, uRungLo, p.rung());
         float uPred = 0.0f;
         if (SPHoptions->useIsentropic && !(p.imaterial() == 0 && SPHoptions->useBuiltinIdeal)) {
             // undo kick
@@ -105,14 +105,14 @@ void SPHpredictInDensity(PKD pkd, particleStore::ParticleReference &p, struct pk
             // new opening kick
             uPred += kick->dtPredISPHOpen[p.rung()] * NewSph.uDot;
             // isentropic evolution
-            uPred = SPHEOSIsentropic(pkd,NewSph.oldRho,uPred,p.density(),p.imaterial(),SPHoptions);
+            uPred = SPHEOSIsentropic(pkd, NewSph.oldRho, uPred, p.density(), p.imaterial(), SPHoptions);
             // new closing kick
             uPred += kick->dtPredISPHClose[p.rung()] * NewSph.uDot;
         }
         else {
             uPred = NewSph.u + dtPredDrift * NewSph.uDot;
         }
-        *P = SPHEOSPCTofRhoU(pkd,p.density(),uPred,cs,T,p.imaterial(),SPHoptions);
+        *P = SPHEOSPCTofRhoU(pkd, p.density(), uPred, cs, T, p.imaterial(), SPHoptions);
         if (SPHoptions->doConsistentPrediction) {
             const auto &v = p.velocity();
             const auto &ap = p.acceleration();

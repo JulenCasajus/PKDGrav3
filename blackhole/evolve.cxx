@@ -78,15 +78,15 @@ void smBHEvolve(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     // CDV - pH = H
     const float ph = 0.5 * fBall;
     const float pH = fBall;
-  
+
     auto &bh = p.BH();
-  
+
     int nAccreted = 0;
     double pDensity = 0.0;
     double massSum = 0.0;
     double cs = 0.0;
     TinyVector <vel_t, 3> v{0.0}, vcirc{0.0};
-  
+
     for (auto i = 0; i < nSmooth; ++i) {
         auto q = pkd->particles[nnList[i].pPart];
         assert(q.is_gas());
@@ -106,7 +106,7 @@ void smBHEvolve(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     const double norm = 1. / pDensity;
     const double vRel2 = dot(v, v) * norm * norm;
     cs *= norm;
-  
+
     p.set_density(pDensity);
 
     // We allow the accretion viscosity to act over a boosted Bondi accretion
@@ -122,12 +122,12 @@ void smBHEvolve(PARTICLE *pIn, float fBall, int nSmooth, NN *nnList, SMF *smf) {
     const double dBondiAccretion = dBondiPrefactor *
                                    4. * M_PI * bh.dInternalMass * bh.dInternalMass * pDensity /
                                    pow(cs * cs + vRel2, 1.5);
-    
+
     // All the prefactors are computed at the setup phase
     const double dEddingtonAccretion = smf->dBHAccretionEddFac *
                                        bh.dInternalMass;
     bh.dEddingtonRatio = dBondiAccretion / dEddingtonAccretion;
-    
+
     bh.dAccretionRate = (dEddingtonAccretion < dBondiAccretion) ? dEddingtonAccretion : dBondiAccretion;
     if (smf->bBHAccretion) {
         nAccreted += bhAccretion(pkd, nnList, nSmooth, p, bh, pH, pMass, pDensity, smf->a);

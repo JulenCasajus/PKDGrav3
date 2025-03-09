@@ -39,26 +39,26 @@ protected:
             M = nullptr;
         }
     }
-    template<class MESSAGE,class QUEUE,class TILE>
-    int queue(MESSAGE *&M,QUEUE &Q, workParticle *work, TILE &tile, bool bGravStep) {
+    template<class MESSAGE, class QUEUE, class TILE>
+    int queue(MESSAGE *&M, QUEUE &Q, workParticle *work, TILE &tile, bool bGravStep) {
         if (M) { // If we are in the middle of building data for a kernel
-            if (M->queue(work,tile,bGravStep)) return work->nP; // Successfully queued
+            if (M->queue(work, tile, bGravStep)) return work->nP; // Successfully queued
             flush(M); // The buffer is full, so send it
         }
         mdl.gpu.flushCompleted();
         if (Q.empty()) return 0; // No buffers so the CPU has to do this part
         M = & Q.dequeue();
-        if (M->queue(work,tile,bGravStep)) return work->nP; // Successfully queued
+        if (M->queue(work, tile, bGravStep)) return work->nP; // Successfully queued
         return 0; // Not sure how this would happen, but okay.
     }
 public:
     explicit MetalClient(mdl::mdlClass &mdl);
     void flushMETAL();
     int queuePP(workParticle *work, ilpTile &tile, bool bGravStep) {
-        return queue(pp,freePP,work,tile,bGravStep);
+        return queue(pp, freePP, work, tile, bGravStep);
     }
     int queuePC(workParticle *work, ilcTile &tile, bool bGravStep) {
-        return queue(pc,freePC,work,tile,bGravStep);
+        return queue(pc, freePC, work, tile, bGravStep);
     }
 };
 #endif

@@ -33,57 +33,57 @@ class pkd_parameters;
 #include "cosmo.h"
 
 struct SPHBallOfBalls {
-    blitz::TinyVector<float,3> fBoBCenter;
+    blitz::TinyVector<float, 3> fBoBCenter;
     float fBoBr;       /* Ball of Balls radius */
     SPHBallOfBalls() = default;
-    SPHBallOfBalls(blitz::TinyVector<float,3> center,float r) : fBoBCenter(center), fBoBr(r) {}
-    SPHBallOfBalls(float r) : fBoBCenter(blitz::TinyVector<float,3>(0.0)),fBoBr(r) {}
+    SPHBallOfBalls(blitz::TinyVector<float, 3> center, float r) : fBoBCenter(center), fBoBr(r) {}
+    SPHBallOfBalls(float r) : fBoBCenter(blitz::TinyVector<float, 3>(0.0)), fBoBr(r) {}
 
     auto combine(SPHBallOfBalls BoB2) const {
-        using V = blitz::TinyVector<double,3>;
+        using V = blitz::TinyVector<double, 3>;
         V difference = fBoBCenter - BoB2.fBoBCenter;
-        double length = sqrt(blitz::dot(difference,difference));
+        double length = sqrt(blitz::dot(difference, difference));
         if (length == 0.0) return *this;
         V direction = difference / length;
         V point1 = fBoBCenter + direction * fBoBr;
         V point2 = BoB2.fBoBCenter - direction * BoB2.fBoBr;
         V radiusvec = (point1 - point2) / 2.0f;
         V midpoint = point2 + radiusvec;
-        double radius = sqrt(blitz::dot(radiusvec,radiusvec));
+        double radius = sqrt(blitz::dot(radiusvec, radiusvec));
         assert(radius >= fBoBr || radius >= BoB2.fBoBr);
         if (radius < fBoBr)           return *this; // Ball 2 is completely inside Ball 1
         else if (radius < BoB2.fBoBr) return BoB2;  // Ball 1 is completely inside Ball 2
-        else return SPHBallOfBalls(midpoint,radius);
+        else return SPHBallOfBalls(midpoint, radius);
     }
-    auto combine(blitz::TinyVector<float,3> center,float r) const {
-        return combine(SPHBallOfBalls(center,r));
+    auto combine(blitz::TinyVector<float, 3> center, float r) const {
+        return combine(SPHBallOfBalls(center, r));
     }
 
 };
 
 struct SPHBoxOfBalls {
-    blitz::TinyVector<float,3> fBoBMin;
-    blitz::TinyVector<float,3> fBoBMax;
+    blitz::TinyVector<float, 3> fBoBMin;
+    blitz::TinyVector<float, 3> fBoBMax;
     SPHBoxOfBalls() = default;
-    SPHBoxOfBalls(blitz::TinyVector<float,3> fBoBMin,blitz::TinyVector<float,3> fBoBMax) : fBoBMin(fBoBMin),fBoBMax(fBoBMax) {}
-    SPHBoxOfBalls(blitz::TinyVector<float,3> center,float r) : fBoBMin(center-r),fBoBMax(center+r) {}
-    SPHBoxOfBalls(float r) : fBoBMin(blitz::TinyVector<float,3>(-r)),fBoBMax(blitz::TinyVector<float,3>(r)) {}
+    SPHBoxOfBalls(blitz::TinyVector<float, 3> fBoBMin, blitz::TinyVector<float, 3> fBoBMax) : fBoBMin(fBoBMin), fBoBMax(fBoBMax) {}
+    SPHBoxOfBalls(blitz::TinyVector<float, 3> center, float r) : fBoBMin(center - r), fBoBMax(center + r) {}
+    SPHBoxOfBalls(float r) : fBoBMin(blitz::TinyVector<float, 3>(-r)), fBoBMax(blitz::TinyVector<float, 3>(r)) {}
     auto combine(SPHBoxOfBalls rhs) const {
-        return SPHBoxOfBalls(blitz::min(fBoBMin,rhs.fBoBMin),blitz::max(fBoBMax,rhs.fBoBMax));
+        return SPHBoxOfBalls(blitz::min(fBoBMin, rhs.fBoBMin), blitz::max(fBoBMax, rhs.fBoBMax));
     }
-    auto combine(blitz::TinyVector<float,3> center,float r) const {
-        return combine(SPHBoxOfBalls(center,r));
+    auto combine(blitz::TinyVector<float, 3> center, float r) const {
+        return combine(SPHBoxOfBalls(center, r));
     }
 
 };
 
 struct SPHVoidOfBalls {
     SPHVoidOfBalls() = default;
-    SPHVoidOfBalls(blitz::TinyVector<float,3> center,float r) {}
+    SPHVoidOfBalls(blitz::TinyVector<float, 3> center, float r) {}
     SPHVoidOfBalls(float r) {}
     auto combine(SPHVoidOfBalls rhs) const { return SPHVoidOfBalls(); }
-    auto combine(blitz::TinyVector<float,3> center,float r) const {
-        return combine(SPHVoidOfBalls(center,r));
+    auto combine(blitz::TinyVector<float, 3> center, float r) const {
+        return combine(SPHVoidOfBalls(center, r));
     }
 };
 
@@ -160,7 +160,7 @@ extern "C" {
 SPHOptions initializeSPHOptions(pkd_parameters &parameters, CSM csm, double dTime);
 void copySPHOptions(SPHOptions *source, SPHOptions *target);
 void copySPHOptionsGPU(SPHOptions *source, SPHOptionsGPU *target);
-float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
+float calculateInterfaceCorrectionPrefactor(float nSmooth, int kernelType);
 #ifdef __cplusplus
 }
 #endif
@@ -170,8 +170,8 @@ float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
  * r = sqrt(d2)/fball
  * fball is the radius at which the kernel becomes zero, w(r>=1) = 0
  * SPHKERNEL calculates w(r)
- * DSPHKERNEL_DR calculates dw/dr
- * DSPHKERNEL_DFBALL calculates dW/dfball
+ * DSPHKERNEL_DR calculates dw / dr
+ * DSPHKERNEL_DFBALL calculates dW / dfball
  */
 
 /* Kernel types: kernelType =
@@ -185,7 +185,7 @@ float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
  * needed in SPHKERNEL and DSPHKERNEL_DR and calculates the kernel normalization C
  */
 #define SPHKERNEL_INIT(r, ifBall, C, t1, mask1, kernelType) { \
-    switch(kernelType) { \
+    switch (kernelType) { \
     case 0: { \
         mask1 = r < 0.5f; \
         t1 = r - 1.0f; \
@@ -212,24 +212,24 @@ float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
  * has to be normalized with C at the end
  */
 #define SPHKERNEL(r, w, t1, t2, t3, r_lt_one, mask1, kernelType) { \
-    switch(kernelType) { \
+    switch (kernelType) { \
     case 0: { \
         t2 = 1.0f + 6.0f * r * r * t1; \
         t3 = - 2.0f * t1 * t1 * t1; \
-        w = maskz_mov(r_lt_one,t3); \
-        w = mask_mov(w,mask1,t2); \
+        w = maskz_mov(r_lt_one, t3); \
+        w = mask_mov(w, mask1, t2); \
         break; } \
     case 1: { \
         t2 = t1 * t1 * t1 * t1 * (1.0f + 4.0f * r); \
-        w = maskz_mov(r_lt_one,t2); \
+        w = maskz_mov(r_lt_one, t2); \
         break; } \
     case 2: { \
         t2 = t1 * t1 *t1 *t1 *t1 *t1 * (1.0f + 6.0f * r + 35.0f / 3.0f * r * r); \
-        w = maskz_mov(r_lt_one,t2); \
+        w = maskz_mov(r_lt_one, t2); \
         break; } \
     case 3: { \
         t2 = t1 * t1 * t1 * t1 * t1 * t1 * t1 * t1 * (1.0f + 8.0f * r + 25.0f * r *r + 32.0f * r * r * r); \
-        w = maskz_mov(r_lt_one,t2); \
+        w = maskz_mov(r_lt_one, t2); \
         break; } \
     default: assert(0);\
     }\
@@ -240,24 +240,24 @@ float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
  * has to be normalized with C at the end
  */
 #define DSPHKERNEL_DR(r, dwdr, t1, t2, t3, r_lt_one, mask1, kernelType) { \
-    switch(kernelType) { \
+    switch (kernelType) { \
     case 0: { \
         t2 = 6.0f * r * (3.0f * r - 2.0f); \
         t3 = - 6.0f * t1 * t1; \
-        dwdr = maskz_mov(r_lt_one,t3); \
-        dwdr = mask_mov(dwdr,mask1,t2); \
+        dwdr = maskz_mov(r_lt_one, t3); \
+        dwdr = mask_mov(dwdr, mask1, t2); \
         break; } \
     case 1: { \
         t2 = -20.0f * r * t1 *t1 * t1; \
-        dwdr = maskz_mov(r_lt_one,t2); \
+        dwdr = maskz_mov(r_lt_one, t2); \
         break; } \
     case 2: { \
         t2 = -56.0f / 3.0f * r * (5.0f * r + 1.0f) * t1 * t1 * t1 * t1 * t1; \
-        dwdr = maskz_mov(r_lt_one,t2); \
+        dwdr = maskz_mov(r_lt_one, t2); \
         break; } \
     case 3: { \
         t2 = -22.0f * r * t1 * t1 * t1 * t1 * t1 * t1 * t1 * (16.0f * r * r + 7.0f * r + 1.0f); \
-        dwdr = maskz_mov(r_lt_one,t2); \
+        dwdr = maskz_mov(r_lt_one, t2); \
         break; } \
     default: assert(0);\
     }\
@@ -267,7 +267,7 @@ float calculateInterfaceCorrectionPrefactor(float nSmooth,int kernelType);
  * Do not normalize, is already normalized.
  */
 #define DSPHKERNEL_DFBALL(r, ifBall, w, dwdr, C, dWdfball, kernelType) { \
-    switch(kernelType) { \
+    switch (kernelType) { \
     case 0: { \
         dWdfball = - C * ifBall * (3.0f * w + dwdr * r); \
         break; } \
